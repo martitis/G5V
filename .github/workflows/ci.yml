@@ -1,0 +1,21 @@
+name: CI
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+
+jobs:
+  build-lint:
+    name: Build and lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      # The warning cap is the current count; lower it as warnings get fixed, never raise it.
+      - run: yarn lint --no-fix --max-warnings 34
+      - run: yarn build

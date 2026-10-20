@@ -1,9 +1,7 @@
 name: publish to ghcr
+# Manual only: deployment is static files behind nginx/Caddy, so Docker images are optional.
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
 jobs:
   push:
     name: "g5v:latest"
