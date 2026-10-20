@@ -44,5 +44,7 @@ Yarn 1 (`npx yarn@1.22.22 <cmd>` if not installed). `.yarnrc` disables the engin
 - Components that open SSE must set `sse: { cleanup: true }` or close the streams in `beforeDestroy`. `App.vue`
   remounts views on every path change.
 - Vuetify switches: bind numeric values with `:true-value="1" :false-value="0"`.
-- Never render secrets (RCON passwords, other users' API keys) into the DOM.
+- Never render secrets (RCON passwords, other users' API keys) into the DOM. The API no longer sends RCON passwords; a blank
+  password on server edit keeps the current one.
+- Match admin actions (pause, unpause, cancel, forfeit, restart) and logout are POST calls; the backend refuses GET (CSRF).
 - Style: 2-space indent, double quotes, `$t()` for all user-visible text.

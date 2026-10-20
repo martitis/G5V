@@ -913,7 +913,7 @@ export default {
       let res;
       let message;
       try {
-        res = await this.axioCall.get(
+        res = await this.axioCall.post(
           `${process.env?.VUE_APP_G5V_API_URL ||
             "/api"}/matches/${matchid}/pause`
         );
@@ -927,7 +927,7 @@ export default {
       let res;
       let message;
       try {
-        res = await this.axioCall.get(
+        res = await this.axioCall.post(
           `${process.env?.VUE_APP_G5V_API_URL ||
             "/api"}/matches/${matchid}/unpause`
         );
@@ -955,7 +955,7 @@ export default {
       let res;
       let message;
       try {
-        res = await this.axioCall.get(
+        res = await this.axioCall.post(
           `${process.env?.VUE_APP_G5V_API_URL ||
             "/api"}/matches/${matchid}/cancel`
         );
@@ -999,7 +999,7 @@ export default {
       let res;
       let message;
       try {
-        res = await this.axioCall.get(
+        res = await this.axioCall.post(
           `${process.env?.VUE_APP_G5V_API_URL ||
             "/api"}/matches/${matchid}/forfeit/${winner}`
         );
@@ -1072,7 +1072,7 @@ export default {
       let res;
       let message;
       try {
-        res = await this.axioCall.get(
+        res = await this.axioCall.post(
           `${process.env?.VUE_APP_G5V_API_URL ||
             "/api"}/matches/${matchid}/restart/`
         );
@@ -1262,6 +1262,16 @@ export default {
         message = error.response.data.message;
       }
       return message;
+    },
+    async Logout() {
+      try {
+        await this.axioCall.post(
+          `${process.env?.VUE_APP_G5V_API_URL || "/api"}/logout`
+        );
+      } catch (error) {
+        // Already logged out or the API is unreachable; the page reload clears the state either way.
+        console.error(error);
+      }
     },
     // END REGISTRATION CALLS
     GetSteamURL: function(steamid) {

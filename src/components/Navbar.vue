@@ -16,7 +16,7 @@
             fab
             small
             color="grey darken-2"
-            :href="apiUrl + '/logout'"
+            @click="logout"
             v-if="user.id !== null"
           >
             <v-icon>mdi-logout-variant</v-icon>
@@ -144,6 +144,13 @@ export default {
   watch: {
     group() {
       this.drawer = false;
+    }
+  },
+  methods: {
+    async logout() {
+      await this.Logout();
+      // Full reload so every component drops the old user.
+      window.location.assign(process.env.BASE_URL || "/");
     }
   }
 };
