@@ -12,8 +12,12 @@ Backend facts (API, MatchZy integration) are in [../G5API/CLAUDE.md](../G5API/CL
   fixes minimal and Vue-2 compatible. Update this file when the migration lands.
 
 ## Commands
+Yarn 1 (`npx yarn@1.22.22 <cmd>` if not installed). `.yarnrc` disables the engines check because Vue CLI's
+`@achrinza/node-ipc` declares Node ≤19 but works on Node 20+. Delete `.yarnrc` after the Vite migration.
 - `yarn serve`: dev server. `vue.config.js` proxies `/api` → `http://localhost:3301` (prefix stripped).
-- `yarn build`: production build to `dist/`. `yarn lint`: ESLint (vue plugin + prettier).
+- `yarn build`: production build to `dist/`.
+- `yarn lint`: ESLint (vue plugin + prettier). **Plain `yarn lint` autofixes files**; use `yarn lint --no-fix` to only
+  check. CI runs `--no-fix --max-warnings <current count>` (`.github/workflows/ci.yml`). Lower the cap as warnings get fixed.
 - API base URL: build-time env `VUE_APP_G5V_API_URL`, defaulting to `/api`.
 - Deployment: bare static `dist/` behind nginx/Caddy (`default.conf`, `Caddyfile` are examples) with an SPA fallback.
 
