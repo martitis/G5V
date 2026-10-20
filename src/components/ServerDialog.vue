@@ -78,6 +78,15 @@
                     <v-text-field
                       v-model="serverInfo.rcon_password"
                       :label="$t('ServerCreate.FormRCONPassword')"
+                      :hint="
+                        serverInfo.id != null
+                          ? $t('ServerCreate.RCONKeepHint')
+                          : ''
+                      "
+                      persistent-hint
+                      :rules="[
+                        v => serverInfo.id != null || !!v || $t('misc.Required')
+                      ]"
                       :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
                       :type="showPass ? 'text' : 'password'"
                       name="rcon_password"

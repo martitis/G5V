@@ -418,16 +418,7 @@ export default {
         },
         {
           title: this.$t("MatchAdmin.ListBackups"),
-          apiCall: async () => {
-            let res = await this.GetMatchBackups(this.matchInfo.id);
-            if (res.response) {
-              this.backups = res.response.split("\n");
-              this.backupDialog = true;
-            } else {
-              this.response = res.message;
-              this.responseSheet = true;
-            }
-          }
+          apiCall: () => this.showServerBackups()
         },
         {
           title: this.$t("MatchAdmin.MatchRestart"),
@@ -501,16 +492,7 @@ export default {
         },
         {
           title: this.$t("MatchAdmin.ListBackups"),
-          apiCall: async () => {
-            let res = await this.GetMatchBackups(this.matchInfo.id);
-            if (res.response) {
-              this.backups = res.response.split("\n");
-              this.backupDialog = true;
-            } else {
-              this.response = res.message;
-              this.responseSheet = true;
-            }
-          }
+          apiCall: () => this.showServerBackups()
         },
         {
           title: this.$t("MatchAdmin.CancelMatch"),
@@ -564,6 +546,28 @@ export default {
     }
   },
   methods: {
+    async showServerBackups() {
+      this.isLoading = true;
+      let res = await this.GetMatchBackups(this.matchInfo.id);
+      this.isLoading = false;
+      if (Array.isArray(res.response) && res.response.length > 0) {
+        // The API returns { file, map_number, round, info }; restore needs the exact file name.
+        this.backups = res.response.map(backup => ({
+          value: backup.file,
+          text:
+            this.$t("MatchAdmin.BackupItem", {
+              map: backup.map_number + 1,
+              round: backup.round
+            }) + (backup.info ? " · " + backup.info : "")
+        }));
+        this.backupDialog = true;
+      } else {
+        this.response = Array.isArray(res.response)
+          ? this.$t("MatchAdmin.NoBackups")
+          : res.message;
+        this.responseSheet = true;
+      }
+    },
     async cancelCurrentMatch() {
       this.isLoading = true;
       let matchRes = await this.CancelMatch(this.matchInfo.id);
