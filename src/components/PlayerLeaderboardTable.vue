@@ -1,178 +1,97 @@
 <template>
-  <v-container class="PlayerLeaderboard" fluid>
+  <v-card>
+    <v-card-title>{{ title ?? $t("misc.PLeader") }}</v-card-title>
     <v-data-table
-      item-key="steamId"
-      class="elevation-1"
-      :loading="isLoading"
-      :loading-text="$t('misc.LoadText')"
       :headers="headers"
       :items="players"
-      :sort-by="['wins', 'kills']"
-      :sort-desc="['wins', 'kills']"
+      :loading="loading"
+      :loading-text="$t('misc.LoadText')"
+      :no-data-text="$t('misc.NoData')"
+      :sort-by="[
+        { key: 'wins', order: 'desc' },
+        { key: 'kills', order: 'desc' }
+      ]"
       multi-sort
-      ref="PlayerLeaderboardTable"
-      :expanded="[]"
+      item-value="steamId"
       show-expand
+      density="comfortable"
     >
-      <template v-slot:top>
-        <v-toolbar flat>
-          {{ $t("misc.PLeader") }}
-        </v-toolbar>
+      <template #[`item.name`]="{ item }">
+        <router-link :to="`/user/${item.steamId}`" class="app-link">{{ item.name }}</router-link>
       </template>
-      <template v-slot:item.name="{ item }">
-        <router-link :to="{ path: '/user/' + item.steamId }">
-          {{ item.name }}
-        </router-link>
-      </template>
-      <template v-slot:expanded-item="{ item }" class="text-center">
-        <td :colspan="headers.length">
-          <v-data-table
-            item-key="steamId"
-            class="elevation-1"
-            :headers="additionalHeaders"
-            hide-default-footer
-            dense
-            :key="item.steamId"
-            :items="[item]"
-            disable-sort
-            :colspan="headers.length"
-          />
-        </td>
+      <template #expanded-row="{ columns, item }">
+        <tr>
+          <td :colspan="columns.length" class="py-2">
+            <!-- Detail stats of one player. -->
+            <v-table density="compact">
+              <thead>
+                <tr>
+                  <th v-for="detail in details" :key="detail.key">{{ detail.title }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td v-for="detail in details" :key="detail.key">{{ detail.value(item) }}</td>
+                </tr>
+              </tbody>
+            </v-table>
+          </td>
+        </tr>
       </template>
     </v-data-table>
-  </v-container>
+  </v-card>
 </template>
 
-<script>
-export default {
-  name: "PlayerLeaderboard",
-  props: {
-    seasonId: Number
-  },
-  data() {
-    return {
-      players: [],
-      isLoading: true
-    };
-  },
-  created() {
-    this.GetLeaderboard();
-  },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t("PlayerStats.User"),
-          align: "start",
-          sortable: true,
-          value: "name",
-          groupable: false
-        },
-        {
-          text: this.$t("misc.TWins"),
-          sortable: true,
-          value: "wins",
-          groupable: false
-        },
-        {
-          text: this.$t("PlayerStats.Kills"),
-          value: "kills",
-          groupable: false
-        },
-        {
-          text: this.$t("PlayerStats.Deaths"),
-          value: "deaths",
-          groupable: false
-        },
-        {
-          text: this.$t("PlayerStats.Assists"),
-          value: "assists",
-          groupable: false
-        },
-        {
-          text: this.$t("PlayerStats.FlashbangAssists"),
-          value: "fba",
-          groupable: false
-        },
-        {
-          text: this.$t("PlayerStats.TotalRoundsPlayed"),
-          value: "trp"
-        },
-        {
-          text: this.$t("PlayerStats.Rating"),
-          value: "average_rating",
-          groupable: false
-        },
-        {
-          text: "",
-          value: "data-table-expand",
-          groupable: false,
-          align: "end"
-        }
-      ];
-    },
-    additionalHeaders() {
-      return [
-        {
-          text: this.$t("PlayerStats.ADR"),
-          value: "adr"
-        },
-        {
-          text: this.$t("PlayerStats.Headshot") + "%",
-          value: "hsp"
-        },
-        {
-          text: this.$t("PlayerStats.5kill"),
-          value: "k5"
-        },
-        {
-          text: this.$t("PlayerStats.4kill"),
-          value: "k4"
-        },
-        {
-          text: this.$t("PlayerStats.3kill"),
-          value: "k3"
-        },
-        {
-          text: this.$t("PlayerStats.2kill"),
-          value: "k2"
-        },
-        {
-          text: this.$t("PlayerStats.1kill"),
-          value: "k1"
-        },
-        {
-          text: this.$t("PlayerStats.v5"),
-          value: "v5"
-        },
-        {
-          text: this.$t("PlayerStats.v4"),
-          value: "v4"
-        }
-      ];
-    }
-  },
-  methods: {
-    async GetLeaderboard() {
-      try {
-        let res;
-        if (this.seasonId)
-          res = await this.GetSeasonPlayerLeaderboard(this.seasonId);
-        else res = await this.GetTotalPlayerLeaderboard();
-        if (typeof res == "string") return;
-        res.forEach(player => {
-          player.adr = !player.trp
-            ? 0.0
-            : (player.total_damage / player.trp).toFixed(2);
-          this.players.push(player);
-        });
-      } catch (error) {
-        console.log("Our error: " + error);
-      } finally {
-        this.isLoading = false;
-      }
-      return;
-    }
+<script setup lang="ts">
+import { computed, onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { leaderboard } from "@/api";
+import type { LeaderboardPlayer } from "@/api/types";
+import { useUiStore } from "@/stores/ui";
+
+const props = defineProps<{ seasonId?: number; pug?: boolean; title?: string }>();
+const { t } = useI18n();
+const ui = useUiStore();
+
+const players = ref<LeaderboardPlayer[]>([]);
+const loading = ref(true);
+
+const headers = computed(() => [
+  { title: t("PlayerStats.User"), key: "name" },
+  { title: t("misc.TWins"), key: "wins" },
+  { title: t("PlayerStats.Kills"), key: "kills" },
+  { title: t("PlayerStats.Deaths"), key: "deaths" },
+  { title: t("PlayerStats.Assists"), key: "assists" },
+  { title: t("PlayerStats.FlashbangAssists"), key: "fba" },
+  { title: t("PlayerStats.TotalRoundsPlayed"), key: "trp" },
+  { title: t("PlayerStats.Rating"), key: "average_rating" },
+  { title: "", key: "data-table-expand" }
+]);
+
+type Detail = { key: string; title: string; value: (p: LeaderboardPlayer) => string | number };
+const details = computed<Detail[]>(() => [
+  { key: "adr", title: t("PlayerStats.ADR"), value: (p) => (p.trp ? (p.total_damage / p.trp).toFixed(1) : 0) },
+  { key: "hsp", title: t("PlayerStats.Headshot") + "%", value: (p) => p.hsp },
+  { key: "k5", title: t("PlayerStats.5kill"), value: (p) => p.k5 },
+  { key: "k4", title: t("PlayerStats.4kill"), value: (p) => p.k4 },
+  { key: "k3", title: t("PlayerStats.3kill"), value: (p) => p.k3 },
+  { key: "k2", title: t("PlayerStats.2kill"), value: (p) => p.k2 },
+  { key: "k1", title: t("PlayerStats.1kill"), value: (p) => p.k1 },
+  { key: "v5", title: t("PlayerStats.v5"), value: (p) => p.v5 },
+  { key: "v4", title: t("PlayerStats.v4"), value: (p) => p.v4 },
+  { key: "v3", title: t("PlayerStats.v3"), value: (p) => p.v3 },
+  { key: "v2", title: t("PlayerStats.v2"), value: (p) => p.v2 },
+  { key: "v1", title: t("PlayerStats.v1"), value: (p) => p.v1 },
+  { key: "maps", title: t("PlayerStats.TotalMaps"), value: (p) => p.total_maps }
+]);
+
+onMounted(async () => {
+  try {
+    players.value = await leaderboard.players(props.seasonId, props.pug);
+  } catch (error) {
+    ui.notifyError(error);
+  } finally {
+    loading.value = false;
   }
-};
+});
 </script>

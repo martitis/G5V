@@ -1,85 +1,57 @@
 <template>
-  <v-container class="TeamLeaderboard" fluid>
+  <v-card>
+    <v-card-title>{{ $t("Leaderboard.TTitle") }}</v-card-title>
     <v-data-table
-      item-key="index"
-      class="elevation-1"
-      :loading="isLoading"
-      :loading-text="$t('misc.LoadText')"
       :headers="headers"
       :items="teams"
-      :sort-by="'wins'"
-      :sort-desc="['wins']"
-      ref="TeamLeaderboardTable"
+      :loading="loading"
+      :loading-text="$t('misc.LoadText')"
+      :no-data-text="$t('misc.NoData')"
+      :sort-by="[{ key: 'wins', order: 'desc' }]"
+      item-value="name"
+      density="comfortable"
     >
-      <template v-slot:top>
-        <v-toolbar flat>
-          {{ $t("Leaderboard.TTitle") }}
-        </v-toolbar>
+      <template #[`item.name`]="{ item }">
+        <router-link v-if="item.id" :to="`/teams/${item.id}`" class="app-link">{{ item.name }}</router-link>
+        <span v-else>{{ item.name }}</span>
+      </template>
+      <template #[`item.rounddiff`]="{ item }">
+        <span :class="item.rounddiff > 0 ? 'text-success' : item.rounddiff < 0 ? 'text-error' : ''">
+          {{ item.rounddiff > 0 ? "+" : "" }}{{ item.rounddiff }}
+        </span>
       </template>
     </v-data-table>
-  </v-container>
+  </v-card>
 </template>
 
-<script>
-export default {
-  name: "TeamLeaderboard",
-  props: {
-    seasonid: Number
-  },
-  data() {
-    return {
-      teams: [],
-      isLoading: true
-    };
-  },
-  created() {
-    this.GetLeaderboard();
-  },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t("Leaderboard.TName"),
-          align: "start",
-          sortable: true,
-          value: "name",
-          groupable: false
-        },
-        {
-          text: this.$t("Leaderboard.TWin"),
-          sortable: true,
-          value: "wins",
-          groupable: false
-        },
-        {
-          text: this.$t("Leaderboard.TLosses"),
-          value: "losses",
-          groupable: false
-        },
-        {
-          text: this.$t("Leaderboard.TDiff"),
-          value: "rounddiff",
-          groupable: false
-        }
-      ];
-    }
-  },
-  methods: {
-    async GetLeaderboard() {
-      try {
-        let res;
-        if (this.seasonid)
-          res = await this.GetSeasonTeamLeaderboard(this.seasonid);
-        else res = await this.GetTeamLeaderboard();
-        if (typeof res == "string") return;
-        this.teams = res;
-      } catch (error) {
-        console.log("Our error: " + error);
-      } finally {
-        this.isLoading = false;
-      }
-      return;
-    }
+<script setup lang="ts">
+import { computed, onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { leaderboard } from "@/api";
+import type { TeamStanding } from "@/api/types";
+import { useUiStore } from "@/stores/ui";
+
+const props = defineProps<{ seasonId?: number }>();
+const { t } = useI18n();
+const ui = useUiStore();
+
+const teams = ref<TeamStanding[]>([]);
+const loading = ref(true);
+
+const headers = computed(() => [
+  { title: t("Leaderboard.TName"), key: "name" },
+  { title: t("Leaderboard.TWin"), key: "wins" },
+  { title: t("Leaderboard.TLosses"), key: "losses" },
+  { title: t("Leaderboard.TDiff"), key: "rounddiff" }
+]);
+
+onMounted(async () => {
+  try {
+    teams.value = await leaderboard.teams(props.seasonId);
+  } catch (error) {
+    ui.notifyError(error);
+  } finally {
+    loading.value = false;
   }
-};
+});
 </script>

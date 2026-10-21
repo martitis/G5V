@@ -1,0 +1,106 @@
+import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
+import { useUiStore } from "@/stores/ui";
+import i18n from "@/plugins/i18n";
+
+declare module "vue-router" {
+  interface RouteMeta {
+    /** Only for logged-in users; others are sent to the home page. */
+    requiresAuth?: boolean;
+    /** Lists only the user's own items ("My ..." pages). */
+    mine?: boolean;
+  }
+}
+
+const routes: RouteRecordRaw[] = [
+  { path: "/", name: "Home", component: () => import("@/views/HomeView.vue") },
+  { path: "/matches", name: "Matches", component: () => import("@/views/MatchesView.vue") },
+  {
+    path: "/mymatches",
+    name: "MyMatches",
+    component: () => import("@/views/MatchesView.vue"),
+    meta: { requiresAuth: true, mine: true }
+  },
+  {
+    path: "/match/create",
+    name: "CreateMatch",
+    component: () => import("@/views/CreateMatchView.vue"),
+    meta: { requiresAuth: true }
+  },
+  { path: "/match/:id(\\d+)", name: "Match", component: () => import("@/views/MatchView.vue") },
+  { path: "/teams", name: "Teams", component: () => import("@/views/TeamsView.vue") },
+  {
+    path: "/myteams",
+    name: "MyTeams",
+    component: () => import("@/views/TeamsView.vue"),
+    meta: { requiresAuth: true, mine: true }
+  },
+  {
+    path: "/teams/create",
+    name: "CreateTeam",
+    component: () => import("@/views/TeamView.vue"),
+    meta: { requiresAuth: true }
+  },
+  { path: "/teams/:id(\\d+)", name: "Team", component: () => import("@/views/TeamView.vue") },
+  { path: "/servers", name: "Servers", component: () => import("@/views/ServersView.vue") },
+  {
+    path: "/myservers",
+    name: "MyServers",
+    component: () => import("@/views/ServersView.vue"),
+    meta: { requiresAuth: true, mine: true }
+  },
+  { path: "/seasons", name: "Seasons", component: () => import("@/views/SeasonsView.vue") },
+  {
+    path: "/myseasons",
+    name: "MySeasons",
+    component: () => import("@/views/SeasonsView.vue"),
+    meta: { requiresAuth: true, mine: true }
+  },
+  { path: "/season/:id(\\d+)", name: "Season", component: () => import("@/views/SeasonView.vue") },
+  {
+    path: "/user",
+    name: "MyUser",
+    component: () => import("@/views/UserView.vue"),
+    meta: { requiresAuth: true }
+  },
+  { path: "/user/:id", name: "User", component: () => import("@/views/UserView.vue") },
+  { path: "/metrics", name: "Metrics", component: () => import("@/views/MetricsView.vue") },
+  {
+    path: "/leaderboard",
+    name: "Leaderboard",
+    component: () => import("@/views/PlayerLeaderboardView.vue")
+  },
+  {
+    path: "/leaderboard/teams",
+    name: "TeamLeaderboard",
+    component: () => import("@/views/TeamLeaderboardView.vue")
+  },
+  {
+    path: "/leaderboard/teams/:seasonid(\\d+)",
+    name: "SeasonTeamLeaderboard",
+    component: () => import("@/views/TeamLeaderboardView.vue")
+  },
+  {
+    path: "/leaderboard/:seasonid(\\d+)",
+    name: "SeasonPlayerLeaderboard",
+    component: () => import("@/views/PlayerLeaderboardView.vue")
+  },
+  { path: "/:pathMatch(.*)*", name: "NotFound", component: () => import("@/views/NotFoundView.vue") }
+];
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes,
+  scrollBehavior: (to, from, saved) => saved ?? { top: 0 }
+});
+
+router.beforeEach(async (to) => {
+  if (!to.meta.requiresAuth) return true;
+  const auth = useAuthStore();
+  await auth.load();
+  if (auth.loggedIn) return true;
+  useUiStore().notify(i18n.global.t("misc.LoginRequired"), "warning");
+  return { name: "Home" };
+});
+
+export default router;

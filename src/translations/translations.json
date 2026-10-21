@@ -18,6 +18,8 @@
       "Home": "Home"
     },
     "Login": {
+      "SteamIdInvalid": "Enter a valid SteamID64 (17 digits, starting with 7656) to register.",
+      "SteamIdHint": "Only needed to register a local account.",
       "title": "Login/Register",
       "Login": "Login",
       "Register": "Register",
@@ -156,7 +158,8 @@
       "ContribScore": "Contribution Score",
       "MVP": "MVPs",
       "RefreshData": "Stats will refresh in {sec} seconds.",
-      "RefreshForce": "Force Refresh"
+      "RefreshForce": "Force Refresh",
+      "TotalMaps": "Maps played"
     },
     "Seasons": {
       "Title": "Seasons/Tournaments",
@@ -232,6 +235,7 @@
       "ShowMyServers": "Show My Servers"
     },
     "ServerCreate": {
+      "HostInvalid": "Enter only the host name or IP address, without the port.",
       "InfoWillNotBeExposed": "Your server information will not be exposed to other users.",
       "Get5Help": "Make sure your server is online and has the latest version of get5 installed.<br>See <a href=\"http://splewis.github.io/get5/latest/installation/\">the installation guide</a> for help installing the get5. PLEASE ENSURE sv_logecho = 1 IS SET ON THE SERVER AND 'log on'",
       "FormDisplayName": "Display Name",
@@ -280,7 +284,7 @@
     "Teams": {
       "YourTeams": "Your teams",
       "NoTeamFound": "No teams found.",
-      "ImportTeam": "ImportTeam",
+      "ImportTeam": "Import teams",
       "Title": "Teams"
     },
     "User": {
@@ -345,6 +349,11 @@
       "TDiff": "Round Difference"
     },
     "misc": {
+      "Versus": "vs",
+      "NoData": "Nothing here yet.",
+      "NotFoundText": "This page doesn't exist or was moved.",
+      "NotFoundTitle": "Page not found",
+      "LoginRequired": "Please log in to see this page.",
       "Cancel": "Cancel",
       "Confirm": "Confirm",
       "Close": "Close",
@@ -393,6 +402,8 @@
       "Home": "Accueil"
     },
     "Login": {
+      "SteamIdInvalid": "Entrez un SteamID64 valide (17 chiffres, commençant par 7656) pour vous inscrire.",
+      "SteamIdHint": "Uniquement nécessaire pour créer un compte local.",
       "title": "S'identifier / S'incrire",
       "Login": "S'identifier",
       "Register": "S'inscrire",
@@ -531,7 +542,8 @@
       "ContribScore": "Contribution Score",
       "MVP": "MVPs",
       "RefreshData": "Les statistiques vont être mises à jour dans {sec} secondes.",
-      "RefreshForce": "Forcer la mise à jour"
+      "RefreshForce": "Forcer la mise à jour",
+      "TotalMaps": "Cartes jouées"
     },
     "Seasons": {
       "Title": "Saisons/Tournois",
@@ -570,7 +582,9 @@
       "ConnectButton": "Se connecter",
       "ConnectButtonAt": "Se connecter au",
       "DeleteButton": "Supprimer mes matchs annulés",
-      "Versus": "vs"
+      "Versus": "vs",
+      "ip_string": "IP du serveur",
+      "server_name": "Nom du serveur"
     },
     "Metrics": {
       "Get5Metrics": "Get5 Metrics",
@@ -606,6 +620,7 @@
       "ShowMyServers": "Montrer mes serveurs"
     },
     "ServerCreate": {
+      "HostInvalid": "Saisissez uniquement le nom d'hôte ou l'adresse IP, sans le port.",
       "InfoWillNotBeExposed": "Les informations de votre serveur ne seront pas exposées aux autres utilisateurs.",
       "Get5Help": "Assurez-vous que votre serveur est en ligne et que la dernière version de get5 est installée.<br>Voir <a href=\"http://splewis.github.io/get5/latest/installation/\">le guide d'installation</a> pour l'aide à l'installation de get5. VEUILLEZ VOUS ASSURER que sv_logecho = 1 EST FIXE SUR LE SERVEUR ET que 'log on' est installé.",
       "FormDisplayName": "Nom affiché",
@@ -719,6 +734,11 @@
       "TDiff": "Round Difference"
     },
     "misc": {
+      "Versus": "vs",
+      "NoData": "Rien pour le moment.",
+      "NotFoundText": "Cette page n'existe pas ou a été déplacée.",
+      "NotFoundTitle": "Page introuvable",
+      "LoginRequired": "Veuillez vous connecter pour voir cette page.",
       "Cancel": "Annuler",
       "Confirm": "Confirmer",
       "Close": "Fermer",
@@ -748,7 +768,7 @@
       "powered": "Powered by Steam"
     }
   },
-  "jp": {
+  "ja": {
     "Navbar": {
       "title": "Get5Vue",
       "AllMatches": "マッチリスト",
@@ -767,6 +787,8 @@
       "Home": "ホーム"
     },
     "Login": {
+      "SteamIdInvalid": "登録するには有効なSteamID64（7656で始まる17桁）を入力してください。",
+      "SteamIdHint": "ローカルアカウントの登録時のみ必要です。",
       "title": "ログイン/登録",
       "Login": "ログイン",
       "Register": "登録",
@@ -863,7 +885,11 @@
       "KnifeDefault": "デフォルト",
       "KnifeNever": "ネバーナイフ",
       "KnifeAlways": "常にナイフ",
-      "Wingman": "ウィングマン・マッチ？"
+      "Wingman": "ウィングマン・マッチ？",
+      "MapSides": "マップ{map}のサイド",
+      "MapSidesTeam1CT": "チーム1がCTスタート",
+      "MapSidesTeam2CT": "チーム2がCTスタート",
+      "MapSidesKnife": "ナイフラウンドでサイド決定"
     },
     "PlayerStats": {
       "Kills": "キルズ",
@@ -902,7 +928,8 @@
       "ContribScore": "貢献度",
       "MVP": "M V P",
       "RefreshData": "統計情報は{sec}秒後に更新されます。",
-      "RefreshForce": "強制リフレッシュ"
+      "RefreshForce": "強制リフレッシュ",
+      "TotalMaps": "プレイしたマップ"
     },
     "Seasons": {
       "Title": "シーズンズ/トーナメント",
@@ -941,7 +968,9 @@
       "ConnectButton": "接続",
       "ConnectButtonAt": "に接続する ",
       "DeleteButton": "キャンセルされたマッチを削除する",
-      "Versus": "対"
+      "Versus": "対",
+      "ip_string": "サーバーIP",
+      "server_name": "サーバー名"
     },
     "Metrics": {
       "Get5Metrics": "Get5 メトリクス",
@@ -977,6 +1006,7 @@
       "ShowMyServers": "マイサーバーの表示"
     },
     "ServerCreate": {
+      "HostInvalid": "ポートを含めず、ホスト名またはIPアドレスのみを入力してください。",
       "InfoWillNotBeExposed": "あなたのサーバー情報は他のユーザーには公開されません。",
       "Get5Help": "サーバーがオンラインであり、最新バージョンのget5がインストールされていることを確認してください。<br>get5のインストールについては、<a href=\"http://splewis.github.io/get5/latest/installation/\">インストールガイド</a>を参照してください。 サーバーでsv_logecho = 1が設定され、'log on'が設定されていることを確認してください。",
       "FormDisplayName": "表示名",
@@ -1024,7 +1054,9 @@
     },
     "Teams": {
       "YourTeams": "あなたのチーム",
-      "NoTeamFound": "チームが見つかりませんでした。"
+      "NoTeamFound": "チームが見つかりませんでした。",
+      "ImportTeam": "チームをインポート",
+      "Title": "チーム"
     },
     "User": {
       "Name": "名前",
@@ -1088,6 +1120,11 @@
       "TDiff": "丸差"
     },
     "misc": {
+      "Versus": "vs",
+      "NoData": "まだ何もありません。",
+      "NotFoundText": "このページは存在しないか、移動されました。",
+      "NotFoundTitle": "ページが見つかりません",
+      "LoginRequired": "このページを表示するにはログインしてください。",
       "Cancel": "キャンセル",
       "Confirm": "確認",
       "Error": "エラー",
