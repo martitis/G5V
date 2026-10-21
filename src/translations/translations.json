@@ -261,6 +261,8 @@
       "PortRangeIncorrect": "Please input a port between 0 and 65536."
     },
     "Team": {
+      "Members": "Members",
+      "Private": "Private team",
       "Players": "Players",
       "RecentMatches": "Recent Matches",
       "MessageDeleteSuccess": "Successfully deleted team.",
@@ -290,6 +292,7 @@
       "Coach": "Coach"
     },
     "Teams": {
+      "ImportHelp": "Imports every participant of a Challonge tournament as a team. Sign-up form fields holding Steam IDs or profile URLs become players. Uses the Challonge API key from your profile.",
       "YourTeams": "Your teams",
       "NoTeamFound": "No teams found.",
       "ImportTeam": "Import teams",
@@ -357,6 +360,7 @@
       "TDiff": "Round Difference"
     },
     "misc": {
+      "Search": "Search",
       "Versus": "vs",
       "NoData": "Nothing here yet.",
       "NotFoundText": "This page doesn't exist or was moved.",
@@ -654,6 +658,8 @@
       "PortRangeIncorrect": "veuillez entrer un port entre 0 et 65536."
     },
     "Team": {
+      "Members": "Membres",
+      "Private": "Équipe privée",
       "Players": "Joueurs",
       "RecentMatches": "Matchs récents",
       "MessageDeleteSuccess": "Equipe supprimée avec succés.",
@@ -683,6 +689,7 @@
       "Coach": "Coach"
     },
     "Teams": {
+      "ImportHelp": "Importe chaque participant d'un tournoi Challonge comme équipe. Les champs du formulaire d'inscription contenant des Steam ID ou des URL de profil deviennent des joueurs. Utilise la clé API Challonge de votre profil.",
       "YourTeams": "Vos équipes",
       "NoTeamFound": "Aucune équipes trouvées.",
       "ImportTeam": "Importer équipes",
@@ -750,6 +757,7 @@
       "TDiff": "Round Difference"
     },
     "misc": {
+      "Search": "Rechercher",
       "Versus": "vs",
       "NoData": "Rien pour le moment.",
       "NotFoundText": "Cette page n'existe pas ou a été déplacée.",
@@ -1048,6 +1056,8 @@
       "PortRangeIncorrect": "ポートは0～65536の間で入力してください。"
     },
     "Team": {
+      "Members": "メンバー",
+      "Private": "非公開チーム",
       "Players": "プレイヤー",
       "RecentMatches": "マッチ履歴",
       "MessageDeleteSuccess": "チームの削除に成功しました。",
@@ -1077,6 +1087,7 @@
       "Coach": "コーチ"
     },
     "Teams": {
+      "ImportHelp": "Challongeトーナメントの参加者をチームとしてインポートします。Steam IDまたはプロフィールURLを含む登録フォームの項目はプレイヤーになります。プロフィールのChallonge APIキーを使用します。",
       "YourTeams": "あなたのチーム",
       "NoTeamFound": "チームが見つかりませんでした。",
       "ImportTeam": "チームをインポート",
@@ -1144,6 +1155,7 @@
       "TDiff": "丸差"
     },
     "misc": {
+      "Search": "検索",
       "Versus": "vs",
       "NoData": "まだ何もありません。",
       "NotFoundText": "このページは存在しないか、移動されました。",
