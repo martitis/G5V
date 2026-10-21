@@ -320,6 +320,15 @@
       "Title": "Teams"
     },
     "User": {
+      "MapNameInvalid": "Letters, digits and _ . / - only.",
+      "MapNameHint": "As MatchZy loads it, e.g. de_mirage or a workshop path.",
+      "NoStats": "No stats recorded yet.",
+      "Settings": "Account settings",
+      "PasswordChanged": "Password changed.",
+      "ApiResetConfirm": "Scripts using the current key will stop working.",
+      "Copied": "Copied to the clipboard.",
+      "Copy": "Copy",
+      "ApiHint": "Lets scripts and bots call the API as you. Keep it secret.",
       "Name": "Name",
       "SteamAccount": "Steam account",
       "TeamsSaved": "Teams saved",
@@ -738,6 +747,15 @@
       "Title": "Equipes"
     },
     "User": {
+      "MapNameInvalid": "Lettres, chiffres et _ . / - uniquement.",
+      "MapNameHint": "Tel que MatchZy le charge, p. ex. de_mirage ou un chemin workshop.",
+      "NoStats": "Aucune statistique enregistrée pour l'instant.",
+      "Settings": "Paramètres du compte",
+      "PasswordChanged": "Mot de passe modifié.",
+      "ApiResetConfirm": "Les scripts utilisant la clé actuelle cesseront de fonctionner.",
+      "Copied": "Copié dans le presse-papiers.",
+      "Copy": "Copier",
+      "ApiHint": "Permet à des scripts et bots d'appeler l'API en votre nom. Gardez-la secrète.",
       "Name": "Nom",
       "SteamAccount": "Compte Steam",
       "TeamsSaved": "Equipes sauvegardées",
@@ -1157,6 +1175,15 @@
       "Title": "チーム"
     },
     "User": {
+      "MapNameInvalid": "英数字と _ . / - のみ使用できます。",
+      "MapNameHint": "MatchZyが読み込む名前（例: de_mirage やワークショップのパス）。",
+      "NoStats": "まだ記録された統計はありません。",
+      "Settings": "アカウント設定",
+      "PasswordChanged": "パスワードを変更しました。",
+      "ApiResetConfirm": "現在のキーを使っているスクリプトは動かなくなります。",
+      "Copied": "クリップボードにコピーしました。",
+      "Copy": "コピー",
+      "ApiHint": "スクリプトやボットがあなたとしてAPIを呼び出すためのキーです。秘密にしてください。",
       "Name": "名前",
       "SteamAccount": "Steamアカウント",
       "TeamsSaved": "作成したチーム数",

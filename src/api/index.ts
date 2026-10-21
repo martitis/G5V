@@ -148,7 +148,7 @@ export const seasons = {
 export const stats = {
   /** Totals of a player (by Steam ID), optionally per season. */
   player: async (steamId: string) =>
-    (await orEmpty(get<{ playerstats: any }>(`/playerstats/${steamId}`), { playerstats: null }))
+    (await orEmpty(get<{ playerstats: PlayerStat[] }>(`/playerstats/${steamId}`), { playerstats: [] }))
       .playerstats,
   uniquePlayers: async () => (await get<{ count: number }>("/playerstats/unique")).count,
   ofMatch: async (matchId: number | string) =>
