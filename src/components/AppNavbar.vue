@@ -1,7 +1,7 @@
 <template>
   <v-app-bar color="primary" density="comfortable">
     <v-app-bar-nav-icon v-if="!mdAndUp" @click.stop="drawer = !drawer" />
-    <v-app-bar-title>{{ $t("Navbar.title") }}</v-app-bar-title>
+    <v-app-bar-title>{{ appTitle() }}</v-app-bar-title>
     <template #append>
       <!-- Nothing until the login check has answered, so logged-in users don't see the login buttons flash. -->
       <template v-if="auth.loaded && !auth.loggedIn">
@@ -90,7 +90,7 @@
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useDisplay } from "vuetify";
-import { apiUrl } from "@/config";
+import { apiUrl, appTitle } from "@/config";
 import { useAuthStore } from "@/stores/auth";
 import ServerDialog from "@/components/ServerDialog.vue";
 import LoginDialog from "@/components/LoginDialog.vue";

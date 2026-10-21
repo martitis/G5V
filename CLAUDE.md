@@ -22,7 +22,8 @@ Yarn 1 (`npx yarn@1.22.22 <cmd>` if not installed).
   security headers, and a commented `/api` proxy with SSE settings). Docker: `DockerfileFull` builds and serves.
 
 ## Runtime config
-`public/config.json` (`{"apiUrl": "/api"}`) is fetched at startup (`src/config.ts`), so one build works anywhere;
+`public/config.json` (`{"apiUrl": "/api", "title": "CS2 Panel"}`) is fetched at startup (`src/config.ts`), so one
+build works anywhere;
 `VITE_API_URL` is only a fallback. Build API URLs with `apiUrl("/path")`.
 
 ## Layout

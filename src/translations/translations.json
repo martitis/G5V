@@ -1,7 +1,6 @@
 {
   "en": {
     "Navbar": {
-      "title": "Get5Vue",
       "AllMatches": "All Matches",
       "MyMatches": "My Matches",
       "MyTeams": "My Teams",
@@ -264,7 +263,6 @@
       "GameServers": "Game servers",
       "Live": "Live matches",
       "Title": "Panel statistics",
-      "Get5Metrics": "Get5 Metrics",
       "Users": "Registered Users",
       "Teams": "Saved Teams",
       "Matches": "Matches Created",
@@ -299,7 +297,7 @@
     "ServerCreate": {
       "HostInvalid": "Enter only the host name or IP address, without the port.",
       "InfoWillNotBeExposed": "Your server information will not be exposed to other users.",
-      "Get5Help": "Make sure your server is online and has the latest version of get5 installed.<br>See <a href=\"http://splewis.github.io/get5/latest/installation/\">the installation guide</a> for help installing the get5. PLEASE ENSURE sv_logecho = 1 IS SET ON THE SERVER AND 'log on'",
+      "MatchZyHelp": "The game server needs <a href=\"https://shobhit-pathak.github.io/MatchZy/\" target=\"_blank\" rel=\"noopener\">MatchZy</a> installed and its RCON password set here. It must be able to reach this panel's API URL, which MatchZy uses to load matches and send events, demos and backups.",
       "FormDisplayName": "Display Name",
       "FormServerIP": "Host Name",
       "FormServerHint": "Can be a URL as well.",
@@ -464,7 +462,6 @@
   },
   "fr": {
     "Navbar": {
-      "title": "Get5Vue",
       "AllMatches": "Tous les matchs",
       "MyMatches": "Mes matchs",
       "MyTeams": "Mon équipe",
@@ -728,7 +725,6 @@
       "GameServers": "Serveurs de jeu",
       "Live": "Matchs en direct",
       "Title": "Statistiques du panneau",
-      "Get5Metrics": "Get5 Metrics",
       "Users": "Utilisateurs inscrits",
       "Teams": "Equipes enregistrées",
       "Matches": "Matchs Créés",
@@ -763,7 +759,7 @@
     "ServerCreate": {
       "HostInvalid": "Saisissez uniquement le nom d'hôte ou l'adresse IP, sans le port.",
       "InfoWillNotBeExposed": "Les informations de votre serveur ne seront pas exposées aux autres utilisateurs.",
-      "Get5Help": "Assurez-vous que votre serveur est en ligne et que la dernière version de get5 est installée.<br>Voir <a href=\"http://splewis.github.io/get5/latest/installation/\">le guide d'installation</a> pour l'aide à l'installation de get5. VEUILLEZ VOUS ASSURER que sv_logecho = 1 EST FIXE SUR LE SERVEUR ET que 'log on' est installé.",
+      "MatchZyHelp": "Le serveur de jeu doit avoir <a href=\"https://shobhit-pathak.github.io/MatchZy/\" target=\"_blank\" rel=\"noopener\">MatchZy</a> installé et son mot de passe RCON renseigné ici. Il doit pouvoir joindre l'URL de l'API de ce panneau, que MatchZy utilise pour charger les matchs et envoyer événements, démos et sauvegardes.",
       "FormDisplayName": "Nom affiché",
       "FormServerIP": "Nom d'hôte",
       "FormServerHint": "Peut aussi être une URL.",
@@ -928,7 +924,6 @@
   },
   "ja": {
     "Navbar": {
-      "title": "Get5Vue",
       "AllMatches": "マッチリスト",
       "MyMatches": "あなたのマッチ",
       "MyTeams": "あなたのチーム",
@@ -1193,7 +1188,6 @@
       "GameServers": "ゲームサーバー",
       "Live": "ライブ中の試合",
       "Title": "パネル統計",
-      "Get5Metrics": "Get5 メトリクス",
       "Users": "登録ユーザー数",
       "Teams": "保存されているチーム",
       "Matches": "作成されたマッチ",
@@ -1228,7 +1222,7 @@
     "ServerCreate": {
       "HostInvalid": "ポートを含めず、ホスト名またはIPアドレスのみを入力してください。",
       "InfoWillNotBeExposed": "あなたのサーバー情報は他のユーザーには公開されません。",
-      "Get5Help": "サーバーがオンラインであり、最新バージョンのget5がインストールされていることを確認してください。<br>get5のインストールについては、<a href=\"http://splewis.github.io/get5/latest/installation/\">インストールガイド</a>を参照してください。 サーバーでsv_logecho = 1が設定され、'log on'が設定されていることを確認してください。",
+      "MatchZyHelp": "ゲームサーバーには<a href=\"https://shobhit-pathak.github.io/MatchZy/\" target=\"_blank\" rel=\"noopener\">MatchZy</a>がインストールされ、ここにRCONパスワードを設定する必要があります。MatchZyは試合の読み込みやイベント・デモ・バックアップの送信にこのパネルのAPI URLを使うため、サーバーからそのURLに到達できる必要があります。",
       "FormDisplayName": "表示名",
       "FormServerIP": "ホスト名",
       "FormServerHint": "URLにすることもできます。",

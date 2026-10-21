@@ -5,7 +5,7 @@
         <v-alert type="info" variant="tonal" class="mb-4">
           <!-- Static translation text with a link (no user input). -->
           <!-- eslint-disable-next-line vue/no-v-html -->
-          <span v-html="$t('ServerCreate.Get5Help')" />
+          <span v-html="$t('ServerCreate.MatchZyHelp')" />
         </v-alert>
         <v-form ref="form" @submit.prevent="save">
           <v-text-field
