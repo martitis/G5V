@@ -10,7 +10,6 @@ const files = [];
 const walk = (dir) => {
   for (const name of readdirSync(dir)) {
     const path = join(dir, name);
-    if (name.startsWith("legacy-")) continue;
     if (statSync(path).isDirectory()) walk(path);
     else if (/\.(vue|ts)$/.test(name)) files.push(path);
   }

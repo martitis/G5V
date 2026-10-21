@@ -4,7 +4,7 @@ import skipFormatting from "@vue/eslint-config-prettier/skip-formatting";
 
 export default defineConfigWithVueTs(
   {
-    ignores: ["dist/**", "node_modules/**", "src/legacy-components/**", "src/legacy-views/**"]
+    ignores: ["dist/**", "node_modules/**"]
   },
   pluginVue.configs["flat/recommended"],
   vueTsConfigs.recommended,
