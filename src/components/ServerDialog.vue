@@ -47,7 +47,7 @@
                   </v-col>
                   <v-col cols="12" sm="12" md="12" lg="4">
                     <v-text-field
-                      v-model="serverInfo.port"
+                      v-model.number="serverInfo.port"
                       :label="$t('ServerCreate.FormServerPort')"
                       ref="Port"
                       type="number"
@@ -216,22 +216,31 @@ export default {
             gotv_port: this.serverInfo.gotv_port
           }
         ];
-        if (this.serverInfo.id == null)
-          serverRes = await this.InsertServer(serverObj);
-        else {
-          serverObj[0].server_id = this.serverInfo.id;
-          serverRes = await this.UpdateServer(serverObj);
+        try {
+          if (this.serverInfo.id == null)
+            serverRes = await this.InsertServer(serverObj);
+          else {
+            serverObj[0].server_id = this.serverInfo.id;
+            serverRes = await this.UpdateServer(serverObj);
+          }
+          serverRes = String(serverRes ?? "");
+          if (serverRes.includes("inserted")) {
+            this.response = this.$t("ServerCreate.MessageRegisterSuccess");
+            this.$emit("is-new-server", refreshGrid);
+            this.show = false;
+          } else if (serverRes.includes("updated")) {
+            this.response = this.$t("ServerCreate.MessageeEditSuccess");
+            refreshGrid = false;
+            this.$emit("is-new-server", refreshGrid);
+            this.show = false;
+          } else {
+            // Keep the dialog open with the error so the input isn't lost.
+            this.response = serverRes;
+          }
+          this.responseSheet = true;
+        } finally {
+          this.serverLoading = false;
         }
-        if (serverRes.includes("inserted"))
-          this.response = this.$t("ServerCreate.MessageRegisterSuccess");
-        else if (serverRes.includes("updated")) {
-          this.response = this.$t("ServerCreate.MessageeEditSuccess");
-          refreshGrid = false;
-        } else this.response = serverRes;
-        this.$emit("is-new-server", refreshGrid);
-        this.responseSheet = true;
-        this.show = false;
-        this.serverLoading = false;
       }
     }
   }

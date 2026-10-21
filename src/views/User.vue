@@ -184,8 +184,11 @@ export default {
 
     if (this.retrievedUser.id === 0) {
       this.userStats = await this.GetUserPlayerStats(this.$route.params.id);
-      this.retrievedUser.name = this.userStats[0].name;
-      this.retrievedUser.steam_id = this.userStats[0].steam_id;
+      // A player without an account: take name and Steam ID from their stats, if there are any.
+      if (Array.isArray(this.userStats) && this.userStats.length) {
+        this.retrievedUser.name = this.userStats[0].name;
+        this.retrievedUser.steam_id = this.userStats[0].steam_id;
+      }
     } else
       this.userStats = await this.GetUserPlayerStats(
         this.retrievedUser.steam_id

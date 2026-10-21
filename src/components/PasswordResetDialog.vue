@@ -108,7 +108,8 @@ export default {
       response: "",
       responseSheet: false,
       userLoading: false,
-      userInfo: Object
+      userInfo: {},
+      user: { id: null, steam_id: "" }
     };
   },
   methods: {
@@ -125,9 +126,12 @@ export default {
           }
         ];
         userResponse = await this.UpdateUserInfo(userObject);
-        console.log(userResponse);
-        if (!userResponse.message.includes("successfully")) {
-          this.response = userResponse.message;
+        const message =
+          typeof userResponse === "string"
+            ? userResponse
+            : userResponse?.message;
+        if (!String(message ?? "").includes("successfully")) {
+          this.response = message;
           this.responseSheet = true;
           this.userLoading = false;
         } else {

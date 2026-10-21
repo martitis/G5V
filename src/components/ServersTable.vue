@@ -314,7 +314,9 @@ export default {
         }
       ];
       this.response = await this.DeleteServer(serverData);
-      this.servers.splice(this.removeIndex, 1);
+      // Only drop the row when the API actually deleted it.
+      if (String(this.response ?? "").includes("successfully"))
+        this.servers.splice(this.removeIndex, 1);
       this.closeDelete();
     },
     closeDelete() {

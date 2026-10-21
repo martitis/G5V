@@ -3,7 +3,11 @@
     <v-row class="pb-5">
       <v-col cols="12" class="flex-grow-1">
         <v-card>
-          <NewMatchForm :user="user" v-if="user.id != -1" />
+          <!-- id is -1 while loading and null when logged out. -->
+          <NewMatchForm :user="user" v-if="user.id != -1 && user.id != null" />
+          <v-card-text v-else-if="user.id == null">
+            {{ $t("CreateMatch.LoginRequired") }}
+          </v-card-text>
         </v-card>
       </v-col>
     </v-row>

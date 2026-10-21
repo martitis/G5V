@@ -15,27 +15,21 @@
           </div>
           <div
             class="text-subtitle-2 mapInfo"
-            v-if="
-              mapStats[index] != null && mapStats[index].start != null
-            "
+            v-if="mapStats[index] != null && mapStats[index].start != null"
             align="center"
           >
             {{ mapStats[index].start }}
           </div>
           <div
             class="text-subtitle-2 mapInfo"
-            v-if="
-              mapStats[index] != null && mapStats[index].end != null
-            "
+            v-if="mapStats[index] != null && mapStats[index].end != null"
             align="center"
           >
             {{ mapStats[index].end }}
           </div>
           <div
             class="text-subtitle-2 mapInfo"
-            v-if="
-              mapStats[index] != null && mapStats[index].demo != null
-            "
+            v-if="mapStats[index] != null && mapStats[index].demo != null"
             align="center"
           >
             <v-btn
@@ -48,9 +42,7 @@
           </div>
           <div
             class="text-subtitle-2 mapInfo"
-            v-if="
-              mapStats[index] != null && mapStats[index].end == null
-            "
+            v-if="mapStats[index] != null && mapStats[index].end == null"
             align="left"
           ></div>
         </v-container>
@@ -108,6 +100,10 @@
 export default {
   props: {
     match_id: Number
+  },
+  // Close this component's event streams when it is destroyed (they piled up on every visit).
+  sse: {
+    cleanup: true
   },
   data() {
     return {
@@ -239,12 +235,11 @@ export default {
       // Template will contain v-rows/etc like on main Team page.
       let matchData = await this.GetMatchData(this.match_id);
       if (matchData.end_time == null) {
-           this.GetMapStatsStream(matchData);
-           this.GetMapPlayerStatsStream(matchData);
-      }
-      else {
-           this.getMapString(matchData);
-           this.GetMapPlayerStats(matchData);
+        this.GetMapStatsStream(matchData);
+        this.GetMapPlayerStatsStream(matchData);
+      } else {
+        this.getMapString(matchData);
+        this.GetMapPlayerStats(matchData);
       }
     },
     async retrieveStatsHelper(serverResponse, matchData) {
@@ -293,7 +288,7 @@ export default {
               // If we don't have a team ID, we must be pugging. Go based on
               // Team strings alone.
               teamNum = player.team_name == matchData.team1_string ? 1 : 2;
-              newName = 
+              newName =
                 player.team_name == matchData.team1_string
                   ? matchData.team1_string
                   : matchData.team2_string;
@@ -343,7 +338,7 @@ export default {
         let sseClient = await this.GetEventMapStats(this.match_id);
         await sseClient.connect();
         await sseClient.on("mapstats", async message => {
-          await this.retrieveMapStatsHelper(message,matchData);
+          await this.retrieveMapStatsHelper(message, matchData);
         });
       } catch (error) {
         console.log("Our error: " + error);
@@ -370,21 +365,37 @@ export default {
           this.$set(this.mapStats, index, {});
         }
 
-        this.$set(this.mapStats[index], 'score', "Score: " +
-          singleMapStat.team1_score +
-          " " +
-          this.GetScoreSymbol(
-            singleMapStat.team1_score,
+        this.$set(
+          this.mapStats[index],
+          "score",
+          "Score: " +
+            singleMapStat.team1_score +
+            " " +
+            this.GetScoreSymbol(
+              singleMapStat.team1_score,
+              singleMapStat.team2_score
+            ) +
+            " " +
             singleMapStat.team2_score
-          ) +
-          " " +
-          singleMapStat.team2_score);
-        this.$set(this.mapStats[index], 'start', "Map Start: " + new Date(singleMapStat.start_time).toLocaleString());
-        this.$set(this.mapStats[index], 'end', singleMapStat.end_time == null ?
-          null :
-          "Map End: " + new Date(singleMapStat.end_time).toLocaleString());
-        this.$set(this.mapStats[index], 'map', "Map: " + singleMapStat.map_name);
-        this.$set(this.mapStats[index], 'demo', singleMapStat.demoFile);
+        );
+        this.$set(
+          this.mapStats[index],
+          "start",
+          "Map Start: " + new Date(singleMapStat.start_time).toLocaleString()
+        );
+        this.$set(
+          this.mapStats[index],
+          "end",
+          singleMapStat.end_time == null
+            ? null
+            : "Map End: " + new Date(singleMapStat.end_time).toLocaleString()
+        );
+        this.$set(
+          this.mapStats[index],
+          "map",
+          "Map: " + singleMapStat.map_name
+        );
+        this.$set(this.mapStats[index], "demo", singleMapStat.demoFile);
       });
       if (matchData.end_time != null) this.isFinished = true;
     }

@@ -313,7 +313,7 @@
     </v-window>
     <v-divider></v-divider>
     <v-card-actions>
-      <v-btn :disabled="step === 1" text @click="checkValidation(false)">
+      <v-btn :disabled="step === 1" text @click="step--">
         {{ $t("misc.Back") }}
       </v-btn>
       <v-spacer />
@@ -422,8 +422,15 @@ export default {
     },
     step(val) {
       if (val == 3) {
-        if (this.selectedSeasonObject.cvars != null) {
-          let seasonCvars = this.selectedSeasonObject.cvars;
+        if (this.selectedSeasonObject?.cvars != null) {
+          // Work on a copy: the season object is reused when the user goes back and forth.
+          let seasonCvars = { ...this.selectedSeasonObject.cvars };
+          const words = value =>
+            value == null || String(value).trim() === ""
+              ? []
+              : String(value)
+                  .trim()
+                  .split(" ");
           this.newMatchData.min_players_to_ready =
             seasonCvars.min_players_to_ready == null
               ? 5
@@ -446,18 +453,10 @@ export default {
             seasonCvars.skip_veto == null || seasonCvars.skip_veto == 0
               ? false
               : true;
-          this.newMatchData.map_pool =
-            seasonCvars.map_pool.length < 1
-              ? []
-              : seasonCvars.map_pool.trim().split(" ");
-          this.newMatchData.spectators =
-            seasonCvars.spectators.length < 1
-              ? null
-              : seasonCvars.spectators.trim().split(" ");
-          this.newMatchData.map_sides =
-            seasonCvars.map_sides.length < 1
-              ? []
-              : seasonCvars.map_sides.trim().split(" ");
+          this.newMatchData.map_pool = words(seasonCvars.map_pool);
+          const spectators = words(seasonCvars.spectators);
+          this.newMatchData.spectators = spectators.length ? spectators : null;
+          this.newMatchData.map_sides = words(seasonCvars.map_sides);
           this.newMatchData.wingman =
             seasonCvars.wingman == null || seasonCvars.wingman == 0
               ? false
@@ -489,14 +488,18 @@ export default {
         return a.user_id - this.user.id || b.public_server - a.public_server;
       });
     }
-    if (this.IsAnyAdmin(this.user)) this.teams = await this.GetAllTeams();
+    // The API helpers return a message string on errors; treat that as "no teams".
+    const list = value => (Array.isArray(value) ? value : []);
+    if (typeof this.servers == "string") this.servers = [];
+    const allTeams = list(await this.GetAllTeams());
+    if (this.IsAnyAdmin(this.user)) this.teams = allTeams;
     else {
-      let tmpPublicTeams = await this.GetAllTeams();
-      this.teams = await this.GetMyTeams();
-      tmpPublicTeams.forEach(async team => {
-        if (typeof this.teams === "string") this.teams = [];
-        if (team.public_team == 1) this.teams.push(team);
-      });
+      const myTeams = list(await this.GetMyTeams());
+      const publicTeams = allTeams.filter(
+        team =>
+          team.public_team == 1 && !myTeams.some(mine => mine.id === team.id)
+      );
+      this.teams = myTeams.concat(publicTeams);
     }
     this.teams.sort((a, b) => {
       return a.user_id - this.user.id || a.public_team - b.public_team;
@@ -508,6 +511,10 @@ export default {
   methods: {
     async ReloadServers() {
       this.servers = await this.GetAllAvailableServers();
+      if (!Array.isArray(this.servers)) {
+        this.servers = [];
+        return;
+      }
       let arrIndex = this.servers
         .map(obj => {
           return obj.ip_string + " " + obj.port + " " + obj.user_id;
@@ -519,14 +526,12 @@ export default {
             " " +
             this.user.id
         );
-      this.selectedServer = this.servers[arrIndex].id;
+      // The new server may not be listed (save failed, or entered differently); keep the selection then.
+      if (arrIndex >= 0) this.selectedServer = this.servers[arrIndex].id;
       this.newServer = {};
     },
-    checkValidation(moveForward = true) {
-      if (this.$refs.newMatchForm.validate()) {
-        if (moveForward) this.step++;
-        else this.step--;
-      }
+    checkValidation() {
+      if (this.$refs.newMatchForm.validate()) this.step++;
     },
     async callCreateMatch() {
       if (this.$refs.newMatchForm.validate()) {

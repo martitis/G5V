@@ -77,6 +77,7 @@
       "GOTVConnect": "Connect to GOTV!"
     },
     "CreateMatch": {
+      "LoginRequired": "Please log in to create a match.",
       "FormServer": "Select a Server",
       "FormSeason": "Select a Season",
       "ServerSelect": "Server",
@@ -451,6 +452,7 @@
       "ConnectButtonAt": "Se connecter à "
     },
     "CreateMatch": {
+      "LoginRequired": "Veuillez vous connecter pour créer un match.",
       "FormServer": "Selectionner un serveur",
       "FormSeason": "Selectionner une saison",
       "ServerSelect": "Serveur",
@@ -825,6 +827,7 @@
       "GOTVConnect": "GOTVに接続"
     },
     "CreateMatch": {
+      "LoginRequired": "マッチを作成するにはログインしてください。",
       "FormServer": "サーバー",
       "FormSeason": "季節を選ぶ",
       "ServerSelect": "サーバ",

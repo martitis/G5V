@@ -1,10 +1,10 @@
 <template>
   <v-data-table
-    item-key="name"
+    item-key="id"
     class="elevation-1"
     :loading="isLoading"
     :loading-text="$t('misc.LoadText')"
-    :headers="headers"
+    :headers="allHeaders"
     :items="matches"
     :options.sync="options"
     :server-items-length="totalMatches"
@@ -50,13 +50,12 @@
     </template>
 
     <template v-slot:item.ip_string="{ item }">
-      <div>
-          {{item.ip_string + ":" + item.port}}
-      </div>
+      <div v-if="item.ip_string">{{ item.ip_string + ":" + item.port }}</div>
     </template>
 
     <template v-slot:item.connect="{ item }">
-      <div v-if="item.end_time === null">
+      <!-- Only for matches that are being played on a known server. -->
+      <div v-if="isLive(item) && item.ip_string">
         <v-btn
           color="primary"
           small
@@ -129,20 +128,27 @@ export default {
         {
           text: this.$t("Matches.Owner"),
           value: "owner"
-        },   
+        }
+      ];
+    },
+    allHeaders() {
+      // Only /mymatches returns server details; don't show empty server columns elsewhere.
+      if (!this.matches.some(match => match.ip_string)) return this.headers;
+      return this.headers.concat([
         {
           text: this.$t("Matches.server_name"),
           value: "server_name"
-        },  
+        },
         {
           text: this.$t("Matches.ip_string"),
           value: "ip_string"
         },
         {
           text: this.$t("Matches.ConnectButton"),
-          value: "connect"
-        }     
-      ];
+          value: "connect",
+          sortable: false
+        }
+      ]);
     },
     isMyMatches() {
       return this.$route.path == "/mymatches";
@@ -157,13 +163,19 @@ export default {
     }
   },
   methods: {
-    async pushMatchData(resultArray) {
-      this.isLoading = true;
+    isLive(match) {
+      return (
+        match.end_time == null &&
+        (match.cancelled == 0 || match.cancelled == null) &&
+        match.start_time != null
+      );
+    },
+    pushMatchData(resultArray) {
       let matches = [];
       let matchString;
       let team1Score,
         team2Score = 0;
-      resultArray.forEach(async match => {
+      for (const match of resultArray) {
         if (match.max_maps == 1) {
           team1Score =
             match.team1_mapscore == undefined ? 0 : match.team1_mapscore;
@@ -173,11 +185,7 @@ export default {
           team1Score = match.team1_score == undefined ? 0 : match.team1_score;
           team2Score = match.team2_score == undefined ? 0 : match.team2_score;
         }
-        if (
-          match.end_time == null &&
-          (match.cancelled == 0 || match.cancelled == null) &&
-          match.start_time != null
-        ) {
+        if (this.isLive(match)) {
           matchString = `Live, ${team1Score}:${team2Score} - ${match.team1_string} vs ${match.team2_string}`;
         } else if (team1Score < team2Score) {
           matchString = `Lost, ${team1Score}:${team2Score} - ${match.team1_string} vs ${match.team2_string}`;
@@ -186,7 +194,7 @@ export default {
         } else if (match.cancelled == 1) {
           matchString = "Cancelled";
         } else if (team1Score == team2Score && match.forfeit != 1) {
-          matchString = `Tied, ${team1Score}:${team2Score} vs ${match.team2_string}`;
+          matchString = `Tied, ${team1Score}:${team2Score} - ${match.team1_string} vs ${match.team2_string}`;
         } else if (match.winner == match.team1_id) {
           matchString = `Forfeit win vs ${match.team2_string}`;
         } else if (match.winner == match.team2_id) {
@@ -194,9 +202,8 @@ export default {
         }
         match.match_status = matchString;
         if (match.cancelled == 1) this.isThereCancelledMatches = true;
-        await matches.push(match);
-      });
-      this.isLoading = false;
+        matches.push(match);
+      }
       return matches;
     },
     async pageUpdate() {
@@ -225,7 +232,8 @@ export default {
       if (itemsPerPage > 0) {
         count = count.slice((page - 1) * itemsPerPage, page * itemsPerPage);
       }
-      this.matches = await this.pushMatchData(count);
+      this.matches = this.pushMatchData(count);
+      this.isLoading = false;
       return;
     },
     async deleteCancelled() {

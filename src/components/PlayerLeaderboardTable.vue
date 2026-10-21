@@ -161,10 +161,9 @@ export default {
         else res = await this.GetTotalPlayerLeaderboard();
         if (typeof res == "string") return;
         res.forEach(player => {
-          player.adr =
-            player.roundsplayed === 0
-              ? 0.0
-              : (player.total_damage / player.trp).toFixed(2);
+          player.adr = !player.trp
+            ? 0.0
+            : (player.total_damage / player.trp).toFixed(2);
           this.players.push(player);
         });
       } catch (error) {

@@ -59,23 +59,28 @@ export default {
         res = await this.GetLimitMatches(3);
         if (typeof res == "string") res = [];
         else {
-          res.forEach(async match => {
-            let mapStats = await this.GetSingleMapStat(match.id, 0);
-            if (match.max_maps == 1) {
-              match.team1_score =
-                mapStats.team1_score == null
-                  ? match.team1_score
-                  : mapStats.team1_score;
-              match.team2_score =
-                mapStats.team2_score == null
-                  ? match.team2_score
-                  : mapStats.team2_score;
-            }
-            match.map_name = mapStats.map_name;
-            match.img_error = false;
-            this.matches.push(match);
-          });
-          this.matches.sort((a, b) => {
+          // Load all cards first, then sort (forEach(async) sorted before anything was added).
+          const loaded = await Promise.all(
+            res.map(async match => {
+              let mapStats = await this.GetSingleMapStat(match.id, 0);
+              if (typeof mapStats != "object" || mapStats == null)
+                mapStats = {};
+              if (match.max_maps == 1) {
+                match.team1_score =
+                  mapStats.team1_score == null
+                    ? match.team1_score
+                    : mapStats.team1_score;
+                match.team2_score =
+                  mapStats.team2_score == null
+                    ? match.team2_score
+                    : mapStats.team2_score;
+              }
+              match.map_name = mapStats.map_name;
+              match.img_error = false;
+              return match;
+            })
+          );
+          this.matches = loaded.sort((a, b) => {
             return a.id - b.id;
           });
         }

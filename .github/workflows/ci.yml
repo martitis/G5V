@@ -17,5 +17,5 @@ jobs:
           cache: yarn
       - run: yarn install --frozen-lockfile
       # The warning cap is the current count; lower it as warnings get fixed, never raise it.
-      - run: yarn lint --no-fix --max-warnings 32
+      - run: yarn lint --no-fix --max-warnings 2
       - run: yarn build

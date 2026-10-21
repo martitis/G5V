@@ -21,15 +21,8 @@ const routes = [
     // this generates a separate chunk (teams.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "Teams" */ "../views/Teams.vue"),
-    children: [
-      {
-        path: "/create",
-        name: "Create Team",
-        component: () =>
-          import(/* webpackChunkName: "Teams" */ "../views/Team.vue")
-      }
-    ]
+      import(/* webpackChunkName: "Teams" */ "../views/Teams.vue")
+    // New teams use /teams/create, handled by /teams/:id (Team.vue checks for "create").
   },
   {
     path: "/mymatches",

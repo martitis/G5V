@@ -590,11 +590,12 @@ export default {
           season_id: this.removeSeason.id
         }
       ];
-      let tmpResp = await this.DeleteSeason(memberData);
-      if (tmpResp.includes("successfully!"))
+      let tmpResp = String((await this.DeleteSeason(memberData)) ?? "");
+      // Only drop the row when the API actually deleted it.
+      if (tmpResp.includes("successfully")) {
         this.response = this.$t("Seasons.SeasonDeleted");
-      else this.response = tmpResp;
-      this.seasons.splice(this.removeIndex, 1);
+        this.seasons.splice(this.removeIndex, 1);
+      } else this.response = tmpResp;
       this.closeDelete();
     },
     closeDelete() {

@@ -64,6 +64,9 @@
       </div>
     </template>
     <template v-slot:top>
+      <v-snackbar v-model="saveMessageShown" timeout="6000">
+        {{ saveMessage }}
+      </v-snackbar>
       <v-toolbar flat>
         <v-toolbar-title
           v-if="
@@ -421,6 +424,8 @@ export default {
       teamDeleted: false,
       logoFile: null,
       logoPreview: null,
+      saveMessage: "",
+      saveMessageShown: false,
       apiUrl: process.env?.VUE_APP_G5V_API_URL || "/api",
       imageLoaded: true
     };
@@ -476,25 +481,20 @@ export default {
     deleteDialog(val) {
       return val || this.close();
     },
-    newAuth: {
-      handler(val) {
-        if (val) {
-          for (let key in this.teamAuth) {
-            if (this.teamAuth[key].steamid == val.steam) {
-              this.newAuth.name = this.teamAuth[key].username;
-              this.newAuth.captain = this.teamAuth[key].captain;
-              this.newAuth.coach = this.teamAuth[key].coach;
-              this.editInfo = true;
-              break;
-            }
-            this.editInfo = false;
-            this.newAuth.name = "";
-            this.newAuth.captain = false;
-            this.newAuth.coach = false;
-          }
-        }
-      },
-      deep: true
+    "newAuth.steam"(steamId) {
+      // Typing the Steam ID of an existing member loads their details for editing.
+      const member = this.teamAuth.find(auth => auth.steamid == steamId);
+      if (member) {
+        this.$set(this.newAuth, "name", member.username);
+        this.$set(this.newAuth, "captain", member.captain);
+        this.$set(this.newAuth, "coach", member.coach);
+        this.editInfo = true;
+      } else if (this.editInfo) {
+        this.$set(this.newAuth, "name", "");
+        this.$set(this.newAuth, "captain", false);
+        this.$set(this.newAuth, "coach", false);
+        this.editInfo = false;
+      }
     },
     editInfo(val) {
       if (val) this.formIndTitle = this.$t("Team.EditPlayer");
@@ -597,7 +597,8 @@ export default {
               logo_file: this.logoFile
             }
           ];
-          await this.UpdateTeamInfo(updatedTeam);
+          const updated = await this.UpdateTeamInfo(updatedTeam);
+          if (!this.reportResult(updated)) return;
         } else {
           let newTeam = [
             {
@@ -610,6 +611,11 @@ export default {
             }
           ];
           let newTeamId = await this.InsertTeamInfo(newTeam);
+          // On errors the API helper returns the message string, which has no id.
+          if (newTeamId?.id == null) {
+            this.reportResult(newTeamId);
+            return;
+          }
           this.$router.push({ name: `Team`, params: { id: newTeamId.id } });
         }
         this.dialog = false;
@@ -630,7 +636,8 @@ export default {
             auth_name: newTeamMember
           }
         ];
-        await this.UpdateTeamInfo(updatedTeam);
+        const updated = await this.UpdateTeamInfo(updatedTeam);
+        if (!this.reportResult(updated)) return;
         // Reset state to force a reload on the table.
         this.teamAuth = [];
         this.newAuth = {};
@@ -653,10 +660,22 @@ export default {
           steam_id: this.removeAuth.steamid
         }
       ];
-      await this.DeleteFromTeam(memberData);
-      this.teamAuth.splice(this.removeIndex, 1);
+      const deleted = await this.DeleteFromTeam(memberData);
+      if (!this.reportResult(deleted)) {
+        this.closeDelete();
+        return;
+      }
       if (this.removeIndex == -1) this.teamDeleted = true;
+      else this.teamAuth.splice(this.removeIndex, 1);
       this.closeDelete();
+    },
+    // Shows API errors; returns true when the call succeeded.
+    reportResult(result) {
+      const message = typeof result === "string" ? result : result?.message;
+      if (String(message ?? "").includes("successfully")) return true;
+      this.saveMessage = message || this.$t("misc.Error");
+      this.saveMessageShown = true;
+      return false;
     },
     closeDelete() {
       this.deleteDialog = false;

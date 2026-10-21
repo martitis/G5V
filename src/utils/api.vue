@@ -1,41 +1,64 @@
 <script>
 import axios from "axios";
+
+// Shared by every component: this file is registered as a global mixin (main.js).
+const http = axios.create({
+  headers: {
+    "Content-Type": "application/json"
+  },
+  withCredentials: true,
+  timeout: 30000
+});
+
+const anonymousUser = () => ({
+  admin: false,
+  steam_id: "",
+  id: null,
+  super_admin: false,
+  name: "",
+  small_image: "",
+  medium_image: "",
+  large_image: ""
+});
+
 export default {
   name: "api",
   data() {
     return {
-      axioCall: axios.create({
-        headers: {
-          "Content-Type": "application/json"
-        },
-        withCredentials: true
-      }),
       languageAlert: false
     };
   },
+  computed: {
+    // Not reactive state, just a handle on the shared instance.
+    axioCall: () => http
+  },
   methods: {
+    // Network errors, timeouts and CORS failures have no response; never assume one.
+    errorMessage(error) {
+      if (error?.response?.data?.message) return this.errorMessage(error);
+      if (error?.response) return `Request failed (${error.response.status}).`;
+      return "Could not reach the server. Please try again.";
+    },
+    errorData(error) {
+      return error?.response?.data ?? { message: this.errorMessage(error) };
+    },
     ChangeLanguage: function(lang) {
       localStorage.setItem("language", lang);
       this.$i18n.locale = lang;
     },
     // BEGIN USER CALLS
     async IsLoggedIn() {
-      const res = await this.axioCall.get(
-        `${process.env?.VUE_APP_G5V_API_URL || "/api"}/isLoggedIn`
-      );
-      if (res.data == false) {
-        return {
-          admin: false,
-          steam_id: "",
-          id: null,
-          super_admin: false,
-          name: "",
-          small_image: "",
-          medium_image: "",
-          large_image: ""
-        };
+      try {
+        const res = await this.axioCall.get(
+          `${process.env?.VUE_APP_G5V_API_URL || "/api"}/isLoggedIn`
+        );
+        if (res.data == false) return anonymousUser();
+        return res.data;
+      } catch (error) {
+        // API unreachable: behave as logged out instead of breaking every page.
+        console.error(error);
+        return anonymousUser();
       }
-      return res.data;
     },
     async GetUserData(userid) {
       let res;
@@ -110,7 +133,7 @@ export default {
         });
         message = res.data;
       } catch (error) {
-        message = error.response.data;
+        message = this.errorData(error);
       }
       return message;
     },
@@ -124,7 +147,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -137,7 +160,7 @@ export default {
         );
         message = res.data.matches;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -150,7 +173,7 @@ export default {
         );
         message = res.data.users;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -164,7 +187,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data;
+        message = this.errorData(error);
       }
       return message;
     },
@@ -245,7 +268,7 @@ export default {
         );
         message = res.data.teams;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -258,7 +281,7 @@ export default {
         );
         message = res.data.teams;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -271,7 +294,7 @@ export default {
         );
         message = res.data.matches;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -285,7 +308,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -299,7 +322,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data;
+        message = this.errorData(error);
       }
       return message;
     },
@@ -316,7 +339,7 @@ export default {
         });
         message = res.data;
       } catch (error) {
-        message = error.response.data;
+        message = this.errorData(error);
       }
       return message;
     },
@@ -330,7 +353,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -376,7 +399,7 @@ export default {
             console.error("Failed to parse or lost connection:", err)
           );
       } catch (error) {
-        retVal = error.response.data.message;
+        retVal = this.errorMessage(error);
       }
       return retVal;
     },
@@ -389,7 +412,7 @@ export default {
         );
         message = res.data.matches;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -403,7 +426,7 @@ export default {
         );
         message = res.data.result;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -416,7 +439,7 @@ export default {
         );
         message = res.data.matches;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -429,7 +452,7 @@ export default {
         );
         message = res.data.matches;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -443,7 +466,7 @@ export default {
         );
         message = res.data.matches;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -456,7 +479,7 @@ export default {
         );
         message = res.data.matches;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -470,7 +493,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data;
+        message = this.errorData(error);
       }
       return message;
     },
@@ -484,7 +507,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data;
+        message = this.errorData(error);
       }
       return message;
     },
@@ -501,7 +524,7 @@ export default {
         });
         message = res.data;
       } catch (error) {
-        message = error.response.data;
+        message = this.errorData(error);
       }
       return message;
     },
@@ -539,7 +562,7 @@ export default {
         );
         return res.data.servers;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -552,7 +575,7 @@ export default {
         );
         return res.data.servers;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -565,7 +588,7 @@ export default {
         );
         return res.data.servers;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -582,7 +605,7 @@ export default {
         });
         message = res.data.message;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -595,7 +618,7 @@ export default {
         );
         return res.data.servers;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -609,7 +632,7 @@ export default {
         );
         message = res.data.message;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -623,7 +646,7 @@ export default {
         );
         message = res.data.message;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -637,7 +660,7 @@ export default {
         );
         message = res.data.message;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -652,7 +675,7 @@ export default {
         );
         message = res.data.seasons;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -665,7 +688,7 @@ export default {
         );
         message = res.data.matches;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -678,7 +701,7 @@ export default {
         );
         message = res.data.seasons;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -692,7 +715,7 @@ export default {
         );
         message = res.data.seasons;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -705,7 +728,7 @@ export default {
         );
         message = res.data.season;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -719,7 +742,7 @@ export default {
         );
         message = res.data.cvars;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -736,7 +759,7 @@ export default {
         });
         message = res.data.message;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -750,7 +773,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data;
+        message = this.errorData(error);
       }
       return message;
     },
@@ -764,7 +787,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data;
+        message = this.errorData(error);
       }
       return message;
     },
@@ -778,7 +801,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data;
+        message = this.errorData(error);
       }
       return message;
     },
@@ -793,7 +816,7 @@ export default {
         );
         message = res.data.playerstats;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -806,7 +829,7 @@ export default {
         );
         message = res.data.count;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -820,7 +843,7 @@ export default {
         );
         message = res.data.playerstats;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -847,7 +870,7 @@ export default {
         );
         message = res.data.matches;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       console.log(message);
       return message;
@@ -863,7 +886,7 @@ export default {
         );
         message = res.data.mapstats;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -877,7 +900,7 @@ export default {
         );
         message = res.data.mapstat;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -890,7 +913,7 @@ export default {
         );
         message = res.data.mapstats;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -919,7 +942,7 @@ export default {
         );
         message = res.data.message;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -933,7 +956,7 @@ export default {
         );
         message = res.data.message;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -947,7 +970,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data;
+        message = this.errorData(error);
       }
       return message;
     },
@@ -961,7 +984,7 @@ export default {
         );
         message = res.data.message;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -976,7 +999,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data;
+        message = this.errorData(error);
       }
       return message;
     },
@@ -991,7 +1014,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data;
+        message = this.errorData(error);
       }
       return message;
     },
@@ -1005,7 +1028,7 @@ export default {
         );
         message = res.data.message;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -1020,7 +1043,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data;
+        message = this.errorData(error);
       }
       return message;
     },
@@ -1034,7 +1057,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -1049,7 +1072,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data;
+        message = this.errorData(error);
       }
       return message;
     },
@@ -1064,7 +1087,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data;
+        message = this.errorData(error);
       }
       return message;
     },
@@ -1078,7 +1101,7 @@ export default {
         );
         message = res.data;
       } catch (error) {
-        message = error.response.data;
+        message = this.errorData(error);
       }
       return message;
     },
@@ -1139,7 +1162,7 @@ export default {
         });
         return combinedVetoInfo;
       } catch (error) {
-        combinedVetoInfo = error.response.data.message;
+        combinedVetoInfo = this.errorMessage(error);
       }
       return combinedVetoInfo;
     },
@@ -1158,7 +1181,7 @@ export default {
             console.error("Failed to parse or lost connection:", err)
           );
       } catch (error) {
-        combinedVetoInfo = error.response.data.message;
+        combinedVetoInfo = this.errorMessage(error);
       }
       return combinedVetoInfo;
     },
@@ -1173,7 +1196,7 @@ export default {
           polyfill: true
         });
       } catch (error) {
-        retVal = error.response.data.message;
+        retVal = this.errorMessage(error);
       }
       return retVal;
     },
@@ -1188,7 +1211,7 @@ export default {
         );
         return res.data.leaderboard;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -1201,7 +1224,7 @@ export default {
         );
         return res.data.leaderboard;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -1215,7 +1238,7 @@ export default {
         );
         return res.data.leaderboard;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -1229,7 +1252,7 @@ export default {
         );
         return res.data.leaderboard;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -1245,7 +1268,7 @@ export default {
         );
         return res.data.message;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },
@@ -1259,7 +1282,7 @@ export default {
         );
         return res.data.message;
       } catch (error) {
-        message = error.response.data.message;
+        message = this.errorMessage(error);
       }
       return message;
     },

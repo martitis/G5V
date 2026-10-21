@@ -1,5 +1,5 @@
 <template>
-  <v-container class="vetoInfo" fluid v-if="vetoInfo.length > 1">
+  <v-container class="vetoInfo" fluid v-if="vetoInfo.length > 0">
     <v-data-table
       :headers="headers"
       :items="vetoInfo"
@@ -78,8 +78,6 @@
 </template>
 
 <script>
-let vetoInformation;
-let vetoSideInformation;
 export default {
   props: {
     match_id: Number
@@ -89,17 +87,7 @@ export default {
   },
   data() {
     return {
-      vetoInfo: [
-        {
-          id: -1,
-          match_id: -1,
-          team_name: "",
-          team_name_side: null,
-          map: "",
-          pick_or_veto: "",
-          side: ""
-        }
-      ],
+      vetoInfo: [],
       expanded: []
     };
   },
@@ -115,12 +103,13 @@ export default {
     },
     async getStreamedVetoInfo() {
       try {
-        vetoInformation = await this.GetStreamedVetoesOfMatch(this.match_id);
-        vetoSideInformation = await this.GetStreamedVetoSidesOfMatch(
+        // Per component (they used to be module-level and shared by every instance).
+        const vetoInformation = await this.GetStreamedVetoesOfMatch(
           this.match_id
         );
-        // Remove the -1 value.
-        this.vetoInfo.pop();
+        const vetoSideInformation = await this.GetStreamedVetoSidesOfMatch(
+          this.match_id
+        );
         await vetoInformation.on("vetodata", this.handleVetoInfo).connect();
         await vetoSideInformation
           .on("vetosidedata", this.handleLiveSideInfo)
@@ -129,8 +118,9 @@ export default {
         console.error(`Error on SSE ${err}`);
       }
     },
-    async handleVetoInfo(liveVetoInfo) {
-      await liveVetoInfo.forEach(vetoData => {
+    handleVetoInfo(liveVetoInfo) {
+      if (!Array.isArray(liveVetoInfo)) return;
+      liveVetoInfo.forEach(vetoData => {
         let isFound = this.vetoInfo.find(tmp => {
           return tmp["id"] === vetoData.id;
         });
@@ -144,26 +134,21 @@ export default {
           });
         }
       });
-      // Update veto information here.
-      let mapStatRes = await this.GetMapStats(this.match_id);
-      if (typeof mapStatRes != "string") this.mapStats = mapStatRes;
     },
-    async handleLiveSideInfo(liveSideInfo) {
-      await liveSideInfo.forEach(liveVetoData => {
-        this.vetoInfo.forEach((vetoData, idx) => {
-          if (liveVetoData["veto_id"] === vetoData["id"]) {
-            this.vetoInfo.splice(idx, 1);
-            this.vetoInfo.push({
-              id: vetoData.id,
-              match_id: vetoData.match_id,
-              team_name: vetoData.team_name,
-              map: vetoData.map,
-              pick_or_veto: vetoData.pick_or_veto,
-              team_name_side: liveVetoData.team_name,
-              side: liveVetoData.side
-            });
-          }
-        });
+    handleLiveSideInfo(liveSideInfo) {
+      if (!Array.isArray(liveSideInfo)) return;
+      liveSideInfo.forEach(liveVetoData => {
+        const idx = this.vetoInfo.findIndex(
+          vetoData => vetoData.id === liveVetoData.veto_id
+        );
+        // Update the row in place so the order stays the order of the veto.
+        if (idx >= 0) {
+          this.$set(this.vetoInfo, idx, {
+            ...this.vetoInfo[idx],
+            team_name_side: liveVetoData.team_name,
+            side: liveVetoData.side
+          });
+        }
       });
     },
     async getVetoInfo() {
@@ -173,9 +158,6 @@ export default {
       } catch (error) {
         console.log(error);
       }
-    },
-    expandAll: function() {
-      this.expanded = this.people.filter(item => item.description);
     },
     collapseAll: function() {
       this.expanded = [];
