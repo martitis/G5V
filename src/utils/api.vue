@@ -35,7 +35,7 @@ export default {
   methods: {
     // Network errors, timeouts and CORS failures have no response; never assume one.
     errorMessage(error) {
-      if (error?.response?.data?.message) return this.errorMessage(error);
+      if (error?.response?.data?.message) return error.response.data.message;
       if (error?.response) return `Request failed (${error.response.status}).`;
       return "Could not reach the server. Please try again.";
     },

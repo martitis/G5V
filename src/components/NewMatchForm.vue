@@ -90,7 +90,7 @@
             />
             <v-divider />
             <v-row class="justify-center">
-              <v-col cols="2">
+              <v-col cols="auto">
                 <v-switch
                   v-model="newMatchData.wingman"
                   :label="$t('CreateMatch.Wingman')"
@@ -103,22 +103,19 @@
               <v-col cols="12">
                 <strong>{{ $t("CreateMatch.FormSeriesType") }}</strong>
               </v-col>
-              <v-radio-group v-model="newMatchData.maps_to_win" row>
-                <v-col lg="3" sm="12">
-                  <v-radio :label="$t('CreateMatch.BestOf') + 1" :value="1" />
-                </v-col>
-                <v-col lg="3" sm="12">
-                  <v-radio :label="$t('CreateMatch.BestOf') + 2" :value="2" />
-                </v-col>
-                <v-col lg="3" sm="12">
-                  <v-radio :label="$t('CreateMatch.BestOf') + 3" :value="3" />
-                </v-col>
-                <v-col lg="3" sm="12">
-                  <v-radio :label="$t('CreateMatch.BestOf') + 5" :value="5" />
-                </v-col>
-                <v-col lg="3" sm="12" offset-lg="5">
-                  <v-radio :label="$t('CreateMatch.BestOf') + 7" :value="7" />
-                </v-col>
+              <!-- Radios directly in the group so it grows with them; grid columns inside it overflowed onto the map pool. -->
+              <v-radio-group
+                v-model="newMatchData.maps_to_win"
+                row
+                class="justify-center"
+              >
+                <v-radio
+                  v-for="maps in [1, 2, 3, 5, 7]"
+                  :key="maps"
+                  :label="$t('CreateMatch.BestOf') + maps"
+                  :value="maps"
+                  class="mx-4 my-1"
+                />
               </v-radio-group>
             </v-row>
             <v-divider />
@@ -136,7 +133,14 @@
               </strong>
             </div>
             <v-row class="justify-center">
-              <v-col lg="1" sm="12" v-for="maps in MapList" :key="maps.id">
+              <v-col
+                cols="6"
+                sm="4"
+                md="3"
+                lg="2"
+                v-for="maps in MapList"
+                :key="maps.id"
+              >
                 <v-checkbox
                   v-model="newMatchData.map_pool"
                   :value="maps.map_name"
