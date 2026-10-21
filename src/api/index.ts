@@ -151,6 +151,8 @@ export const stats = {
     (await orEmpty(get<{ playerstats: PlayerStat[] }>(`/playerstats/${steamId}`), { playerstats: [] }))
       .playerstats,
   uniquePlayers: async () => (await get<{ count: number }>("/playerstats/unique")).count,
+  /** Site-wide counters (users, teams, matches, ...). */
+  metrics: async () => (await get<{ metrics: Record<string, number> }>("/metrics")).metrics,
   ofMatch: async (matchId: number | string) =>
     (
       await orEmpty(get<{ playerstats: PlayerStat[] }>(`/playerstats/match/${matchId}`), {

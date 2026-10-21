@@ -227,6 +227,9 @@
       "Versus": "vs"
     },
     "Metrics": {
+      "GameServers": "Game servers",
+      "Live": "Live matches",
+      "Title": "Panel statistics",
       "Get5Metrics": "Get5 Metrics",
       "Users": "Registered Users",
       "Teams": "Saved Teams",
@@ -654,6 +657,9 @@
       "server_name": "Nom du serveur"
     },
     "Metrics": {
+      "GameServers": "Serveurs de jeu",
+      "Live": "Matchs en direct",
+      "Title": "Statistiques du panneau",
       "Get5Metrics": "Get5 Metrics",
       "Users": "Utilisateurs inscrits",
       "Teams": "Equipes enregistrées",
@@ -1082,6 +1088,9 @@
       "server_name": "サーバー名"
     },
     "Metrics": {
+      "GameServers": "ゲームサーバー",
+      "Live": "ライブ中の試合",
+      "Title": "パネル統計",
       "Get5Metrics": "Get5 メトリクス",
       "Users": "登録ユーザー数",
       "Teams": "保存されているチーム",
