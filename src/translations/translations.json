@@ -79,6 +79,13 @@
       "GOTVConnect": "Connect to GOTV!"
     },
     "CreateMatch": {
+      "CvarInvalidValue": "Quotes, semicolons and line breaks aren't allowed.",
+      "CvarDuplicate": "Listed twice.",
+      "CvarBlocked": "This cvar can't be set from the panel.",
+      "CvarInvalidName": "Letters, digits and _ only.",
+      "CvarAdd": "Add cvar",
+      "CvarValue": "Value",
+      "CvarName": "Cvar",
       "LoginRequired": "Please log in to create a match.",
       "FormServer": "Select a Server",
       "FormSeason": "Select a Season",
@@ -162,6 +169,16 @@
       "TotalMaps": "Maps played"
     },
     "Seasons": {
+      "ReadyPerTeam": "Players per team needed to ready",
+      "Matches": "Matches",
+      "DefaultsHint": "Pre-filled when a match is created in this season.",
+      "Defaults": "Match defaults",
+      "EndBeforeStart": "The end date is before the start date.",
+      "EndDate": "End date (optional)",
+      "StartDate": "Start date",
+      "StatusEnded": "Ended",
+      "StatusActive": "Active",
+      "StatusUpcoming": "Upcoming",
       "Title": "Seasons/Tournaments",
       "New": "New Season",
       "NotFinished": "Ongoing",
@@ -479,6 +496,13 @@
       "ConnectButtonAt": "Se connecter à "
     },
     "CreateMatch": {
+      "CvarInvalidValue": "Les guillemets, points-virgules et retours à la ligne ne sont pas autorisés.",
+      "CvarDuplicate": "Listée deux fois.",
+      "CvarBlocked": "Cette cvar ne peut pas être définie depuis le panneau.",
+      "CvarInvalidName": "Lettres, chiffres et _ uniquement.",
+      "CvarAdd": "Ajouter une cvar",
+      "CvarValue": "Valeur",
+      "CvarName": "Cvar",
       "LoginRequired": "Veuillez vous connecter pour créer un match.",
       "FormServer": "Selectionner un serveur",
       "FormSeason": "Selectionner une saison",
@@ -562,6 +586,16 @@
       "TotalMaps": "Cartes jouées"
     },
     "Seasons": {
+      "ReadyPerTeam": "Joueurs prêts requis par équipe",
+      "Matches": "Matchs",
+      "DefaultsHint": "Pré-remplis à la création d'un match de cette saison.",
+      "Defaults": "Paramètres par défaut des matchs",
+      "EndBeforeStart": "La date de fin précède la date de début.",
+      "EndDate": "Date de fin (facultative)",
+      "StartDate": "Date de début",
+      "StatusEnded": "Terminée",
+      "StatusActive": "En cours",
+      "StatusUpcoming": "À venir",
       "Title": "Saisons/Tournois",
       "New": "Nouvelle",
       "NotFinished": "En cours",
@@ -881,6 +915,13 @@
       "GOTVConnect": "GOTVに接続"
     },
     "CreateMatch": {
+      "CvarInvalidValue": "引用符、セミコロン、改行は使用できません。",
+      "CvarDuplicate": "重複しています。",
+      "CvarBlocked": "このCvarはパネルから設定できません。",
+      "CvarInvalidName": "英数字と _ のみ使用できます。",
+      "CvarAdd": "Cvarを追加",
+      "CvarValue": "値",
+      "CvarName": "Cvar",
       "LoginRequired": "マッチを作成するにはログインしてください。",
       "FormServer": "サーバー",
       "FormSeason": "季節を選ぶ",
@@ -964,6 +1005,16 @@
       "TotalMaps": "プレイしたマップ"
     },
     "Seasons": {
+      "ReadyPerTeam": "準備完了に必要なチームごとの人数",
+      "Matches": "試合",
+      "DefaultsHint": "このシーズンで試合を作成するときに初期値として使われます。",
+      "Defaults": "試合のデフォルト設定",
+      "EndBeforeStart": "終了日が開始日より前です。",
+      "EndDate": "終了日（任意）",
+      "StartDate": "開始日",
+      "StatusEnded": "終了",
+      "StatusActive": "開催中",
+      "StatusUpcoming": "開催予定",
       "Title": "シーズンズ/トーナメント",
       "New": "新しい季節",
       "NotFinished": "継続中",

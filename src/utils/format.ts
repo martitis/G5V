@@ -96,5 +96,24 @@ export function formatDate(value: string | null | undefined): string {
   return isNaN(date.getTime()) ? value : date.toLocaleDateString();
 }
 
+/** "YYYY-MM-DD" in local time, for <input type="date">; "" when the value is empty or invalid. */
+export function toDateInput(value: string | null | undefined): string {
+  if (!value) return "";
+  const date = new Date(value);
+  if (isNaN(date.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+export type SeasonStatus = "upcoming" | "active" | "ended";
+export function seasonStatus(season: { start_date: string | null; end_date: string | null }): SeasonStatus {
+  const today = toDateInput(new Date().toISOString());
+  const start = toDateInput(season.start_date);
+  const end = toDateInput(season.end_date);
+  if (start && start > today) return "upcoming";
+  if (end && end < today) return "ended";
+  return "active";
+}
+
 /** Valid SteamID64 (individual account). */
 export const isSteamId64 = (value: string) => /^7656\d{13}$/.test(value.trim());
