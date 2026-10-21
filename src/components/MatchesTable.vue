@@ -72,6 +72,7 @@ import { users } from "@/api";
 import type { Match } from "@/api/types";
 import { useUiStore } from "@/stores/ui";
 import { displayScore, isCancelled, isLive } from "@/utils/format";
+import { matchStatus } from "@/utils/matchStatus";
 
 /** `load` returns the matches to list; it is called again when it changes or on `reload()`. */
 const props = defineProps<{ load: () => Promise<Match[]>; title?: string }>();
@@ -84,33 +85,11 @@ const loading = ref(true);
 /** user id -> name, for lists whose rows don't carry the owner's name. */
 const ownerNames = ref<Record<number, string>>({});
 
-function status(match: Match): { label: string; color: string } {
-  if (isCancelled(match)) return { label: t("Matches.StatusCancelled"), color: "grey" };
-  if (isLive(match)) return { label: t("Matches.StatusLive"), color: "error" };
-  if (match.end_time == null && match.forfeit != 1) {
-    return { label: t("Matches.StatusUpcoming"), color: "info" };
-  }
-  const winner =
-    match.winner == null
-      ? null
-      : match.winner === match.team1_id
-        ? match.team1_string
-        : match.winner === match.team2_id
-          ? match.team2_string
-          : null;
-  if (match.forfeit == 1 && winner) return { label: t("Matches.StatusForfeit", { team: winner }), color: "warning" };
-  if (winner) return { label: t("Matches.StatusWon", { team: winner }), color: "success" };
-  const [a, b] = displayScore(match);
-  return a === b
-    ? { label: t("Matches.StatusTie"), color: "secondary" }
-    : { label: t("Matches.StatusFinished"), color: "secondary" };
-}
-
 const rows = computed(() =>
   matches.value.map((match) => ({
     ...match,
     owner: match.owner || ownerNames.value[match.user_id],
-    status: status(match),
+    status: matchStatus(match, t),
     score: displayScore(match)
   }))
 );
@@ -139,11 +118,16 @@ async function reload() {
     matches.value = await props.load();
     emit("loaded", matches.value);
     // One request per distinct owner (the old table made two requests per row).
-    const missing = [...new Set(matches.value.filter((m) => !m.owner).map((m) => m.user_id))].filter(
-      (id) => !(id in ownerNames.value)
-    );
+    const missing = [
+      ...new Set(matches.value.filter((m) => !m.owner).map((m) => m.user_id))
+    ].filter((id) => !(id in ownerNames.value));
     const names = await Promise.all(
-      missing.map((id) => users.get(id).then((user) => [id, user.name] as const).catch(() => [id, ""] as const))
+      missing.map((id) =>
+        users
+          .get(id)
+          .then((user) => [id, user.name] as const)
+          .catch(() => [id, ""] as const)
+      )
     );
     ownerNames.value = { ...ownerNames.value, ...Object.fromEntries(names) };
   } catch (error) {

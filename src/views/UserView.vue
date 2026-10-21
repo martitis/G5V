@@ -1,7 +1,9 @@
 <template>
   <v-container fluid>
     <v-skeleton-loader v-if="loading && !profile" type="card, card" />
-    <v-alert v-else-if="!profile" type="warning" variant="tonal">{{ $t("misc.NotFoundText") }}</v-alert>
+    <v-alert v-else-if="!profile" type="warning" variant="tonal">{{
+      $t("misc.NotFoundText")
+    }}</v-alert>
 
     <template v-else>
       <v-card class="mb-4">
@@ -13,11 +15,20 @@
           <div class="flex-grow-1">
             <div class="d-flex align-center flex-wrap ga-2">
               <span class="text-headline-small">{{ profile.name || profile.steam_id }}</span>
-              <v-chip v-if="profile.super_admin" color="primary" size="small" label>{{ $t("User.SuperAdmin") }}</v-chip>
-              <v-chip v-else-if="profile.admin" color="orange" size="small" label>{{ $t("User.Admin") }}</v-chip>
+              <v-chip v-if="profile.super_admin" color="primary" size="small" label>{{
+                $t("User.SuperAdmin")
+              }}</v-chip>
+              <v-chip v-else-if="profile.admin" color="orange" size="small" label>{{
+                $t("User.Admin")
+              }}</v-chip>
             </div>
             <div v-if="profile.steam_id" class="text-body-medium text-medium-emphasis mt-1">
-              <a :href="steamProfileUrl(profile.steam_id)" target="_blank" rel="noopener" class="app-link">
+              <a
+                :href="steamProfileUrl(profile.steam_id)"
+                target="_blank"
+                rel="noopener"
+                class="app-link"
+              >
                 <v-icon size="small">mdi-steam</v-icon> {{ profile.steam_id }}
               </a>
             </div>
@@ -52,10 +63,20 @@
               style="min-width: 260px; max-width: 640px"
               @click:append-inner="showApi = !showApi"
             />
-            <v-btn variant="tonal" prepend-icon="mdi-content-copy" :disabled="!profile.api_key" @click="copyApiKey">
+            <v-btn
+              variant="tonal"
+              prepend-icon="mdi-content-copy"
+              :disabled="!profile.api_key"
+              @click="copyApiKey"
+            >
               {{ $t("User.Copy") }}
             </v-btn>
-            <v-btn color="secondary" variant="tonal" prepend-icon="mdi-refresh" @click="confirmApiReset = true">
+            <v-btn
+              color="secondary"
+              variant="tonal"
+              prepend-icon="mdi-refresh"
+              @click="confirmApiReset = true"
+            >
               {{ $t("User.ResetAPI") }}
             </v-btn>
           </div>
@@ -78,7 +99,12 @@
           </div>
 
           <!-- Only local accounts have a password; Steam logins don't. -->
-          <v-btn v-if="profile.username" variant="tonal" prepend-icon="mdi-lock-reset" @click="passwordDialog = true">
+          <v-btn
+            v-if="profile.username"
+            variant="tonal"
+            prepend-icon="mdi-lock-reset"
+            @click="passwordDialog = true"
+          >
             {{ $t("User.ResetPass") }}
           </v-btn>
         </v-card-text>
@@ -143,7 +169,9 @@ const loadRecent = computed(() => {
   const user = profile.value;
   return () => {
     if (!user) return Promise.resolve([]);
-    return user.id != null ? users.recentMatches(user.id) : stats.playerRecentMatches(user.steam_id);
+    return user.id != null
+      ? users.recentMatches(user.id)
+      : stats.playerRecentMatches(user.steam_id);
   };
 });
 
@@ -214,7 +242,10 @@ async function saveChallongeKey() {
   if (!profile.value?.id) return;
   busy.value = true;
   try {
-    const result = await users.update({ id: profile.value.id, challonge_api_key: challongeKey.value });
+    const result = await users.update({
+      id: profile.value.id,
+      challonge_api_key: challongeKey.value
+    });
     ui.notify(result.message, "success");
   } catch (error) {
     ui.notifyError(error);

@@ -51,10 +51,14 @@ const int = (value: string | undefined, fallback: number) => {
   const parsed = parseInt(value ?? "", 10);
   return Number.isFinite(parsed) ? parsed : fallback;
 };
-const bool = (value: string | undefined) => value != null && value !== "0" && value !== "false" && value !== "";
+const bool = (value: string | undefined) =>
+  value != null && value !== "0" && value !== "false" && value !== "";
 
 /** Splits stored season cvars into the match defaults and the remaining server cvars. */
-export function parseSeasonCvars(cvars: Record<string, string>): { defaults: SeasonDefaults; cvars: Record<string, string> } {
+export function parseSeasonCvars(cvars: Record<string, string>): {
+  defaults: SeasonDefaults;
+  cvars: Record<string, string>;
+} {
   const base = emptyDefaults();
   const defaults: SeasonDefaults = {
     maps_to_win: int(cvars.maps_to_win, base.maps_to_win),
@@ -77,7 +81,10 @@ export function parseSeasonCvars(cvars: Record<string, string>): { defaults: Sea
 }
 
 /** The `season_cvar` object the API stores: server cvars plus the defaults under their reserved names. */
-export function serializeSeasonCvars(defaults: SeasonDefaults, cvars: Record<string, string>): Record<string, string> {
+export function serializeSeasonCvars(
+  defaults: SeasonDefaults,
+  cvars: Record<string, string>
+): Record<string, string> {
   return {
     ...cvars,
     maps_to_win: String(defaults.maps_to_win),
@@ -88,7 +95,9 @@ export function serializeSeasonCvars(defaults: SeasonDefaults, cvars: Record<str
     wingman: defaults.wingman ? "1" : "0",
     side_type: defaults.side_type,
     map_pool: defaults.map_pool.join(" "),
-    map_sides: defaults.skip_veto ? defaults.map_sides.slice(0, defaults.maps_to_win).join(" ") : "",
+    map_sides: defaults.skip_veto
+      ? defaults.map_sides.slice(0, defaults.maps_to_win).join(" ")
+      : "",
     spectators: defaults.spectators.join(" ")
   };
 }

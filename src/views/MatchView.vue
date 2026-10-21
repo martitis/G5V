@@ -1,4 +1,169 @@
 <template>
-  <!-- PORTING PLACEHOLDER: replaced when this page is ported (Phase 4). -->
-  <v-container><v-alert type="info" variant="tonal">MatchView: not ported yet.</v-alert></v-container>
+  <v-container fluid>
+    <v-skeleton-loader v-if="loading && !match" type="card, card" />
+    <v-alert v-else-if="!match" type="warning" variant="tonal">{{
+      $t("misc.NotFoundText")
+    }}</v-alert>
+
+    <template v-else>
+      <MatchHeader
+        :match="match"
+        :team1="team1"
+        :team2="team2"
+        :server="server"
+        :score="score"
+        class="mb-4"
+      >
+        <template #actions>
+          <MatchStreams
+            v-if="live"
+            :match-id="match.id"
+            @match="onMatch"
+            @mapstats="(list) => (mapStats = list)"
+            @playerstats="(list) => (playerStats = list)"
+            @vetoes="(list) => (vetoList = list)"
+            @vetosides="(list) => (vetoSides = list)"
+          />
+          <MatchAdminMenu v-if="adminTools" :match="match" @changed="reload" />
+        </template>
+      </MatchHeader>
+
+      <VetoList v-if="vetoList.length" :vetoes="vetoList" :sides="vetoSides" class="mb-4" />
+
+      <MapScoreboard
+        v-for="map in maps"
+        :key="map.key"
+        :match="match"
+        :map-stat="map.stat"
+        :map-number="map.number"
+        :players="map.players"
+        :live="live && map.stat?.end_time == null"
+        class="mb-4"
+      />
+      <v-alert v-if="!maps.length" type="info" variant="tonal">{{ $t("Match.NoMapsYet") }}</v-alert>
+    </template>
+  </v-container>
 </template>
+
+<script setup lang="ts">
+import { computed, ref, watch } from "vue";
+import { useRoute } from "vue-router";
+import { matches, servers, stats, teams, vetoes } from "@/api";
+import type { MapStat, Match, PlayerStat, Server, Team, Veto, VetoSide } from "@/api/types";
+import MapScoreboard from "@/components/match/MapScoreboard.vue";
+import MatchAdminMenu from "@/components/match/MatchAdminMenu.vue";
+import MatchHeader from "@/components/match/MatchHeader.vue";
+import MatchStreams from "@/components/match/MatchStreams.vue";
+import VetoList from "@/components/match/VetoList.vue";
+import { useAuthStore } from "@/stores/auth";
+import { useUiStore } from "@/stores/ui";
+import { isFinished } from "@/utils/format";
+
+const route = useRoute();
+const auth = useAuthStore();
+const ui = useUiStore();
+
+const match = ref<Match | null>(null);
+const team1 = ref<Team | null>(null);
+const team2 = ref<Team | null>(null);
+const server = ref<Server | null>(null);
+const mapStats = ref<MapStat[]>([]);
+const playerStats = ref<PlayerStat[]>([]);
+const vetoList = ref<Veto[]>([]);
+const vetoSides = ref<VetoSide[]>([]);
+const loading = ref(true);
+
+/** Live (or waiting to start): the event stream replaces the one-off requests. */
+const live = computed(() => match.value != null && !isFinished(match.value));
+const adminTools = computed(
+  () => match.value != null && live.value && (auth.isAdmin || auth.user?.id === match.value.user_id)
+);
+
+/** Series score; a BO1 shows the round score of its map instead of 1:0. */
+const score = computed<[number, number]>(() => {
+  const m = match.value;
+  if (!m) return [0, 0];
+  if (m.max_maps == 1 && mapStats.value[0])
+    return [mapStats.value[0].team1_score, mapStats.value[0].team2_score];
+  return [m.team1_score ?? 0, m.team2_score ?? 0];
+});
+
+/** One entry per played map, with its players (stats rows can arrive before the map row). */
+const maps = computed(() => {
+  const byMap = new Map<number, PlayerStat[]>();
+  for (const player of playerStats.value) {
+    byMap.set(player.map_id, [...(byMap.get(player.map_id) ?? []), player]);
+  }
+  const entries: { key: number; stat: MapStat | null; number: number; players: PlayerStat[] }[] = [
+    ...mapStats.value
+  ]
+    .sort((a, b) => a.map_number - b.map_number)
+    .map((stat) => ({
+      key: stat.id,
+      stat,
+      number: stat.map_number,
+      players: byMap.get(stat.id) ?? []
+    }));
+  for (const [mapId, players] of byMap) {
+    if (!mapStats.value.some((stat) => stat.id === mapId)) {
+      entries.push({ key: mapId, stat: null, number: entries.length, players });
+    }
+  }
+  return entries;
+});
+
+function onMatch(updated: Match) {
+  const serverChanged = updated.server_id !== match.value?.server_id;
+  match.value = updated;
+  if (serverChanged) void loadServer();
+}
+
+async function loadServer() {
+  const id = match.value?.server_id;
+  // Server details need a login; anonymous viewers don't get connect buttons.
+  server.value = id && auth.loggedIn ? await servers.get(id).catch(() => null) : null;
+}
+
+async function load() {
+  loading.value = true;
+  try {
+    await auth.load();
+    const id = String(route.params.id);
+    const found = await matches.get(id);
+    match.value = found;
+    const [t1, t2] = await Promise.all([
+      found.team1_id ? teams.basic(found.team1_id).catch(() => null) : null,
+      found.team2_id ? teams.basic(found.team2_id).catch(() => null) : null,
+      loadServer()
+    ]);
+    team1.value = t1;
+    team2.value = t2;
+    // A live match gets everything from its event stream (MatchStreams).
+    if (isFinished(found)) {
+      [mapStats.value, playerStats.value, vetoList.value, vetoSides.value] = await Promise.all([
+        stats.maps(id),
+        stats.ofMatch(id),
+        vetoes.ofMatch(id),
+        vetoes.sidesOfMatch(id)
+      ]);
+    }
+  } catch (error) {
+    match.value = null;
+    ui.notifyError(error);
+  } finally {
+    loading.value = false;
+  }
+}
+
+/** After an admin action (not every action triggers a stream update, e.g. cancel). */
+async function reload() {
+  if (!match.value) return;
+  try {
+    onMatch(await matches.get(match.value.id));
+  } catch (error) {
+    ui.notifyError(error);
+  }
+}
+
+watch(() => route.params.id, load, { immediate: true });
+</script>

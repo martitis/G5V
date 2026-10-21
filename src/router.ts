@@ -85,7 +85,11 @@ const routes: RouteRecordRaw[] = [
     name: "SeasonPlayerLeaderboard",
     component: () => import("@/views/PlayerLeaderboardView.vue")
   },
-  { path: "/:pathMatch(.*)*", name: "NotFound", component: () => import("@/views/NotFoundView.vue") }
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: () => import("@/views/NotFoundView.vue")
+  }
 ];
 
 const router = createRouter({

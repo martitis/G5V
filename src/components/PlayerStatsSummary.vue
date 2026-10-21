@@ -43,7 +43,10 @@ const totals = computed(() => {
 const tiles = computed(() => {
   const s = totals.value;
   return [
-    { label: t("PlayerStats.Rating"), value: rating(s.kills, s.roundsplayed, s.deaths, s.k1, s.k2, s.k3, s.k4, s.k5) },
+    {
+      label: t("PlayerStats.Rating"),
+      value: rating(s.kills, s.roundsplayed, s.deaths, s.k1, s.k2, s.k3, s.k4, s.k5)
+    },
     { label: t("PlayerStats.KDR"), value: kdr(s) },
     { label: t("PlayerStats.ADR"), value: adr(s) },
     { label: t("PlayerStats.Headshot"), value: `${hsp(s)}%` },

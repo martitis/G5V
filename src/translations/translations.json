@@ -31,6 +31,11 @@
       "NewPasswordLabel": "New Password"
     },
     "MatchAdmin": {
+      "Done": "Done.",
+      "TeamWins": "{team} wins",
+      "ConfigPreview": "Show MatchZy config",
+      "Response": "Server response",
+      "RemovePlayer": "Remove player from match",
       "AdminTools": "Admin Actions",
       "CancelMatchConfirm": "Are you sure you wish to cancel the match?",
       "SteamLabel": "Steam ID (64,32, ID3)",
@@ -66,6 +71,17 @@
       "MatchRestartInfo": "Restarting the current match will remove all map stats. Continue?"
     },
     "Match": {
+      "Server": "Server",
+      "Season": "Season",
+      "NoMapsYet": "No map has been played yet.",
+      "SideChosen": "{team} chose {side}",
+      "Paused": "Paused",
+      "Copied": "Copied to the clipboard.",
+      "CopyConnect": "Copy connect command",
+      "Reconnecting": "Reconnecting…",
+      "LiveUpdates": "Live updates",
+      "MapNumber": "Map {n}",
+      "Vetoes": "Map veto",
       "MatchHasBeenCancelled": "This match has been cancelled.",
       "MatchForfeitedBy": "This match was forfeit by {team}.",
       "MatchPendingStart": "This match is pending start.",
@@ -460,6 +476,11 @@
       "NewPasswordLabel": "Nouveau mot de passe"
     },
     "MatchAdmin": {
+      "Done": "Terminé.",
+      "TeamWins": "{team} gagne",
+      "ConfigPreview": "Afficher la config MatchZy",
+      "Response": "Réponse du serveur",
+      "RemovePlayer": "Retirer un joueur du match",
       "AdminTools": "Admin Actions",
       "CancelMatchConfirm": "Etes-vous sur de vouloir annuler ce match ?",
       "SteamLabel": "Steam ID (64,32, ID3)",
@@ -495,6 +516,17 @@
       "MatchRestartInfo": "Le redémarrage du match en cours va supprimer toutes les statistiques de la map. Continuer?"
     },
     "Match": {
+      "Server": "Serveur",
+      "Season": "Saison",
+      "NoMapsYet": "Aucune carte jouée pour l'instant.",
+      "SideChosen": "{team} a choisi {side}",
+      "Paused": "En pause",
+      "Copied": "Copié dans le presse-papiers.",
+      "CopyConnect": "Copier la commande de connexion",
+      "Reconnecting": "Reconnexion…",
+      "LiveUpdates": "Mises à jour en direct",
+      "MapNumber": "Carte {n}",
+      "Vetoes": "Veto des cartes",
       "MatchHasBeenCancelled": "Ce match a été annulé.",
       "MatchForfeitedBy": "La {team} a déclaré forfait pour ce match.",
       "MatchPendingStart": "Ce match est en attente de lancement.",
@@ -890,6 +922,11 @@
       "NewPasswordLabel": "新しいパスワード"
     },
     "MatchAdmin": {
+      "Done": "完了しました。",
+      "TeamWins": "{team}の勝利",
+      "ConfigPreview": "MatchZy設定を表示",
+      "Response": "サーバーの応答",
+      "RemovePlayer": "試合からプレイヤーを削除",
       "AdminTools": "管理者ツール",
       "CancelMatchConfirm": "試合をキャンセルしてもよろしいですか？",
       "SteamLabel": "Steam ID (64,32, ID3)",
@@ -925,6 +962,17 @@
       "MatchRestartInfo": "現在のマッチをリスタートすると、すべてのマップ統計が削除されます。続ける？"
     },
     "Match": {
+      "Server": "サーバー",
+      "Season": "シーズン",
+      "NoMapsYet": "まだマップはプレイされていません。",
+      "SideChosen": "{team}が{side}を選択",
+      "Paused": "一時停止中",
+      "Copied": "クリップボードにコピーしました。",
+      "CopyConnect": "接続コマンドをコピー",
+      "Reconnecting": "再接続中…",
+      "LiveUpdates": "ライブ更新",
+      "MapNumber": "マップ{n}",
+      "Vetoes": "マップ拒否",
       "MatchHasBeenCancelled": "このマッチはキャンセルされました。",
       "MatchForfeitedBy": "このマッチは {team} が試合放棄しました。",
       "MatchPendingStart": "このマッチは開始待機中です。",

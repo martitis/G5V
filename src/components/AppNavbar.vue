@@ -31,22 +31,52 @@
       <v-list-item to="/" exact :title="$t('Navbar.Home')" prepend-icon="mdi-home" />
       <v-list-item to="/matches" :title="$t('Navbar.AllMatches')" prepend-icon="mdi-sword-cross" />
       <template v-if="auth.loggedIn">
-        <v-list-item to="/mymatches" :title="$t('Navbar.MyMatches')" prepend-icon="mdi-account-details" />
-        <v-list-item to="/match/create" :title="$t('Navbar.CreateMatch')" prepend-icon="mdi-plus-box" />
+        <v-list-item
+          to="/mymatches"
+          :title="$t('Navbar.MyMatches')"
+          prepend-icon="mdi-account-details"
+        />
+        <v-list-item
+          to="/match/create"
+          :title="$t('Navbar.CreateMatch')"
+          prepend-icon="mdi-plus-box"
+        />
       </template>
       <v-divider class="my-2" />
-      <v-list-item to="/teams" exact :title="$t('Navbar.AllTeams')" prepend-icon="mdi-account-group" />
+      <v-list-item
+        to="/teams"
+        exact
+        :title="$t('Navbar.AllTeams')"
+        prepend-icon="mdi-account-group"
+      />
       <template v-if="auth.loggedIn">
-        <v-list-item to="/myteams" :title="$t('Navbar.MyTeams')" prepend-icon="mdi-account-multiple" />
-        <v-list-item to="/teams/create" :title="$t('Navbar.CreateTeam')" prepend-icon="mdi-account-multiple-plus" />
+        <v-list-item
+          to="/myteams"
+          :title="$t('Navbar.MyTeams')"
+          prepend-icon="mdi-account-multiple"
+        />
+        <v-list-item
+          to="/teams/create"
+          :title="$t('Navbar.CreateTeam')"
+          prepend-icon="mdi-account-multiple-plus"
+        />
       </template>
       <v-divider class="my-2" />
       <template v-if="auth.loggedIn">
         <v-list-item to="/myservers" :title="$t('Navbar.MyServers')" prepend-icon="mdi-server" />
-        <v-list-item :title="$t('Navbar.AddServer')" prepend-icon="mdi-server-plus" @click="serverDialog = true" />
+        <v-list-item
+          :title="$t('Navbar.AddServer')"
+          prepend-icon="mdi-server-plus"
+          @click="serverDialog = true"
+        />
       </template>
       <v-list-item to="/seasons" :title="$t('Navbar.AllSeasons')" prepend-icon="mdi-trophy" />
-      <v-list-item v-if="auth.loggedIn" to="/myseasons" :title="$t('Navbar.MySeasons')" prepend-icon="mdi-trophy-outline" />
+      <v-list-item
+        v-if="auth.loggedIn"
+        to="/myseasons"
+        :title="$t('Navbar.MySeasons')"
+        prepend-icon="mdi-trophy-outline"
+      />
       <v-divider class="my-2" />
       <v-list-item to="/leaderboard" :title="$t('Navbar.PlayerLeader')" prepend-icon="mdi-podium" />
     </v-list>

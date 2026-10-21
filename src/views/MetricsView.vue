@@ -10,7 +10,9 @@
                 <div>
                   <div class="text-body-small text-medium-emphasis">{{ tile.label }}</div>
                   <v-skeleton-loader v-if="loading" type="text" width="60" />
-                  <div v-else class="text-headline-small font-weight-medium">{{ metrics[tile.key] ?? 0 }}</div>
+                  <div v-else class="text-headline-small font-weight-medium">
+                    {{ metrics[tile.key] ?? 0 }}
+                  </div>
                 </div>
               </v-card-text>
             </v-card>

@@ -85,6 +85,8 @@ export const matches = {
   /** The MatchZy config JSON (owner or super admin). */
   config: (id: number | string) => get<Record<string, unknown>>(`/matches/${id}/config`),
   streamUrl: (id: number | string) => `/matches/${id}/stream`,
+  /** One stream with match, mapstats, playerstats, vetodata and vetosidedata events. */
+  liveStreamUrl: (id: number | string) => `/matches/${id}/live/stream`,
   // Admin actions (RCON).
   pause: (id: number) => post<MessageResponse>(`/matches/${id}/pause`),
   unpause: (id: number) => post<MessageResponse>(`/matches/${id}/unpause`),
@@ -93,6 +95,8 @@ export const matches = {
   forfeit: (id: number, winner: 1 | 2) => post<MessageResponse>(`/matches/${id}/forfeit/${winner}`),
   addPlayer: (id: number, body: Body) =>
     put<MessageResponse & { response?: string }>(`/matches/${id}/adduser`, wrap(body)),
+  removePlayer: (id: number, steam_id: string) =>
+    put<MessageResponse & { response?: string }>(`/matches/${id}/removeuser`, wrap({ steam_id })),
   addSpectator: (id: number, body: Body) =>
     put<MessageResponse & { response?: string }>(`/matches/${id}/addspec`, wrap(body)),
   rcon: (id: number, rcon_command: string) =>
@@ -148,8 +152,11 @@ export const seasons = {
 export const stats = {
   /** Totals of a player (by Steam ID), optionally per season. */
   player: async (steamId: string) =>
-    (await orEmpty(get<{ playerstats: PlayerStat[] }>(`/playerstats/${steamId}`), { playerstats: [] }))
-      .playerstats,
+    (
+      await orEmpty(get<{ playerstats: PlayerStat[] }>(`/playerstats/${steamId}`), {
+        playerstats: []
+      })
+    ).playerstats,
   uniquePlayers: async () => (await get<{ count: number }>("/playerstats/unique")).count,
   /** Site-wide counters (users, teams, matches, ...). */
   metrics: async () => (await get<{ metrics: Record<string, number> }>("/metrics")).metrics,
@@ -186,7 +193,9 @@ export const leaderboard = {
   teams: async (seasonId?: number | string) =>
     (
       await orEmpty(
-        get<{ leaderboard: TeamStanding[] }>(seasonId ? `/leaderboard/${seasonId}` : "/leaderboard"),
+        get<{ leaderboard: TeamStanding[] }>(
+          seasonId ? `/leaderboard/${seasonId}` : "/leaderboard"
+        ),
         { leaderboard: [] }
       )
     ).leaderboard,
@@ -194,7 +203,11 @@ export const leaderboard = {
     (
       await orEmpty(
         get<{ leaderboard: LeaderboardPlayer[] }>(
-          pug ? "/leaderboard/players/pug" : seasonId ? `/leaderboard/players/${seasonId}` : "/leaderboard/players"
+          pug
+            ? "/leaderboard/players/pug"
+            : seasonId
+              ? `/leaderboard/players/${seasonId}`
+              : "/leaderboard/players"
         ),
         { leaderboard: [] }
       )

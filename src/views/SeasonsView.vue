@@ -14,10 +14,17 @@
           style="max-width: 280px"
         />
         <template v-if="auth.loggedIn">
-          <v-btn color="secondary" variant="tonal" prepend-icon="mdi-import" @click="importDialog = true">
+          <v-btn
+            color="secondary"
+            variant="tonal"
+            prepend-icon="mdi-import"
+            @click="importDialog = true"
+          >
             {{ $t("Seasons.ImportSeason") }}
           </v-btn>
-          <v-btn color="primary" prepend-icon="mdi-plus" @click="openDialog(null)">{{ $t("Seasons.New") }}</v-btn>
+          <v-btn color="primary" prepend-icon="mdi-plus" @click="openDialog(null)">{{
+            $t("Seasons.New")
+          }}</v-btn>
         </template>
       </v-card-title>
       <v-data-table
@@ -51,7 +58,13 @@
         <template #[`item.actions`]="{ item }">
           <div v-if="auth.canEdit(item.user_id)" class="d-flex justify-end">
             <v-btn icon="mdi-pencil" size="small" variant="text" @click="openDialog(item)" />
-            <v-btn icon="mdi-delete" size="small" variant="text" color="error" @click="toDelete = item" />
+            <v-btn
+              icon="mdi-delete"
+              size="small"
+              variant="text"
+              color="error"
+              @click="toDelete = item"
+            />
           </div>
         </template>
       </v-data-table>
@@ -59,12 +72,18 @@
 
     <SeasonDialog v-model="dialog" :season="editing" @saved="load" />
 
-    <v-dialog :model-value="toDelete !== null" max-width="480" @update:model-value="toDelete = null">
+    <v-dialog
+      :model-value="toDelete !== null"
+      max-width="480"
+      @update:model-value="toDelete = null"
+    >
       <v-card :title="$t('Seasons.DeleteConfirmation')" :text="$t('Seasons.DeleteExplain')">
         <v-card-actions>
           <v-spacer />
           <v-btn variant="text" @click="toDelete = null">{{ $t("misc.Cancel") }}</v-btn>
-          <v-btn color="error" :loading="busy" @click="confirmDelete">{{ $t("misc.Delete") }}</v-btn>
+          <v-btn color="error" :loading="busy" @click="confirmDelete">{{
+            $t("misc.Delete")
+          }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -79,12 +98,24 @@
             persistent-hint
             @keyup.enter="importSeason"
           />
-          <v-switch v-model="challonge.import_teams" :label="$t('Seasons.ImportTeams')" color="primary" hide-details />
+          <v-switch
+            v-model="challonge.import_teams"
+            :label="$t('Seasons.ImportTeams')"
+            color="primary"
+            hide-details
+          />
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn variant="text" :disabled="busy" @click="importDialog = false">{{ $t("misc.Cancel") }}</v-btn>
-          <v-btn color="primary" :loading="busy" :disabled="!challonge.tournament_id" @click="importSeason">
+          <v-btn variant="text" :disabled="busy" @click="importDialog = false">{{
+            $t("misc.Cancel")
+          }}</v-btn>
+          <v-btn
+            color="primary"
+            :loading="busy"
+            :disabled="!challonge.tournament_id"
+            @click="importSeason"
+          >
             {{ $t("misc.Import") }}
           </v-btn>
         </v-card-actions>
@@ -104,7 +135,11 @@ import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
 import { formatDate, seasonStatus, type SeasonStatus } from "@/utils/format";
 
-const STATUS_COLORS: Record<SeasonStatus, string> = { upcoming: "info", active: "success", ended: "grey" };
+const STATUS_COLORS: Record<SeasonStatus, string> = {
+  upcoming: "info",
+  active: "success",
+  ended: "grey"
+};
 
 const route = useRoute();
 const { t } = useI18n();
@@ -121,7 +156,9 @@ const toDelete = ref<Season | null>(null);
 const importDialog = ref(false);
 const challonge = reactive({ tournament_id: "", import_teams: true });
 
-const rows = computed(() => seasons.value.map((season) => ({ ...season, status: seasonStatus(season) })));
+const rows = computed(() =>
+  seasons.value.map((season) => ({ ...season, status: seasonStatus(season) }))
+);
 
 const headers = computed(() => [
   { title: t("Seasons.ID"), key: "id" },

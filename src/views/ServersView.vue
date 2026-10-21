@@ -28,7 +28,13 @@
         density="comfortable"
       >
         <template #[`item.display_name`]="{ item }">
-          <img v-if="item.flag" :src="flagUrl(item.flag)" alt="" class="mr-2" style="border-radius: 3px; vertical-align: middle" />
+          <img
+            v-if="item.flag"
+            :src="flagUrl(item.flag)"
+            alt=""
+            class="mr-2"
+            style="border-radius: 3px; vertical-align: middle"
+          />
           {{ item.display_name }}
         </template>
         <template #[`item.address`]="{ item }">
@@ -70,7 +76,13 @@
             </v-btn>
             <template v-if="auth.canEdit(item.user_id)">
               <v-btn icon="mdi-pencil" size="small" variant="text" @click="openDialog(item)" />
-              <v-btn icon="mdi-delete" size="small" variant="text" color="error" @click="toDelete = item" />
+              <v-btn
+                icon="mdi-delete"
+                size="small"
+                variant="text"
+                color="error"
+                @click="toDelete = item"
+              />
             </template>
           </div>
         </template>
@@ -79,12 +91,18 @@
 
     <ServerDialog v-model="dialog" :server="editing" @saved="load" />
 
-    <v-dialog :model-value="toDelete !== null" max-width="480" @update:model-value="toDelete = null">
+    <v-dialog
+      :model-value="toDelete !== null"
+      max-width="480"
+      @update:model-value="toDelete = null"
+    >
       <v-card :title="$t('MyServers.DeleteConfirmation')" :text="toDelete?.display_name">
         <v-card-actions>
           <v-spacer />
           <v-btn variant="text" @click="toDelete = null">{{ $t("misc.Cancel") }}</v-btn>
-          <v-btn color="error" :loading="deleting" @click="confirmDelete">{{ $t("misc.Delete") }}</v-btn>
+          <v-btn color="error" :loading="deleting" @click="confirmDelete">{{
+            $t("misc.Delete")
+          }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -134,7 +152,8 @@ async function load() {
   loading.value = true;
   try {
     await auth.load();
-    servers.value = route.meta.mine && !showAll.value ? await serversApi.mine() : await serversApi.all();
+    servers.value =
+      route.meta.mine && !showAll.value ? await serversApi.mine() : await serversApi.all();
   } catch (error) {
     ui.notifyError(error);
   } finally {

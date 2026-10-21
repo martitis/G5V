@@ -15,11 +15,14 @@
 import { ref, watch } from "vue";
 import { logoUrl } from "@/utils/format";
 
-const props = withDefaults(defineProps<{ logo?: string | null; size?: number; placeholder?: boolean }>(), {
-  logo: null,
-  size: 32,
-  placeholder: false
-});
+const props = withDefaults(
+  defineProps<{ logo?: string | null; size?: number; placeholder?: boolean }>(),
+  {
+    logo: null,
+    size: 32,
+    placeholder: false
+  }
+);
 
 const ext = ref<"png" | "svg">("png");
 const failed = ref(false);

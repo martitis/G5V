@@ -12,7 +12,9 @@
       density="comfortable"
     >
       <template #[`item.name`]="{ item }">
-        <router-link v-if="item.id" :to="`/teams/${item.id}`" class="app-link">{{ item.name }}</router-link>
+        <router-link v-if="item.id" :to="`/teams/${item.id}`" class="app-link">{{
+          item.name
+        }}</router-link>
         <span v-else>{{ item.name }}</span>
       </template>
       <template #[`item.rounddiff`]="{ item }">

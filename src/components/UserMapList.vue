@@ -19,7 +19,13 @@
     >
       <template #[`item.map_display_name`]="{ item }">
         <div class="d-flex align-center ga-2">
-          <v-img :src="mapImageUrl(item.map_name)" width="64" height="36" cover class="rounded flex-grow-0" />
+          <v-img
+            :src="mapImageUrl(item.map_name)"
+            width="64"
+            height="36"
+            cover
+            class="rounded flex-grow-0"
+          />
           {{ item.map_display_name }}
         </div>
       </template>
@@ -36,7 +42,13 @@
       <template #[`item.actions`]="{ item }">
         <div v-if="editable" class="d-flex justify-end">
           <v-btn icon="mdi-pencil" size="small" variant="text" @click="openDialog(item)" />
-          <v-btn icon="mdi-delete" size="small" variant="text" color="error" @click="toDelete = item" />
+          <v-btn
+            icon="mdi-delete"
+            size="small"
+            variant="text"
+            color="error"
+            @click="toDelete = item"
+          />
         </div>
       </template>
     </v-data-table>
@@ -55,21 +67,34 @@
               :label="$t('User.MapName')"
               :hint="$t('User.MapNameHint')"
               persistent-hint
-              :rules="[(v: string) => /^[A-Za-z0-9_./-]{1,128}$/.test(v ?? '') || $t('User.MapNameInvalid')]"
+              :rules="[
+                (v: string) => /^[A-Za-z0-9_./-]{1,128}$/.test(v ?? '') || $t('User.MapNameInvalid')
+              ]"
             />
-            <v-switch v-model="draft.enabled" :label="$t('User.MapEnabled')" color="primary" hide-details />
+            <v-switch
+              v-model="draft.enabled"
+              :label="$t('User.MapEnabled')"
+              color="primary"
+              hide-details
+            />
             <button type="submit" hidden />
           </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn variant="text" :disabled="saving" @click="dialog = false">{{ $t("misc.Cancel") }}</v-btn>
+          <v-btn variant="text" :disabled="saving" @click="dialog = false">{{
+            $t("misc.Cancel")
+          }}</v-btn>
           <v-btn color="primary" :loading="saving" @click="save">{{ $t("User.MapSave") }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <v-dialog :model-value="toDelete !== null" max-width="480" @update:model-value="toDelete = null">
+    <v-dialog
+      :model-value="toDelete !== null"
+      max-width="480"
+      @update:model-value="toDelete = null"
+    >
       <v-card
         :title="$t('User.MapDeleteTitle')"
         :text="$t('User.MapDeleteExplain', { map: toDelete?.map_display_name })"

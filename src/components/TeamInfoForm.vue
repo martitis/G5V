@@ -25,7 +25,12 @@
     </v-row>
     <v-row density="compact" class="align-center">
       <v-col cols="12" sm="4">
-        <v-switch v-model="draft.public" :label="$t('TeamCreate.FormPublicTeam')" color="primary" hide-details />
+        <v-switch
+          v-model="draft.public"
+          :label="$t('TeamCreate.FormPublicTeam')"
+          color="primary"
+          hide-details
+        />
       </v-col>
       <v-col cols="9" sm="6">
         <v-file-input
@@ -38,7 +43,14 @@
         />
       </v-col>
       <v-col cols="3" sm="2" class="d-flex justify-center">
-        <img v-if="logoFile" :src="logoFile" width="48" height="48" alt="" style="object-fit: contain" />
+        <img
+          v-if="logoFile"
+          :src="logoFile"
+          width="48"
+          height="48"
+          alt=""
+          style="object-fit: contain"
+        />
         <TeamLogo v-else :logo="team?.logo" :size="48" />
       </v-col>
     </v-row>

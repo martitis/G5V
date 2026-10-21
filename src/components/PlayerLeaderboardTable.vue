@@ -70,7 +70,11 @@ const headers = computed(() => [
 
 type Detail = { key: string; title: string; value: (p: LeaderboardPlayer) => string | number };
 const details = computed<Detail[]>(() => [
-  { key: "adr", title: t("PlayerStats.ADR"), value: (p) => (p.trp ? (p.total_damage / p.trp).toFixed(1) : 0) },
+  {
+    key: "adr",
+    title: t("PlayerStats.ADR"),
+    value: (p) => (p.trp ? (p.total_damage / p.trp).toFixed(1) : 0)
+  },
   { key: "hsp", title: t("PlayerStats.Headshot") + "%", value: (p) => p.hsp },
   { key: "k5", title: t("PlayerStats.5kill"), value: (p) => p.k5 },
   { key: "k4", title: t("PlayerStats.4kill"), value: (p) => p.k4 },

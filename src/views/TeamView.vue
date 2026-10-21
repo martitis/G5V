@@ -9,7 +9,9 @@
 
     <template v-else>
       <v-skeleton-loader v-if="loading && !team" type="card, table" />
-      <v-alert v-else-if="!team" type="warning" variant="tonal">{{ $t("misc.NotFoundText") }}</v-alert>
+      <v-alert v-else-if="!team" type="warning" variant="tonal">{{
+        $t("misc.NotFoundText")
+      }}</v-alert>
 
       <template v-else>
         <v-card class="mb-4">
@@ -19,8 +21,15 @@
               <div class="d-flex align-center flex-wrap ga-2">
                 <span class="text-headline-small">{{ team.name }}</span>
                 <v-chip size="small" label>{{ team.tag }}</v-chip>
-                <img v-if="team.flag" :src="flagUrl(team.flag)" :alt="team.flag" style="border-radius: 3px" />
-                <v-icon v-if="!team.public_team" size="small" :title="$t('Team.Private')">mdi-lock</v-icon>
+                <img
+                  v-if="team.flag"
+                  :src="flagUrl(team.flag)"
+                  :alt="team.flag"
+                  style="border-radius: 3px"
+                />
+                <v-icon v-if="!team.public_team" size="small" :title="$t('Team.Private')"
+                  >mdi-lock</v-icon
+                >
               </div>
               <div class="text-body-medium text-medium-emphasis mt-1">
                 {{ $t("Team.Owner") }}:
@@ -30,10 +39,20 @@
               </div>
             </div>
             <div v-if="canEdit" class="d-flex ga-2">
-              <v-btn color="primary" variant="tonal" prepend-icon="mdi-pencil" @click="editDialog = true">
+              <v-btn
+                color="primary"
+                variant="tonal"
+                prepend-icon="mdi-pencil"
+                @click="editDialog = true"
+              >
                 {{ $t("Team.EditInfo") }}
               </v-btn>
-              <v-btn color="error" variant="tonal" prepend-icon="mdi-delete" @click="confirmTeamDelete = true">
+              <v-btn
+                color="error"
+                variant="tonal"
+                prepend-icon="mdi-delete"
+                @click="confirmTeamDelete = true"
+              >
                 {{ $t("Team.DeleteTeam") }}
               </v-btn>
             </div>
@@ -45,7 +64,12 @@
             <span>{{ $t("Team.Players") }}</span>
             <v-chip size="small" variant="tonal">{{ members.length }}</v-chip>
             <v-spacer />
-            <v-btn v-if="canEdit" color="primary" prepend-icon="mdi-account-plus" @click="openMember(null)">
+            <v-btn
+              v-if="canEdit"
+              color="primary"
+              prepend-icon="mdi-account-plus"
+              @click="openMember(null)"
+            >
               {{ $t("Team.NewMember") }}
             </v-btn>
           </v-card-title>
@@ -65,7 +89,12 @@
                   <v-img v-if="item.image" :src="item.image" alt="" />
                   <v-icon v-else>mdi-account</v-icon>
                 </v-avatar>
-                <a :href="steamProfileUrl(item.steamId)" target="_blank" rel="noopener" class="app-link">
+                <a
+                  :href="steamProfileUrl(item.steamId)"
+                  target="_blank"
+                  rel="noopener"
+                  class="app-link"
+                >
                   {{ item.name || item.steamId }}
                 </a>
               </div>
@@ -83,7 +112,14 @@
                 >
                   {{ $t("Team.CaptainBadge") }}
                 </v-chip>
-                <v-chip v-if="item.coach" size="small" color="info" variant="tonal" prepend-icon="mdi-whistle" label>
+                <v-chip
+                  v-if="item.coach"
+                  size="small"
+                  color="info"
+                  variant="tonal"
+                  prepend-icon="mdi-whistle"
+                  label
+                >
                   {{ $t("Team.Coach") }}
                 </v-chip>
               </div>
@@ -91,7 +127,13 @@
             <template #[`item.actions`]="{ item }">
               <div v-if="canEdit" class="d-flex justify-end">
                 <v-btn icon="mdi-pencil" size="small" variant="text" @click="openMember(item)" />
-                <v-btn icon="mdi-delete" size="small" variant="text" color="error" @click="memberToDelete = item" />
+                <v-btn
+                  icon="mdi-delete"
+                  size="small"
+                  variant="text"
+                  color="error"
+                  @click="memberToDelete = item"
+                />
               </div>
             </template>
           </v-data-table>
@@ -105,7 +147,12 @@
     <v-dialog v-model="editDialog" max-width="760">
       <v-card :title="$t('Team.EditInfo')">
         <v-card-text>
-          <TeamInfoForm :team="team" cancellable @cancel="editDialog = false" @saved="onInfoSaved" />
+          <TeamInfoForm
+            :team="team"
+            cancellable
+            @cancel="editDialog = false"
+            @saved="onInfoSaved"
+          />
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -126,8 +173,18 @@
             />
             <v-text-field v-model="memberDraft.name" :label="$t('Team.NickLabel')" class="mt-2" />
             <div class="d-flex flex-wrap ga-4">
-              <v-switch v-model="memberDraft.captain" :label="$t('Team.Captain')" color="primary" hide-details />
-              <v-switch v-model="memberDraft.coach" :label="$t('Team.Coach')" color="primary" hide-details />
+              <v-switch
+                v-model="memberDraft.captain"
+                :label="$t('Team.Captain')"
+                color="primary"
+                hide-details
+              />
+              <v-switch
+                v-model="memberDraft.coach"
+                :label="$t('Team.Coach')"
+                color="primary"
+                hide-details
+              />
             </div>
             <v-alert type="info" variant="tonal" density="compact" class="mt-2">
               {{ $t("Team.WhatIsCaptain") }}
@@ -137,15 +194,24 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn variant="text" :disabled="busy" @click="memberDialog = false">{{ $t("misc.Cancel") }}</v-btn>
+          <v-btn variant="text" :disabled="busy" @click="memberDialog = false">{{
+            $t("misc.Cancel")
+          }}</v-btn>
           <v-btn color="primary" :loading="busy" @click="saveMember">{{ $t("misc.Save") }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <!-- Delete confirmations -->
-    <v-dialog :model-value="memberToDelete !== null" max-width="480" @update:model-value="memberToDelete = null">
-      <v-card :title="$t('Team.DeleteConfirmation')" :text="memberToDelete?.name || memberToDelete?.steamId">
+    <v-dialog
+      :model-value="memberToDelete !== null"
+      max-width="480"
+      @update:model-value="memberToDelete = null"
+    >
+      <v-card
+        :title="$t('Team.DeleteConfirmation')"
+        :text="memberToDelete?.name || memberToDelete?.steamId"
+      >
         <v-card-actions>
           <v-spacer />
           <v-btn variant="text" @click="memberToDelete = null">{{ $t("misc.Cancel") }}</v-btn>
@@ -204,7 +270,13 @@ const confirmTeamDelete = ref(false);
 const memberDialog = ref(false);
 const memberToDelete = ref<MemberRow | null>(null);
 const memberForm = ref<{ validate: () => Promise<{ valid: boolean }> } | null>(null);
-const memberDraft = reactive({ steam: "", name: "", captain: false, coach: false, existing: false });
+const memberDraft = reactive({
+  steam: "",
+  name: "",
+  captain: false,
+  coach: false,
+  existing: false
+});
 
 const canEdit = computed(() => team.value != null && auth.canEdit(team.value.user_id));
 
@@ -219,7 +291,9 @@ const members = computed<MemberRow[]>(() =>
   }))
 );
 /** MatchZy gives the vetoes to the first captain (or the first player when there is none). */
-const vetoCaptain = computed(() => (members.value.find((m) => m.captain) ?? members.value[0])?.steamId);
+const vetoCaptain = computed(
+  () => (members.value.find((m) => m.captain) ?? members.value[0])?.steamId
+);
 
 const memberHeaders = computed(() => [
   { title: t("Team.Username"), key: "name" },
@@ -294,7 +368,10 @@ async function deleteMember() {
   if (!team.value || !memberToDelete.value) return;
   busy.value = true;
   try {
-    const result = await teams.remove({ team_id: team.value.id, steam_id: memberToDelete.value.steamId });
+    const result = await teams.remove({
+      team_id: team.value.id,
+      steam_id: memberToDelete.value.steamId
+    });
     ui.notify(result.message, "success");
     memberToDelete.value = null;
     await load();

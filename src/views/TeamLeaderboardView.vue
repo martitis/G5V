@@ -10,5 +10,7 @@ import { useRoute } from "vue-router";
 import TeamLeaderboardTable from "@/components/TeamLeaderboardTable.vue";
 
 const route = useRoute();
-const seasonId = computed(() => (route.params.seasonid ? Number(route.params.seasonid) : undefined));
+const seasonId = computed(() =>
+  route.params.seasonid ? Number(route.params.seasonid) : undefined
+);
 </script>

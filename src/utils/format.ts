@@ -6,11 +6,79 @@ const base = import.meta.env.BASE_URL;
 
 /** Valve flag codes available in public/img/valve_flags. */
 export const FLAGS = [
-  "AE", "AR", "AT", "AU", "BD", "BE", "BG", "BR", "BY", "CA", "CC", "CH", "CL", "CN", "CZ", "DE",
-  "DK", "DZ", "EE", "ES", "EU", "FI", "FR", "GB", "GP", "GR", "HK", "HR", "HU", "ID", "IE", "IL",
-  "IN", "IR", "IS", "IT", "JP", "KR", "KZ", "LT", "LU", "LV", "LY", "MK", "MO", "MX", "MY", "NL",
-  "NO", "NZ", "PE", "PH", "PK", "PL", "PT", "RE", "RO", "RS", "RU", "SA", "SE", "SG", "SI", "SK",
-  "SQ", "TH", "TR", "TW", "UA", "US", "VE", "VN", "ZA"
+  "AE",
+  "AR",
+  "AT",
+  "AU",
+  "BD",
+  "BE",
+  "BG",
+  "BR",
+  "BY",
+  "CA",
+  "CC",
+  "CH",
+  "CL",
+  "CN",
+  "CZ",
+  "DE",
+  "DK",
+  "DZ",
+  "EE",
+  "ES",
+  "EU",
+  "FI",
+  "FR",
+  "GB",
+  "GP",
+  "GR",
+  "HK",
+  "HR",
+  "HU",
+  "ID",
+  "IE",
+  "IL",
+  "IN",
+  "IR",
+  "IS",
+  "IT",
+  "JP",
+  "KR",
+  "KZ",
+  "LT",
+  "LU",
+  "LV",
+  "LY",
+  "MK",
+  "MO",
+  "MX",
+  "MY",
+  "NL",
+  "NO",
+  "NZ",
+  "PE",
+  "PH",
+  "PK",
+  "PL",
+  "PT",
+  "RE",
+  "RO",
+  "RS",
+  "RU",
+  "SA",
+  "SE",
+  "SG",
+  "SI",
+  "SK",
+  "SQ",
+  "TH",
+  "TR",
+  "TW",
+  "UA",
+  "US",
+  "VE",
+  "VN",
+  "ZA"
 ];
 
 export function flagUrl(flag: string | null | undefined): string {
@@ -18,8 +86,16 @@ export function flagUrl(flag: string | null | undefined): string {
 }
 
 const KNOWN_MAPS = [
-  "de_ancient", "de_anubis", "de_cache", "de_dust2", "de_inferno", "de_mirage", "de_nuke",
-  "de_overpass", "de_train", "de_vertigo"
+  "de_ancient",
+  "de_anubis",
+  "de_cache",
+  "de_dust2",
+  "de_inferno",
+  "de_mirage",
+  "de_nuke",
+  "de_overpass",
+  "de_train",
+  "de_vertigo"
 ];
 
 export function mapImageUrl(mapName: string | null | undefined): string {
@@ -45,10 +121,17 @@ export function mapDisplayName(mapName: string | null | undefined, mapList: MapL
   return mapName.replace(/^de_/, "").replace(/^\w/, (c) => c.toUpperCase());
 }
 
-type StatLine = { kills: number; deaths: number; headshot_kills?: number; damage?: number; roundsplayed?: number };
+type StatLine = {
+  kills: number;
+  deaths: number;
+  headshot_kills?: number;
+  damage?: number;
+  roundsplayed?: number;
+};
 
 export const kdr = (s: StatLine) => (s.deaths ? (s.kills / s.deaths).toFixed(2) : String(s.kills));
-export const hsp = (s: StatLine) => (s.kills ? (((s.headshot_kills ?? 0) / s.kills) * 100).toFixed(1) : "0");
+export const hsp = (s: StatLine) =>
+  s.kills ? (((s.headshot_kills ?? 0) / s.kills) * 100).toFixed(1) : "0";
 export const adr = (s: StatLine) =>
   s.roundsplayed ? ((s.damage ?? 0) / s.roundsplayed).toFixed(1) : "0";
 export const fpr = (s: StatLine) => (s.roundsplayed ? (s.kills / s.roundsplayed).toFixed(2) : "0");
@@ -106,7 +189,10 @@ export function toDateInput(value: string | null | undefined): string {
 }
 
 export type SeasonStatus = "upcoming" | "active" | "ended";
-export function seasonStatus(season: { start_date: string | null; end_date: string | null }): SeasonStatus {
+export function seasonStatus(season: {
+  start_date: string | null;
+  end_date: string | null;
+}): SeasonStatus {
   const today = toDateInput(new Date().toISOString());
   const start = toDateInput(season.start_date);
   const end = toDateInput(season.end_date);

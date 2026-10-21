@@ -7,7 +7,12 @@
           <v-text-field v-model="draft.name" :label="$t('Seasons.Name')" :rules="[required]" />
           <v-row density="compact">
             <v-col cols="12" sm="6">
-              <v-text-field v-model="draft.start" type="date" :label="$t('Seasons.StartDate')" :rules="[required]" />
+              <v-text-field
+                v-model="draft.start"
+                type="date"
+                :label="$t('Seasons.StartDate')"
+                :rules="[required]"
+              />
             </v-col>
             <v-col cols="12" sm="6">
               <v-text-field
@@ -21,10 +26,19 @@
           </v-row>
 
           <div class="text-title-medium mt-2">{{ $t("Seasons.Defaults") }}</div>
-          <div class="text-body-small text-medium-emphasis mb-3">{{ $t("Seasons.DefaultsHint") }}</div>
+          <div class="text-body-small text-medium-emphasis mb-3">
+            {{ $t("Seasons.DefaultsHint") }}
+          </div>
 
           <div class="text-body-medium mb-1">{{ $t("CreateMatch.FormSeriesType") }}</div>
-          <v-btn-toggle v-model="defaults.maps_to_win" mandatory color="primary" variant="outlined" divided class="mb-4">
+          <v-btn-toggle
+            v-model="defaults.maps_to_win"
+            mandatory
+            color="primary"
+            variant="outlined"
+            divided
+            class="mb-4"
+          >
             <v-btn v-for="n in [1, 2, 3, 5, 7]" :key="n" :value="n">BO{{ n }}</v-btn>
           </v-btn-toggle>
 
@@ -58,8 +72,18 @@
           </v-row>
 
           <div class="d-flex flex-wrap ga-4">
-            <v-switch v-model="defaults.wingman" :label="$t('CreateMatch.Wingman')" color="primary" hide-details />
-            <v-switch v-model="defaults.skip_veto" :label="$t('CreateMatch.SkipVeto')" color="primary" hide-details />
+            <v-switch
+              v-model="defaults.wingman"
+              :label="$t('CreateMatch.Wingman')"
+              color="primary"
+              hide-details
+            />
+            <v-switch
+              v-model="defaults.skip_veto"
+              :label="$t('CreateMatch.SkipVeto')"
+              color="primary"
+              hide-details
+            />
           </div>
 
           <v-radio-group v-model="defaults.side_type" inline hide-details class="mb-2">
@@ -69,9 +93,17 @@
           </v-radio-group>
 
           <div class="text-body-medium mt-2">{{ $t("CreateMatch.FormMapPool") }}</div>
-          <div class="text-body-small text-medium-emphasis">{{ $t("CreateMatch.FormMapExplanation") }}</div>
+          <div class="text-body-small text-medium-emphasis">
+            {{ $t("CreateMatch.FormMapExplanation") }}
+          </div>
           <v-chip-group v-model="defaults.map_pool" multiple column selected-class="text-primary">
-            <v-chip v-for="map in mapList" :key="map.id" :value="map.map_name" filter variant="outlined">
+            <v-chip
+              v-for="map in mapList"
+              :key="map.id"
+              :value="map.map_name"
+              filter
+              variant="outlined"
+            >
               {{ map.map_display_name }}
             </v-chip>
           </v-chip-group>
@@ -107,7 +139,9 @@
       <v-card-actions>
         <v-spacer />
         <v-btn variant="text" :disabled="busy" @click="show = false">{{ $t("misc.Cancel") }}</v-btn>
-        <v-btn color="primary" :loading="busy" :disabled="loading" @click="save">{{ $t("misc.Save") }}</v-btn>
+        <v-btn color="primary" :loading="busy" :disabled="loading" @click="save">{{
+          $t("misc.Save")
+        }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -182,14 +216,16 @@ watch(
 );
 
 const required = (value: string) => !!value?.trim() || t("misc.Required");
-const endRule = (value: string | null) => !value || value >= draft.start || t("Seasons.EndBeforeStart");
+const endRule = (value: string | null) =>
+  !value || value >= draft.start || t("Seasons.EndBeforeStart");
 const mapPoolError = computed(() => {
   if (defaults.map_pool.length === 0) return "";
   return defaults.map_pool.length < defaults.maps_to_win ? t("CreateMatch.MapNotEnough") : "";
 });
 
 async function save() {
-  if (busy.value || loading.value || mapPoolError.value || !(await form.value?.validate())?.valid) return;
+  if (busy.value || loading.value || mapPoolError.value || !(await form.value?.validate())?.valid)
+    return;
   busy.value = true;
   try {
     const body = {

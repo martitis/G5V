@@ -19,7 +19,9 @@
       />
       <v-btn icon="mdi-close" variant="text" size="small" class="mt-1" @click="removeRow(index)" />
     </div>
-    <v-btn variant="tonal" size="small" prepend-icon="mdi-plus" @click="addRow">{{ $t("CreateMatch.CvarAdd") }}</v-btn>
+    <v-btn variant="tonal" size="small" prepend-icon="mdi-plus" @click="addRow">{{
+      $t("CreateMatch.CvarAdd")
+    }}</v-btn>
     <div v-if="hint" class="text-body-small text-medium-emphasis mt-2">{{ hint }}</div>
   </div>
 </template>
@@ -42,7 +44,11 @@ watch(
   model,
   (value) => {
     if (value === lastEmitted) return;
-    rows.value = Object.entries(value ?? {}).map(([name, v]) => ({ id: nextId++, name, value: String(v) }));
+    rows.value = Object.entries(value ?? {}).map(([name, v]) => ({
+      id: nextId++,
+      name,
+      value: String(v)
+    }));
   },
   { immediate: true }
 );
@@ -63,14 +69,17 @@ function removeRow(index: number) {
   emitValue();
 }
 
-const BLOCKED = /^(rcon_password|sv_rcon_.*|matchzy_everyone_is_admin|.*_url|.*_header_(key|value))$/i;
+const BLOCKED =
+  /^(rcon_password|sv_rcon_.*|matchzy_everyone_is_admin|.*_url|.*_header_(key|value))$/i;
 const nameRule = (value: string) => {
   if (!value) return true;
   if (!/^[A-Za-z0-9_]{1,64}$/.test(value)) return t("CreateMatch.CvarInvalidName");
   if (BLOCKED.test(value)) return t("CreateMatch.CvarBlocked");
-  if (rows.value.filter((row) => row.name === value).length > 1) return t("CreateMatch.CvarDuplicate");
+  if (rows.value.filter((row) => row.name === value).length > 1)
+    return t("CreateMatch.CvarDuplicate");
   return true;
 };
 // Control characters are rejected by the API too.
-const valueRule = (value: string) => !/[";\x00-\x1f\x7f]/.test(value ?? "") || t("CreateMatch.CvarInvalidValue");
+const valueRule = (value: string) =>
+  !/[";\x00-\x1f\x7f]/.test(value ?? "") || t("CreateMatch.CvarInvalidValue");
 </script>

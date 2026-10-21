@@ -1,14 +1,18 @@
 <template>
   <v-container fluid>
     <v-skeleton-loader v-if="loading && !season" type="card, table" />
-    <v-alert v-else-if="!season" type="warning" variant="tonal">{{ $t("misc.NotFoundText") }}</v-alert>
+    <v-alert v-else-if="!season" type="warning" variant="tonal">{{
+      $t("misc.NotFoundText")
+    }}</v-alert>
     <template v-else>
       <v-card class="mb-4">
         <v-card-text class="d-flex align-center flex-wrap ga-4">
           <div class="flex-grow-1">
             <div class="d-flex align-center flex-wrap ga-2">
               <span class="text-headline-small">{{ season.name }}</span>
-              <v-chip :color="STATUS_COLORS[status]" size="small" variant="tonal" label>{{ statusLabel }}</v-chip>
+              <v-chip :color="STATUS_COLORS[status]" size="small" variant="tonal" label>{{
+                statusLabel
+              }}</v-chip>
             </div>
             <div class="text-body-medium text-medium-emphasis mt-1">
               {{ formatDate(season.start_date) }} –
@@ -16,10 +20,18 @@
             </div>
           </div>
           <div class="d-flex flex-wrap ga-2">
-            <v-btn variant="tonal" prepend-icon="mdi-account-star" :to="`/leaderboard/${season.id}`">
+            <v-btn
+              variant="tonal"
+              prepend-icon="mdi-account-star"
+              :to="`/leaderboard/${season.id}`"
+            >
               {{ $t("misc.PLeader") }}
             </v-btn>
-            <v-btn variant="tonal" prepend-icon="mdi-trophy" :to="`/leaderboard/teams/${season.id}`">
+            <v-btn
+              variant="tonal"
+              prepend-icon="mdi-trophy"
+              :to="`/leaderboard/teams/${season.id}`"
+            >
               {{ $t("Leaderboard.TTitle") }}
             </v-btn>
             <v-btn
@@ -54,7 +66,11 @@ import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
 import { formatDate, seasonStatus, type SeasonStatus } from "@/utils/format";
 
-const STATUS_COLORS: Record<SeasonStatus, string> = { upcoming: "info", active: "success", ended: "grey" };
+const STATUS_COLORS: Record<SeasonStatus, string> = {
+  upcoming: "info",
+  active: "success",
+  ended: "grey"
+};
 
 const route = useRoute();
 const { t } = useI18n();

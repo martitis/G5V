@@ -14,7 +14,12 @@
           style="max-width: 280px"
         />
         <template v-if="auth.loggedIn">
-          <v-btn color="secondary" variant="tonal" prepend-icon="mdi-import" @click="importDialog = true">
+          <v-btn
+            color="secondary"
+            variant="tonal"
+            prepend-icon="mdi-import"
+            @click="importDialog = true"
+          >
             {{ $t("Teams.ImportTeam") }}
           </v-btn>
           <v-btn color="primary" prepend-icon="mdi-plus" to="/teams/create">
@@ -40,7 +45,12 @@
           </v-icon>
         </template>
         <template #[`item.flag`]="{ item }">
-          <img v-if="item.flag" :src="flagUrl(item.flag)" :alt="item.flag" style="border-radius: 3px" />
+          <img
+            v-if="item.flag"
+            :src="flagUrl(item.flag)"
+            :alt="item.flag"
+            style="border-radius: 3px"
+          />
         </template>
         <template #[`item.members`]="{ item }">
           {{ Object.keys(item.auth_name ?? {}).length }}
@@ -66,8 +76,15 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn variant="text" :disabled="importing" @click="importDialog = false">{{ $t("misc.Cancel") }}</v-btn>
-          <v-btn color="primary" :loading="importing" :disabled="!tournamentId" @click="importTeams">
+          <v-btn variant="text" :disabled="importing" @click="importDialog = false">{{
+            $t("misc.Cancel")
+          }}</v-btn>
+          <v-btn
+            color="primary"
+            :loading="importing"
+            :disabled="!tournamentId"
+            @click="importTeams"
+          >
             {{ $t("Seasons.Import") }}
           </v-btn>
         </v-card-actions>

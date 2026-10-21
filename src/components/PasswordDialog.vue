@@ -62,7 +62,11 @@ async function save() {
   if (busy.value || !(await form.value?.validate())?.valid) return;
   busy.value = true;
   try {
-    await users.update({ id: props.userId, old_password: oldPassword.value, password: newPassword.value });
+    await users.update({
+      id: props.userId,
+      old_password: oldPassword.value,
+      password: newPassword.value
+    });
     ui.notify(t("User.PasswordChanged"), "success");
     show.value = false;
   } catch (error) {
