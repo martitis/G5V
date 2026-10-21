@@ -187,6 +187,14 @@
       "ImportError": "Error importing season. Please ensure the Challonge URL is correct."
     },
     "Matches": {
+      "Score": "Score",
+      "StatusFinished": "Finished",
+      "StatusTie": "Tie",
+      "StatusForfeit": "{team} won by forfeit",
+      "StatusWon": "{team} won",
+      "StatusCancelled": "Cancelled",
+      "StatusUpcoming": "Not started",
+      "StatusLive": "Live",
       "YourMatches": "Your matches",
       "AllMatches": "All matches",
       "MatchID": "Match ID",
@@ -571,6 +579,14 @@
       "ImportError": "Erreur durant l'import de la saison. Assurez-vous que l'URL Challonge est correcte."
     },
     "Matches": {
+      "Score": "Score",
+      "StatusFinished": "Terminé",
+      "StatusTie": "Égalité",
+      "StatusForfeit": "{team} a gagné par forfait",
+      "StatusWon": "{team} a gagné",
+      "StatusCancelled": "Annulé",
+      "StatusUpcoming": "Pas commencé",
+      "StatusLive": "En direct",
       "YourMatches": "Vos matchs",
       "AllMatches": "Tous les matchs",
       "MatchID": "Match ID",
@@ -957,6 +973,14 @@
       "ImportError": "シーズンのインポートにエラーが発生しました。ChallongeのURLが正しいかどうか確認してください。"
     },
     "Matches": {
+      "Score": "スコア",
+      "StatusFinished": "終了",
+      "StatusTie": "引き分け",
+      "StatusForfeit": "{team}の不戦勝",
+      "StatusWon": "{team}の勝利",
+      "StatusCancelled": "キャンセル",
+      "StatusUpcoming": "未開始",
+      "StatusLive": "ライブ",
       "YourMatches": "あなたのマッチ",
       "AllMatches": "すべてのマッチ",
       "MatchID": "マッチID",
