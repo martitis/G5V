@@ -306,17 +306,7 @@
                 />
               </v-col>
             </v-row>
-            <v-row class="justify-center">
-              <v-col cols="2">
-                <v-switch
-                  v-model="newMatchData.enforce_teams"
-                  :label="$t('Check Auths?')"
-                  ref="enforce_teams"
-                  true-value=1
-                  false-value=0
-                />
-              </v-col>
-            </v-row>
+            <!-- No "check auths" switch: MatchZy always kicks players who aren't in a team or the spectators. -->
           </div>
         </v-window-item>
       </v-form>

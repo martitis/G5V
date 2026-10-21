@@ -207,14 +207,18 @@ export default {
     async importChallongeTeams() {
       let importData = [this.challongeInfo];
       let isImport = await this.ImportChallongeTeams(importData);
-      if (isImport.message.includes("successfully")) {
+      // The API helper returns the response body on success and the error message string on failure.
+      if (isImport?.message?.includes("successfully")) {
         this.teams = [];
         this.GetTeams();
         this.response = isImport.message;
         this.responseSheet = true;
         this.newImportDialog = false;
       } else {
-        this.response = this.$t("Seasons.ImportError");
+        this.response =
+          typeof isImport === "string" && isImport
+            ? isImport
+            : this.$t("Seasons.ImportError");
         this.responseSheet = true;
         this.$nextTick(() => {
           this.challongeInfo = {
