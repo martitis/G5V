@@ -261,6 +261,10 @@
       "PortRangeIncorrect": "Please input a port between 0 and 65536."
     },
     "Team": {
+      "LogoInvalid": "The logo must be a PNG or SVG image.",
+      "CaptainBadge": "Captain",
+      "NoMembers": "No players yet. Only listed players can join the server.",
+      "DeleteTeam": "Delete team",
       "Members": "Members",
       "Private": "Private team",
       "Players": "Players",
@@ -658,6 +662,10 @@
       "PortRangeIncorrect": "veuillez entrer un port entre 0 et 65536."
     },
     "Team": {
+      "LogoInvalid": "Le logo doit être une image PNG ou SVG.",
+      "CaptainBadge": "Capitaine",
+      "NoMembers": "Aucun joueur pour l'instant. Seuls les joueurs listés peuvent rejoindre le serveur.",
+      "DeleteTeam": "Supprimer l'équipe",
       "Members": "Membres",
       "Private": "Équipe privée",
       "Players": "Joueurs",
@@ -1056,6 +1064,10 @@
       "PortRangeIncorrect": "ポートは0～65536の間で入力してください。"
     },
     "Team": {
+      "LogoInvalid": "ロゴはPNGまたはSVG画像である必要があります。",
+      "CaptainBadge": "キャプテン",
+      "NoMembers": "まだプレイヤーがいません。登録されたプレイヤーのみサーバーに参加できます。",
+      "DeleteTeam": "チームを削除",
       "Members": "メンバー",
       "Private": "非公開チーム",
       "Players": "プレイヤー",

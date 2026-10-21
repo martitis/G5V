@@ -1,5 +1,6 @@
 /** Display helpers shared by the pages (were mixin methods in the old panel). */
 import type { Match, MapListEntry } from "@/api/types";
+import { apiUrl } from "@/config";
 
 const base = import.meta.env.BASE_URL;
 
@@ -25,6 +26,11 @@ export function mapImageUrl(mapName: string | null | undefined): string {
   return mapName && KNOWN_MAPS.includes(mapName)
     ? `${base}img/maps/${mapName}.jpg`
     : `${base}img/maps/_unknown.jpg`;
+}
+
+/** Team logo served by the API. The DB stores only the name; the file is .png or .svg (TeamLogo falls back). */
+export function logoUrl(logo: string, ext: "png" | "svg" = "png"): string {
+  return apiUrl(`/static/img/logos/${encodeURIComponent(logo)}.${ext}`);
 }
 
 export function steamProfileUrl(steamId: string): string {
