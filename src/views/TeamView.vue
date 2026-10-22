@@ -139,7 +139,12 @@
           </v-data-table>
         </v-card>
 
-        <MatchesTable :load="loadRecent" :title="$t('Team.RecentMatches')" />
+        <MatchList
+          :title="$t('Team.RecentMatches')"
+          :fixed="{ team_id: team.id }"
+          :filters="false"
+          :page-size="10"
+        />
       </template>
     </template>
 
@@ -237,7 +242,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { teams } from "@/api";
 import type { Team } from "@/api/types";
-import MatchesTable from "@/components/MatchesTable.vue";
+import MatchList from "@/components/matchlist/MatchList.vue";
 import TeamInfoForm from "@/components/TeamInfoForm.vue";
 import TeamLogo from "@/components/TeamLogo.vue";
 import { useAuthStore } from "@/stores/auth";
@@ -301,11 +306,6 @@ const memberHeaders = computed(() => [
   { title: "", key: "roles", sortable: false },
   { title: "", key: "actions", sortable: false, align: "end" as const }
 ]);
-
-const loadRecent = computed(() => {
-  const id = teamId.value;
-  return () => (id ? teams.recentMatches(id) : Promise.resolve([]));
-});
 
 async function load() {
   if (teamId.value == null) {

@@ -47,7 +47,7 @@
         </v-card-text>
       </v-card>
 
-      <MatchesTable :load="loadMatches" :title="$t('Seasons.Matches')" />
+      <MatchList :title="$t('Seasons.Matches')" :fixed="{ season_id: season.id }" />
     </template>
 
     <SeasonDialog v-model="dialog" :season="season" @saved="load" />
@@ -59,8 +59,8 @@ import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { seasons } from "@/api";
-import type { Match, Season } from "@/api/types";
-import MatchesTable from "@/components/MatchesTable.vue";
+import type { Season } from "@/api/types";
+import MatchList from "@/components/matchlist/MatchList.vue";
 import SeasonDialog from "@/components/SeasonDialog.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
@@ -78,7 +78,6 @@ const auth = useAuthStore();
 const ui = useUiStore();
 
 const season = ref<Season | null>(null);
-const matches = ref<Match[]>([]);
 const loading = ref(true);
 const dialog = ref(false);
 
@@ -92,19 +91,12 @@ const statusLabel = computed(
     })[status.value]
 );
 
-// The season request already returns its matches; hand them to the table without a second request.
-const loadMatches = computed(() => {
-  const list = matches.value;
-  return () => Promise.resolve(list);
-});
-
 async function load() {
   loading.value = true;
   try {
     await auth.load();
     const result = await seasons.get(String(route.params.id));
     season.value = result.season;
-    matches.value = result.matches ?? [];
   } catch (error) {
     season.value = null;
     ui.notifyError(error);

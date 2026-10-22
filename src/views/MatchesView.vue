@@ -1,13 +1,19 @@
 <template>
   <v-container fluid>
-    <MatchesTable
-      ref="table"
-      :load="load"
+    <MatchList
+      ref="list"
+      :key="mine ? 'mine' : 'all'"
       :title="mine ? $t('Navbar.MyMatches') : $t('Navbar.AllMatches')"
+      :fixed="mine ? { mine: true } : {}"
+      :initial-status="mine ? 'all' : 'default'"
       @loaded="onLoaded"
     >
-      <template v-if="mine && hasCancelled" #actions>
+      <template #actions>
+        <v-btn v-if="auth.loggedIn" color="primary" prepend-icon="mdi-plus" to="/match/create">
+          {{ $t("CreateMatch.Title") }}
+        </v-btn>
         <v-btn
+          v-if="mine && hasCancelled"
           color="error"
           variant="tonal"
           prepend-icon="mdi-delete-sweep"
@@ -17,7 +23,7 @@
           {{ $t("Matches.DeleteButton") }}
         </v-btn>
       </template>
-    </MatchesTable>
+    </MatchList>
   </v-container>
 </template>
 
@@ -25,21 +31,22 @@
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import { matches } from "@/api";
-import type { Match } from "@/api/types";
-import MatchesTable from "@/components/MatchesTable.vue";
+import type { MatchSummary } from "@/api/types";
+import MatchList from "@/components/matchlist/MatchList.vue";
+import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
 
 const route = useRoute();
+const auth = useAuthStore();
 const ui = useUiStore();
 const mine = computed(() => Boolean(route.meta.mine));
-const load = computed(() => (mine.value ? matches.mine : matches.all));
 
-const table = ref<InstanceType<typeof MatchesTable> | null>(null);
+const list = ref<InstanceType<typeof MatchList> | null>(null);
 const hasCancelled = ref(false);
 const deleting = ref(false);
 
-function onLoaded(list: Match[]) {
-  hasCancelled.value = list.some((match) => match.cancelled == 1);
+function onLoaded(list: MatchSummary[]) {
+  hasCancelled.value = list.some((match) => match.status === "cancelled");
 }
 
 async function deleteCancelled() {
@@ -47,7 +54,7 @@ async function deleteCancelled() {
   try {
     const result = await matches.remove({ all_cancelled: true });
     ui.notify(result.message, "success");
-    await table.value?.reload();
+    await list.value?.reload();
   } catch (error) {
     ui.notifyError(error);
   } finally {

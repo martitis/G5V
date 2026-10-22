@@ -196,3 +196,64 @@ export interface BackupEntry {
   round: number;
   info: string;
 }
+
+/** GET /matches/summary: one match list entry. */
+export type MatchSummaryStatus =
+  "pending" | "warmup" | "live" | "paused" | "finished" | "cancelled";
+
+export interface SummaryTeam {
+  id: number | null;
+  name: string;
+  tag: string | null;
+  logo: string | null;
+  flag: string | null;
+  /** Maps won. */
+  score: number;
+}
+
+export interface MatchSummary {
+  id: number;
+  title: string | null;
+  status: MatchSummaryStatus;
+  winner: 1 | 2 | null;
+  forfeit: boolean;
+  max_maps: number;
+  season_id: number | null;
+  is_pug: boolean;
+  private_match: boolean;
+  owner: { id: number; name: string | null };
+  start_time: string | null;
+  end_time: string | null;
+  team1: SummaryTeam;
+  team2: SummaryTeam;
+  maps: {
+    number: number;
+    name: string | null;
+    team1_score: number;
+    team2_score: number;
+    winner: 1 | 2 | null;
+    finished: boolean;
+  }[];
+  current_map: {
+    number: number;
+    name: string | null;
+    team1_score: number;
+    team2_score: number;
+    /** Rounds played; the current round is round + 1. */
+    round: number;
+    team1_side: "ct" | "t" | null;
+  } | null;
+  pause: { type: string | null; team: string | null } | null;
+  server: { name: string | null; ip: string; port: number; gotv_port: number | null } | null;
+}
+
+export interface SummaryQuery {
+  status?: "active" | "finished" | "cancelled" | "all";
+  season_id?: number;
+  team_id?: number;
+  server_id?: number;
+  mine?: boolean;
+  q?: string;
+  limit?: number;
+  offset?: number;
+}

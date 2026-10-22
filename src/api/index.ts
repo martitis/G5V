@@ -9,9 +9,11 @@ import type {
   MapListEntry,
   MapStat,
   Match,
+  MatchSummary,
   PlayerStat,
   Season,
   Server,
+  SummaryQuery,
   Team,
   TeamStanding,
   User,
@@ -85,6 +87,17 @@ export const matches = {
   /** The MatchZy config JSON (owner or super admin). */
   config: (id: number | string) => get<Record<string, unknown>>(`/matches/${id}/config`),
   streamUrl: (id: number | string) => `/matches/${id}/stream`,
+  /** One page of the match list (live and upcoming first). */
+  summary: (query: SummaryQuery) => {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(query)) {
+      if (value !== undefined && value !== null && value !== "" && value !== false)
+        params.set(key, String(value));
+    }
+    return get<{ matches: MatchSummary[]; total: number }>(`/matches/summary?${params.toString()}`);
+  },
+  /** "summaries" events with the given and all active matches. */
+  summaryStreamUrl: (ids: number[]) => `/matches/summary/stream?ids=${ids.join(",")}`,
   /** One stream with match, mapstats, playerstats, vetodata and vetosidedata events. */
   liveStreamUrl: (id: number | string) => `/matches/${id}/live/stream`,
   // Admin actions (RCON).
