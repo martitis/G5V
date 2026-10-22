@@ -131,6 +131,14 @@ export const matches = {
     (await get<{ response: BackupEntry[] }>(`/matches/${id}/backup`)).response ?? [],
   /** Rounds, kills (newest 500), bombs and pause state. */
   timeline: (id: number | string) => get<MatchTimeline>(`/matches/${id}/timeline`),
+  /** Admin match control (MatchZy command over RCON); `response` is the server's reply. */
+  control: (id: number, body: Body) =>
+    post<MessageResponse & { response?: string }>(`/matches/${id}/control`, wrap(body)),
+  /** RCON reachability and MatchZy's get5_status. */
+  serverStatus: (id: number) =>
+    get<{ reachable: boolean; status: Record<string, unknown> | null }>(
+      `/matches/${id}/server/status`
+    ),
   /** Re-sends the API's event/backup/demo URLs to the server (after the API's address changed). */
   updateCallbacks: (id: number) =>
     post<MessageResponse & { response?: string }>(`/matches/${id}/callbacks`),

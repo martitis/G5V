@@ -43,6 +43,8 @@
         {{ pauseText }}
       </v-alert>
 
+      <MatchControlPanel v-if="adminTools" :match="match" class="mb-4" />
+
       <VetoList v-if="vetoList.length" :vetoes="vetoList" :sides="vetoSides" class="mb-4" />
 
       <MapScoreboard
@@ -83,6 +85,7 @@ import type {
 } from "@/api/types";
 import MapScoreboard from "@/components/match/MapScoreboard.vue";
 import MatchAdminMenu from "@/components/match/MatchAdminMenu.vue";
+import MatchControlPanel from "@/components/match/MatchControlPanel.vue";
 import MatchHeader from "@/components/match/MatchHeader.vue";
 import MatchStreams from "@/components/match/MatchStreams.vue";
 import VetoList from "@/components/match/VetoList.vue";

@@ -194,10 +194,13 @@
           <v-text-field
             v-model="rconCommand"
             :label="$t('MatchAdmin.RCONCommand')"
-            :hint="$t('MatchAdmin.RCONHint')"
+            :hint="`${$t('MatchAdmin.RCONHint')} ${$t('Control.HistoryHint')}`"
+            persistent-hint
             placeholder="status"
             autofocus
             @keyup.enter="sendRcon"
+            @keydown.up.prevent="browseHistory(1)"
+            @keydown.down.prevent="browseHistory(-1)"
           />
           <pre v-if="rconOutput" class="console mt-2">{{ rconOutput }}</pre>
         </v-card-text>
@@ -416,10 +419,39 @@ async function changeServer() {
   });
 }
 
+/** Commands sent before (newest first), kept in this browser. */
+const HISTORY_KEY = "rconHistory";
+const readHistory = (): string[] => {
+  try {
+    const stored: unknown = JSON.parse(localStorage.getItem(HISTORY_KEY) ?? "[]");
+    return Array.isArray(stored)
+      ? stored.filter((entry): entry is string => typeof entry === "string")
+      : [];
+  } catch {
+    return [];
+  }
+};
+let historyIndex = -1;
+function browseHistory(step: 1 | -1) {
+  const history = readHistory();
+  historyIndex = Math.max(-1, Math.min(history.length - 1, historyIndex + step));
+  rconCommand.value = historyIndex === -1 ? "" : history[historyIndex];
+}
+function remember(command: string) {
+  const history = [command, ...readHistory().filter((entry) => entry !== command)].slice(0, 30);
+  try {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  } catch {
+    // Private mode: no history.
+  }
+  historyIndex = -1;
+}
+
 async function sendRcon() {
   if (!rconCommand.value) return;
   busy.value = true;
   try {
+    remember(rconCommand.value);
     const result = await matches.rcon(props.match.id, rconCommand.value);
     rconOutput.value = result.response || result.message;
   } catch (error) {
