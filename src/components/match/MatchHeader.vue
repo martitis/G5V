@@ -3,9 +3,7 @@
     <v-card-text>
       <div class="d-flex align-center flex-wrap ga-2 mb-4">
         <v-chip :color="status.color" size="small" variant="tonal" label>{{ status.label }}</v-chip>
-        <span v-if="match.title" class="text-body-medium text-medium-emphasis">{{
-          match.title
-        }}</span>
+        <span v-if="title" class="text-body-medium text-medium-emphasis">{{ title }}</span>
         <router-link
           v-if="match.season_id"
           :to="`/season/${match.season_id}`"
@@ -99,7 +97,7 @@ import type { Match, Server, Team } from "@/api/types";
 import TeamSide from "@/components/match/TeamSide.vue";
 import { useUiStore } from "@/stores/ui";
 import { copyText } from "@/utils/clipboard";
-import { formatDateTime, isFinished } from "@/utils/format";
+import { formatDateTime, isFinished, matchTitle } from "@/utils/format";
 import { matchStatus } from "@/utils/matchStatus";
 
 const props = defineProps<{
@@ -115,6 +113,7 @@ const { t } = useI18n();
 const ui = useUiStore();
 
 const status = computed(() => matchStatus(props.match, t));
+const title = computed(() => matchTitle(props.match.title));
 const winnerSide = computed(() =>
   props.match.winner == null
     ? 0

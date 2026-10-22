@@ -201,5 +201,10 @@ export function seasonStatus(season: {
   return "active";
 }
 
+/** A match title worth showing: Get5's default template ("Map {MAPNUMBER} of {MAXMAPS}") is not one. */
+export function matchTitle(title: string | null | undefined): string {
+  return title && !/\{[A-Z_]+\}/.test(title) ? title : "";
+}
+
 /** Valid SteamID64 (individual account). */
 export const isSteamId64 = (value: string) => /^7656\d{13}$/.test(value.trim());
