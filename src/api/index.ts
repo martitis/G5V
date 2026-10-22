@@ -4,6 +4,7 @@
  */
 import { del, get, orEmpty, post, put, type MessageResponse } from "./http";
 import type {
+  SearchResults,
   OpenPugQueue,
   PugPlayer,
   PugQueue,
@@ -247,7 +248,13 @@ export const leaderboard = {
 /** Super admins only. */
 export const admin = {
   users: async () => (await get<{ users: AdminUser[] }>("/admin/users")).users,
-  audit: (query: { action?: string; user_id?: number; limit?: number; offset?: number }) => {
+  audit: (query: {
+    action?: string;
+    q?: string;
+    user_id?: number;
+    limit?: number;
+    offset?: number;
+  }) => {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(query)) {
       if (value !== undefined && value !== "") params.set(key, String(value));
@@ -282,3 +289,6 @@ export const pugs = {
   retry: (id: number) => post<MessageResponse>(`/pugs/${id}/retry`),
   cancel: (id: number) => post<MessageResponse>(`/pugs/${id}/cancel`)
 };
+
+/** Teams, players, matches and tournaments whose name contains q (2+ characters). */
+export const search = (q: string) => get<SearchResults>(`/search?q=${encodeURIComponent(q)}`);

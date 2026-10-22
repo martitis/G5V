@@ -4,6 +4,15 @@
       <span>{{ $t("Admin.TabAudit") }}</span>
       <v-chip size="small" variant="tonal">{{ total }}</v-chip>
       <v-spacer />
+      <v-text-field
+        v-model="text"
+        :label="$t('misc.Search')"
+        prepend-inner-icon="mdi-magnify"
+        density="compact"
+        hide-details
+        clearable
+        style="max-width: 240px"
+      />
       <v-select
         v-model="action"
         :items="actionItems"
@@ -78,6 +87,8 @@ const loading = ref(false);
 const page = ref(1);
 const perPage = ref(25);
 const action = ref("");
+/** Text in the action, detail or user name (searched by the API). */
+const text = ref<string | null>("");
 
 const headers = computed(() => [
   { title: t("Admin.Time"), key: "time", sortable: false },
@@ -113,6 +124,7 @@ async function load() {
   try {
     const result = await admin.audit({
       action: action.value || undefined,
+      q: text.value?.trim() || undefined,
       limit: perPage.value,
       offset: (page.value - 1) * perPage.value
     });
@@ -125,6 +137,16 @@ async function load() {
     if (id === requestId) loading.value = false;
   }
 }
+
+// Typing waits for a pause before asking the API.
+let textTimer: ReturnType<typeof setTimeout> | null = null;
+watch(text, () => {
+  if (textTimer) clearTimeout(textTimer);
+  textTimer = setTimeout(() => {
+    if (page.value === 1) void load();
+    else page.value = 1;
+  }, 300);
+});
 
 watch(action, () => {
   if (page.value === 1) void load();

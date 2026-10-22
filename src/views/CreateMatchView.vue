@@ -268,7 +268,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import {
   maps,
@@ -309,7 +309,8 @@ const form = reactive({
   veto_first: "team1"
 });
 /** Existing teams, or a PUG queue that forms the teams when it fills. */
-const mode = ref<"teams" | "pug">("teams");
+// "Open a queue" on the PUG page links here with ?mode=pug.
+const mode = ref<"teams" | "pug">(useRoute().query.mode === "pug" ? "pug" : "teams");
 const pug = reactive({
   formation: "balanced" as "balanced" | "random" | "captains",
   ready_seconds: 60 as number | null,

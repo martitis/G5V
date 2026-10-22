@@ -1,9 +1,24 @@
 <template>
   <v-card>
-    <v-card-title>{{ $t("Leaderboard.TTitle") }}</v-card-title>
+    <v-card-title class="d-flex align-center flex-wrap ga-2">
+      <span>{{ $t("Leaderboard.TTitle") }}</span>
+      <template v-if="searchable">
+        <v-spacer />
+        <v-text-field
+          v-model="search"
+          :label="$t('misc.Search')"
+          prepend-inner-icon="mdi-magnify"
+          density="compact"
+          hide-details
+          clearable
+          style="max-width: 280px"
+        />
+      </template>
+    </v-card-title>
     <v-data-table
       :headers="headers"
       :items="teams"
+      :search="search ?? ''"
       :loading="loading"
       :loading-text="$t('misc.LoadText')"
       :no-data-text="$t('misc.NoData')"
@@ -33,7 +48,9 @@ import { leaderboard } from "@/api";
 import type { TeamStanding } from "@/api/types";
 import { useUiStore } from "@/stores/ui";
 
-const props = defineProps<{ seasonId?: number }>();
+/** searchable: show a search field (the leaderboard page; Home leaves it off). */
+const props = defineProps<{ seasonId?: number; searchable?: boolean }>();
+const search = ref("");
 const { t } = useI18n();
 const ui = useUiStore();
 

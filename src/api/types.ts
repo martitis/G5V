@@ -482,3 +482,24 @@ export interface OpenPugQueue {
   joined: number;
   size: number;
 }
+
+/** GET /search */
+export interface SearchResults {
+  teams: { id: number; name: string; tag: string | null; logo: string | null }[];
+  players: {
+    user_id: number | null;
+    steam_id: string;
+    name: string | null;
+    image: string | null;
+  }[];
+  matches: {
+    id: number;
+    team1_string: string;
+    team2_string: string;
+    title: string | null;
+    start_time: string | null;
+    end_time: string | null;
+    cancelled: number | null;
+  }[];
+  tournaments: { id: number; name: string; format: string; status: string }[];
+}

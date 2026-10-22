@@ -4,12 +4,22 @@
     <MatchList
       ref="list"
       :key="mine ? 'mine' : 'all'"
-      :title="mine ? $t('Navbar.MyMatches') : $t('Navbar.AllMatches')"
+      :title="$t('Navbar.Matches')"
       :fixed="mine ? { mine: true } : {}"
       :initial-status="mine ? 'all' : 'default'"
+      hide-mine-toggle
       @loaded="onLoaded"
     >
       <template #actions>
+        <v-switch
+          v-if="auth.loggedIn"
+          v-model="mine"
+          :label="$t('misc.OnlyMine')"
+          color="primary"
+          density="compact"
+          hide-details
+          class="mr-2"
+        />
         <v-btn v-if="auth.isAdmin" color="primary" prepend-icon="mdi-plus" to="/match/create">
           {{ $t("CreateMatch.Title") }}
         </v-btn>
@@ -29,19 +39,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { useRoute } from "vue-router";
+import { ref } from "vue";
 import { matches } from "@/api";
 import type { MatchSummary } from "@/api/types";
 import MatchList from "@/components/matchlist/MatchList.vue";
 import OpenQueues from "@/components/pug/OpenQueues.vue";
+import { useOnlyMine } from "@/composables/useOnlyMine";
 import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
 
-const route = useRoute();
 const auth = useAuthStore();
 const ui = useUiStore();
-const mine = computed(() => Boolean(route.meta.mine));
+const mine = useOnlyMine("matches");
 
 const list = ref<InstanceType<typeof MatchList> | null>(null);
 const hasCancelled = ref(false);

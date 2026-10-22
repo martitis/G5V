@@ -1,10 +1,15 @@
 <template>
-  <v-card v-if="queues.length" class="mb-4">
+  <v-card v-if="queues.length || showEmpty" class="mb-4">
     <v-card-title class="d-flex align-center ga-2">
       <v-icon color="primary">mdi-account-group</v-icon>
       <span>{{ $t("Pug.OpenQueues") }}</span>
+      <v-spacer />
+      <slot name="actions" />
     </v-card-title>
-    <v-card-text class="d-flex flex-wrap ga-3">
+    <v-card-text v-if="!queues.length" class="text-medium-emphasis">{{
+      $t("Pug.NoQueues")
+    }}</v-card-text>
+    <v-card-text v-else class="d-flex flex-wrap ga-3">
       <v-card
         v-for="queue in queues"
         :key="queue.id"
@@ -31,7 +36,8 @@ import { onBeforeUnmount, onMounted, ref } from "vue";
 import { pugs } from "@/api";
 import type { OpenPugQueue } from "@/api/types";
 
-/** "Open queue 7/10" cards above the match list; refreshed every 10 s. Hidden when there is none. */
+/** "Open queue 7/10" cards; refreshed every 10 s. Hidden when there is none, unless showEmpty (the PUG page). */
+defineProps<{ showEmpty?: boolean }>();
 const queues = ref<OpenPugQueue[]>([]);
 
 async function load() {

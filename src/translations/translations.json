@@ -16,7 +16,17 @@
       "PlayerLeader": "Player Leaderboard",
       "Home": "Home",
       "Admin": "Admin",
-      "Tournaments": "Tournaments"
+      "Tournaments": "Tournaments",
+      "SectionPlay": "Play",
+      "SectionManage": "Manage",
+      "SectionStats": "Stats",
+      "Matches": "Matches",
+      "Teams": "Teams",
+      "Servers": "Servers",
+      "Seasons": "Seasons",
+      "Pugs": "PUG queues",
+      "Leaderboards": "Leaderboards",
+      "Stats": "Panel stats"
     },
     "Login": {
       "SteamIdInvalid": "Enter a valid SteamID64 (17 digits, starting with 7656) to register.",
@@ -478,7 +488,9 @@
       "TName": "Team Name",
       "TWin": "Wins",
       "TLosses": "Losses",
-      "TDiff": "Round Difference"
+      "TDiff": "Round Difference",
+      "Players": "Players",
+      "Teams": "Teams"
     },
     "misc": {
       "Add": "Add",
@@ -511,7 +523,8 @@
       "PLeader": "Player Leaderboard",
       "TWins": "Total Wins",
       "LessThan": "Date two must be greater than or equal to date one.",
-      "Import": "Import"
+      "Import": "Import",
+      "OnlyMine": "Only mine"
     },
     "Footer": {
       "company": "Phlex Plexico",
@@ -646,7 +659,18 @@
       "Available": "Available players",
       "Rating": "Rating",
       "SteamRequired": "Sign in with Steam to join.",
-      "Waiting": "Waiting for players…"
+      "Waiting": "Waiting for players…",
+      "NoQueues": "No open queues right now.",
+      "OpenNew": "Open a queue"
+    },
+    "Search": {
+      "Placeholder": "Search teams, players, matches…",
+      "Teams": "Teams",
+      "Players": "Players",
+      "Matches": "Matches",
+      "Tournaments": "Tournaments",
+      "NoResults": "Nothing found.",
+      "TypeMore": "Type at least 2 characters."
     }
   },
   "fr": {
@@ -666,7 +690,17 @@
       "PlayerLeader": "Classement des joueurs",
       "Home": "Accueil",
       "Admin": "Administration",
-      "Tournaments": "Tournois"
+      "Tournaments": "Tournois",
+      "SectionPlay": "Jouer",
+      "SectionManage": "Gérer",
+      "SectionStats": "Statistiques",
+      "Matches": "Matchs",
+      "Teams": "Équipes",
+      "Servers": "Serveurs",
+      "Seasons": "Saisons",
+      "Pugs": "Files PUG",
+      "Leaderboards": "Classements",
+      "Stats": "Statistiques du panneau"
     },
     "Login": {
       "SteamIdInvalid": "Entrez un SteamID64 valide (17 chiffres, commençant par 7656) pour vous inscrire.",
@@ -1129,7 +1163,9 @@
       "TName": "Nom de l'équipe",
       "TWin": "Victoires",
       "TLosses": "Défaites",
-      "TDiff": "Round Difference"
+      "TDiff": "Round Difference",
+      "Players": "Joueurs",
+      "Teams": "Équipes"
     },
     "misc": {
       "Add": "Ajouter",
@@ -1162,7 +1198,8 @@
       "PLeader": "Classement des joueurs",
       "TWins": "Total de victoires",
       "LessThan": "La date 2 doit être supérieur ou égale à la date 1.",
-      "Import": "Importer"
+      "Import": "Importer",
+      "OnlyMine": "Seulement les miens"
     },
     "Footer": {
       "company": "Phlex Plexico",
@@ -1297,7 +1334,18 @@
       "Available": "Joueurs disponibles",
       "Rating": "Note",
       "SteamRequired": "Connectez-vous avec Steam pour rejoindre.",
-      "Waiting": "En attente de joueurs…"
+      "Waiting": "En attente de joueurs…",
+      "NoQueues": "Aucune file ouverte pour le moment.",
+      "OpenNew": "Ouvrir une file"
+    },
+    "Search": {
+      "Placeholder": "Rechercher équipes, joueurs, matchs…",
+      "Teams": "Équipes",
+      "Players": "Joueurs",
+      "Matches": "Matchs",
+      "Tournaments": "Tournois",
+      "NoResults": "Aucun résultat.",
+      "TypeMore": "Saisissez au moins 2 caractères."
     }
   },
   "ja": {
@@ -1317,7 +1365,17 @@
       "PlayerLeader": "プレイヤーリーダーボード",
       "Home": "ホーム",
       "Admin": "管理",
-      "Tournaments": "トーナメント"
+      "Tournaments": "トーナメント",
+      "SectionPlay": "プレイ",
+      "SectionManage": "管理",
+      "SectionStats": "統計",
+      "Matches": "試合",
+      "Teams": "チーム",
+      "Servers": "サーバー",
+      "Seasons": "シーズン",
+      "Pugs": "PUGキュー",
+      "Leaderboards": "ランキング",
+      "Stats": "パネル統計"
     },
     "Login": {
       "SteamIdInvalid": "登録するには有効なSteamID64（7656で始まる17桁）を入力してください。",
@@ -1781,7 +1839,9 @@
       "TName": "チーム名",
       "TWin": "勝利",
       "TLosses": "損失額",
-      "TDiff": "丸差"
+      "TDiff": "丸差",
+      "Players": "プレイヤー",
+      "Teams": "チーム"
     },
     "misc": {
       "Add": "追加",
@@ -1814,7 +1874,8 @@
       "PLeader": "プレイヤーリーダーボード",
       "TWins": "合計勝利数",
       "LessThan": "日付2は日付1以上でなければなりません。",
-      "Import": "輸入"
+      "Import": "輸入",
+      "OnlyMine": "自分のもののみ"
     },
     "Footer": {
       "company": "Phlex Plexico",
@@ -1949,7 +2010,18 @@
       "Available": "選択可能なプレイヤー",
       "Rating": "レーティング",
       "SteamRequired": "参加するにはSteamでログインしてください。",
-      "Waiting": "プレイヤーを待っています…"
+      "Waiting": "プレイヤーを待っています…",
+      "NoQueues": "現在参加受付中のキューはありません。",
+      "OpenNew": "キューを開く"
+    },
+    "Search": {
+      "Placeholder": "チーム・プレイヤー・試合を検索…",
+      "Teams": "チーム",
+      "Players": "プレイヤー",
+      "Matches": "試合",
+      "Tournaments": "トーナメント",
+      "NoResults": "見つかりませんでした。",
+      "TypeMore": "2文字以上入力してください。"
     }
   }
 }

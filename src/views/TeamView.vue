@@ -211,7 +211,7 @@ async function deleteTeam() {
     await teams.remove({ team_id: team.value.id });
     ui.notify(t("Team.MessageDeleteSuccess"), "success");
     confirmTeamDelete.value = false;
-    await router.push("/myteams");
+    await router.push({ path: "/teams", query: { mine: "1" } });
   } catch (error) {
     ui.notifyError(error);
   } finally {

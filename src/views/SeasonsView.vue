@@ -14,6 +14,13 @@
           style="max-width: 280px"
         />
         <template v-if="auth.loggedIn">
+          <v-switch
+            v-model="mine"
+            :label="$t('misc.OnlyMine')"
+            color="primary"
+            density="compact"
+            hide-details
+          />
           <v-btn
             color="secondary"
             variant="tonal"
@@ -126,11 +133,11 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from "vue";
-import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { seasons as seasonsApi } from "@/api";
 import type { Season } from "@/api/types";
 import SeasonDialog from "@/components/SeasonDialog.vue";
+import { useOnlyMine } from "@/composables/useOnlyMine";
 import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
 import { formatDate, seasonStatus, type SeasonStatus } from "@/utils/format";
@@ -141,7 +148,7 @@ const STATUS_COLORS: Record<SeasonStatus, string> = {
   ended: "grey"
 };
 
-const route = useRoute();
+const mine = useOnlyMine("seasons");
 const { t } = useI18n();
 const auth = useAuthStore();
 const ui = useUiStore();
@@ -182,7 +189,7 @@ async function load() {
   loading.value = true;
   try {
     await auth.load();
-    seasons.value = route.meta.mine ? await seasonsApi.mine() : await seasonsApi.all();
+    seasons.value = mine.value && auth.loggedIn ? await seasonsApi.mine() : await seasonsApi.all();
   } catch (error) {
     ui.notifyError(error);
   } finally {
@@ -226,6 +233,6 @@ async function importSeason() {
   }
 }
 
-watch(() => route.meta.mine, load);
+watch(mine, load);
 onMounted(load);
 </script>

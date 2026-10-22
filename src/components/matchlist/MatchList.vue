@@ -37,7 +37,7 @@
         style="max-width: 260px"
       />
       <v-switch
-        v-if="auth.loggedIn && !fixed.mine"
+        v-if="auth.loggedIn && !fixed.mine && !hideMineToggle"
         v-model="onlyMine"
         :label="$t('Matches.OnlyMine')"
         color="primary"
@@ -96,6 +96,8 @@ const props = withDefaults(
     initialStatus?: StatusFilter;
     /** Keep the listed matches updated over SSE. */
     live?: boolean;
+    /** The page has its own "Only mine" switch (Matches). */
+    hideMineToggle?: boolean;
   }>(),
   {
     title: undefined,
@@ -104,7 +106,8 @@ const props = withDefaults(
     pageSize: 20,
     compact: false,
     initialStatus: "default",
-    live: true
+    live: true,
+    hideMineToggle: false
   }
 );
 const emit = defineEmits<{ loaded: [matches: MatchSummary[]] }>();

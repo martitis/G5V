@@ -4,15 +4,23 @@
       <v-card-title class="d-flex align-center flex-wrap ga-2">
         <span>{{ $t("MyServers.Title") }}</span>
         <v-spacer />
+        <v-text-field
+          v-model="search"
+          :label="$t('misc.Search')"
+          prepend-inner-icon="mdi-magnify"
+          density="compact"
+          hide-details
+          clearable
+          style="max-width: 280px"
+        />
         <template v-if="auth.loggedIn">
-          <v-btn
-            v-if="route.meta.mine"
-            color="secondary"
-            variant="tonal"
-            @click="showAll = !showAll"
-          >
-            {{ showAll ? $t("MyServers.ShowMyServers") : $t("MyServers.ShowPublicServers") }}
-          </v-btn>
+          <v-switch
+            v-model="mine"
+            :label="$t('misc.OnlyMine')"
+            color="primary"
+            density="compact"
+            hide-details
+          />
           <v-btn color="primary" prepend-icon="mdi-server-plus" @click="openDialog(null)">
             {{ $t("MyServers.New") }}
           </v-btn>
@@ -21,6 +29,7 @@
       <v-data-table
         :headers="headers"
         :items="servers"
+        :search="search"
         :loading="loading"
         :loading-text="$t('misc.LoadText')"
         :no-data-text="$t('MyServers.NoServersFound')"
@@ -111,23 +120,23 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from "vue";
-import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { servers as serversApi } from "@/api";
 import type { Server } from "@/api/types";
 import ServerDialog from "@/components/ServerDialog.vue";
+import { useOnlyMine } from "@/composables/useOnlyMine";
 import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
 import { flagUrl } from "@/utils/format";
 
-const route = useRoute();
 const { t } = useI18n();
 const auth = useAuthStore();
 const ui = useUiStore();
 
 const servers = ref<Server[]>([]);
 const loading = ref(true);
-const showAll = ref(false);
+const mine = useOnlyMine("servers");
+const search = ref("");
 const dialog = ref(false);
 const editing = ref<Server | null>(null);
 const toDelete = ref<Server | null>(null);
@@ -152,8 +161,7 @@ async function load() {
   loading.value = true;
   try {
     await auth.load();
-    servers.value =
-      route.meta.mine && !showAll.value ? await serversApi.mine() : await serversApi.all();
+    servers.value = mine.value && auth.loggedIn ? await serversApi.mine() : await serversApi.all();
   } catch (error) {
     ui.notifyError(error);
   } finally {
@@ -207,6 +215,6 @@ async function confirmDelete() {
   }
 }
 
-watch(showAll, load);
+watch(mine, load);
 onMounted(load);
 </script>

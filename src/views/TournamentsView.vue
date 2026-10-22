@@ -4,6 +4,15 @@
       <v-card-title class="d-flex align-center flex-wrap ga-2">
         <span>{{ $t("Tournament.Title") }}</span>
         <v-spacer />
+        <v-text-field
+          v-model="search"
+          :label="$t('misc.Search')"
+          prepend-inner-icon="mdi-magnify"
+          density="compact"
+          hide-details
+          clearable
+          style="max-width: 280px"
+        />
         <v-btn
           v-if="auth.isAdmin"
           color="primary"
@@ -16,6 +25,7 @@
       <v-data-table
         :headers="headers"
         :items="list"
+        :search="search ?? ''"
         :loading="loading"
         :loading-text="$t('misc.LoadText')"
         :no-data-text="$t('Tournament.None')"
@@ -66,6 +76,7 @@ const ui = useUiStore();
 const list = ref<TournamentSummary[]>([]);
 const loading = ref(true);
 const dialog = ref(false);
+const search = ref("");
 
 const headers = computed(() => [
   { title: t("Tournament.Name"), key: "name" },

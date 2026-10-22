@@ -2,8 +2,16 @@
   <v-container fluid>
     <v-card>
       <v-card-title class="d-flex align-center flex-wrap ga-2">
-        <span>{{ mine ? $t("Navbar.MyTeams") : $t("Teams.Title") }}</span>
+        <span>{{ $t("Teams.Title") }}</span>
         <v-spacer />
+        <v-switch
+          v-if="auth.loggedIn"
+          v-model="mine"
+          :label="$t('misc.OnlyMine')"
+          color="primary"
+          density="compact"
+          hide-details
+        />
         <v-text-field
           v-model="search"
           :label="$t('misc.Search')"
@@ -106,12 +114,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { teams as teamsApi } from "@/api";
 import type { Team } from "@/api/types";
 import TeamEditorDialog from "@/components/team/TeamEditorDialog.vue";
+import { useOnlyMine } from "@/composables/useOnlyMine";
 import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
 import { flagUrl } from "@/utils/format";
@@ -120,7 +129,7 @@ const route = useRoute();
 const { t } = useI18n();
 const auth = useAuthStore();
 const ui = useUiStore();
-const mine = computed(() => Boolean(route.meta.mine));
+const mine = useOnlyMine("teams");
 
 const teams = ref<Team[]>([]);
 const loading = ref(true);
@@ -150,7 +159,7 @@ async function load() {
   loading.value = true;
   try {
     await auth.load();
-    teams.value = mine.value ? await teamsApi.mine() : await teamsApi.all();
+    teams.value = mine.value && auth.loggedIn ? await teamsApi.mine() : await teamsApi.all();
   } catch (error) {
     ui.notifyError(error);
   } finally {
@@ -188,11 +197,13 @@ async function onSaved() {
   await load();
 }
 
+watch(mine, load);
+
 onMounted(async () => {
   await load();
   // /teams/create redirects here with ?create=1.
   if (route.query.create && auth.loggedIn) {
-    void router.replace({ query: {} });
+    void router.replace({ query: { ...route.query, create: undefined } });
     void openEditor(null);
   }
 });

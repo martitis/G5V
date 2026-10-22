@@ -19,12 +19,8 @@ declare module "vue-router" {
 const routes: RouteRecordRaw[] = [
   { path: "/", name: "Home", component: () => import("@/views/HomeView.vue") },
   { path: "/matches", name: "Matches", component: () => import("@/views/MatchesView.vue") },
-  {
-    path: "/mymatches",
-    name: "MyMatches",
-    component: () => import("@/views/MatchesView.vue"),
-    meta: { requiresAuth: true, mine: true }
-  },
+  // The old "My …" pages are the lists with "Only mine" on.
+  { path: "/mymatches", redirect: { path: "/matches", query: { mine: "1" } } },
   {
     path: "/match/create",
     name: "CreateMatch",
@@ -33,29 +29,14 @@ const routes: RouteRecordRaw[] = [
   },
   { path: "/match/:id(\\d+)", name: "Match", component: () => import("@/views/MatchView.vue") },
   { path: "/teams", name: "Teams", component: () => import("@/views/TeamsView.vue") },
-  {
-    path: "/myteams",
-    name: "MyTeams",
-    component: () => import("@/views/TeamsView.vue"),
-    meta: { requiresAuth: true, mine: true }
-  },
+  { path: "/myteams", redirect: { path: "/teams", query: { mine: "1" } } },
   // Teams are created in a dialog on the teams list now; keep the old URL working.
   { path: "/teams/create", redirect: { path: "/teams", query: { create: "1" } } },
   { path: "/teams/:id(\\d+)", name: "Team", component: () => import("@/views/TeamView.vue") },
   { path: "/servers", name: "Servers", component: () => import("@/views/ServersView.vue") },
-  {
-    path: "/myservers",
-    name: "MyServers",
-    component: () => import("@/views/ServersView.vue"),
-    meta: { requiresAuth: true, mine: true }
-  },
+  { path: "/myservers", redirect: { path: "/servers", query: { mine: "1" } } },
   { path: "/seasons", name: "Seasons", component: () => import("@/views/SeasonsView.vue") },
-  {
-    path: "/myseasons",
-    name: "MySeasons",
-    component: () => import("@/views/SeasonsView.vue"),
-    meta: { requiresAuth: true, mine: true }
-  },
+  { path: "/myseasons", redirect: { path: "/seasons", query: { mine: "1" } } },
   { path: "/season/:id(\\d+)", name: "Season", component: () => import("@/views/SeasonView.vue") },
   {
     path: "/user",
@@ -64,6 +45,7 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true }
   },
   { path: "/user/:id", name: "User", component: () => import("@/views/UserView.vue") },
+  { path: "/pugs", name: "Pugs", component: () => import("@/views/PugsView.vue") },
   { path: "/pug/:id(\\d+)", name: "Pug", component: () => import("@/views/PugView.vue") },
   {
     path: "/tournaments",

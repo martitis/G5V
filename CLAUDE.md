@@ -35,7 +35,10 @@ build works anywhere;
   `load()` asks `/isloggedin` once), `src/stores/ui.ts` (`notify`, `notifyError` snackbar).
 - `src/composables/useEventSource.ts`: SSE that closes on unmount. Call it in `setup`, never after an `await`;
   mount a component only while the stream is needed (see `components/match/MatchStreams.vue`).
-- `src/router.ts`: same URLs as the old panel; `meta.requiresAuth`, `meta.mine` ("My …" pages).
+- `src/router.ts`: `meta.requiresAuth` / `requiresAdmin` / `requiresSuperAdmin`. The old "My …" URLs redirect to the
+  lists with `?mine=1`; lists use `composables/useOnlyMine.ts` ("Only mine" toggle, remembered per browser).
+- Sidebar (`AppNavbar.vue`): one entry per area, grouped Play / Manage / Stats; create/add actions live on the
+  lists, not in the sidebar. `GlobalSearch.vue` in the app bar uses `GET /search`.
 - `src/views/`: one page per route. `src/components/match/`: match page parts (header, scoreboards, vetoes, admin
   menu, live stream). Shared: `MatchesTable`, `TeamLogo` (png → svg fallback), `CvarEditor`, `ServerDialog`,
   `SeasonDialog`, `TeamInfoForm`, `UserMapList`.
