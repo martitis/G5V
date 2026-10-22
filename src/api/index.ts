@@ -168,6 +168,9 @@ export const servers = {
   /** The RCON password (owner or super admin only). */
   rconPassword: async (id: number) =>
     (await get<{ rcon_password: string }>(`/servers/${id}/rcon`)).rcon_password,
+  /** Starts or stops MatchZy practice mode (css_prac / css_exitprac) on a free server. */
+  practice: (id: number, action: "start" | "stop") =>
+    post<MessageResponse>(`/servers/${id}/practice`, wrap({ action })),
   create: (body: Body) => post<MessageResponse>("/servers", wrap(body)),
   update: (body: Body) => put<MessageResponse>("/servers", wrap(body)),
   remove: (server_id: number) => del<MessageResponse>("/servers", wrap({ server_id }))

@@ -112,6 +112,8 @@ export interface Server {
   gotv_port?: number | null;
   public_server: number | boolean;
   in_use?: number | boolean;
+  /** In use by MatchZy practice mode, not a match. */
+  practice_mode?: number | boolean;
   flag?: string;
   [key: string]: unknown;
 }

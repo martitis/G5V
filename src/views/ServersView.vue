@@ -50,7 +50,16 @@
           <span v-if="item.ip_string">{{ item.ip_string }}:{{ item.port }}</span>
         </template>
         <template #[`item.in_use`]="{ item }">
-          <v-chip :color="item.in_use ? 'warning' : 'success'" size="small" variant="tonal" label>
+          <v-chip v-if="item.practice_mode" color="info" size="small" variant="tonal" label>
+            {{ $t("MyServers.Practice") }}
+          </v-chip>
+          <v-chip
+            v-else
+            :color="item.in_use ? 'warning' : 'success'"
+            size="small"
+            variant="tonal"
+            label
+          >
             {{ item.in_use ? $t("MyServers.InUse") : $t("MyServers.Free") }}
           </v-chip>
         </template>
@@ -82,6 +91,19 @@
               @click="checkStatus(item.id)"
             >
               {{ $t("MyServers.Status") }}
+            </v-btn>
+            <v-btn
+              v-if="canPractice(item) && (item.practice_mode || !item.in_use)"
+              size="small"
+              variant="tonal"
+              :color="item.practice_mode ? 'info' : undefined"
+              :loading="practicing[item.id]"
+              :prepend-icon="item.practice_mode ? 'mdi-stop' : 'mdi-target'"
+              @click="togglePractice(item)"
+            >
+              {{
+                item.practice_mode ? $t("MyServers.PracticeStop") : $t("MyServers.PracticeStart")
+              }}
             </v-btn>
             <template v-if="auth.canEdit(item.user_id)">
               <v-btn icon="mdi-pencil" size="small" variant="text" @click="openDialog(item)" />
@@ -145,6 +167,11 @@ const deleting = ref(false);
 const rcon = reactive<Record<number, string>>({});
 const checking = reactive<Record<number, boolean>>({});
 const statusColor = reactive<Record<number, string>>({});
+const practicing = reactive<Record<number, boolean>>({});
+
+/** Same rule as the API: owner, super admin, or an admin on a public server. */
+const canPractice = (server: Server) =>
+  auth.canEdit(server.user_id) || (Boolean(server.public_server) && auth.isAdmin);
 
 const headers = computed(() => [
   { title: t("MyServers.ID"), key: "id" },
@@ -197,6 +224,19 @@ async function checkStatus(id: number) {
     ui.notifyError(error);
   } finally {
     checking[id] = false;
+  }
+}
+
+async function togglePractice(server: Server) {
+  practicing[server.id] = true;
+  try {
+    const result = await serversApi.practice(server.id, server.practice_mode ? "stop" : "start");
+    ui.notify(result.message, "success");
+    await load();
+  } catch (error) {
+    ui.notifyError(error);
+  } finally {
+    practicing[server.id] = false;
   }
 }
 

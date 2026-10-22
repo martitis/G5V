@@ -329,6 +329,9 @@
     "MyServers": {
       "NoServersFound": "No servers found.",
       "InUse": "In Use",
+      "Practice": "Practice",
+      "PracticeStart": "Practice",
+      "PracticeStop": "End practice",
       "Free": "Free",
       "MessageDeleteSuccess": "Successfully deleted server.",
       "Title": "Servers",
@@ -1072,6 +1075,9 @@
     "MyServers": {
       "NoServersFound": "Pas de serveurs trouvés.",
       "InUse": "Utilisé",
+      "Practice": "Entraînement",
+      "PracticeStart": "Entraînement",
+      "PracticeStop": "Fin de l'entraînement",
       "Free": "Libre",
       "MessageDeleteSuccess": "Serveur supprimé avec succés.",
       "Title": "Serveurs",
@@ -1816,6 +1822,9 @@
     "MyServers": {
       "NoServersFound": "サーバーが見つかりません。",
       "InUse": "使用中",
+      "Practice": "練習",
+      "PracticeStart": "練習",
+      "PracticeStop": "練習を終了",
       "Free": "自由",
       "MessageDeleteSuccess": "サーバーの削除に成功しました。",
       "Title": "サーバー",
