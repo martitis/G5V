@@ -10,6 +10,7 @@ import type {
   MapStat,
   Match,
   MatchSummary,
+  MatchTimeline,
   ResolvedMember,
   PlayerStat,
   Season,
@@ -120,6 +121,8 @@ export const matches = {
     put<MessageResponse & { response?: string }>(`/matches/${id}/rcon`, wrap({ rcon_command })),
   backups: async (id: number) =>
     (await get<{ response: BackupEntry[] }>(`/matches/${id}/backup`)).response ?? [],
+  /** Rounds, kills (newest 500), bombs and pause state. */
+  timeline: (id: number | string) => get<MatchTimeline>(`/matches/${id}/timeline`),
   /** Re-sends the API's event/backup/demo URLs to the server (after the API's address changed). */
   updateCallbacks: (id: number) =>
     post<MessageResponse & { response?: string }>(`/matches/${id}/callbacks`),

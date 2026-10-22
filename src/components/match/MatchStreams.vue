@@ -12,7 +12,17 @@
 
 <script setup lang="ts">
 import { matches } from "@/api";
-import type { MapStat, Match, PlayerStat, Veto, VetoSide } from "@/api/types";
+import type {
+  BombEvent,
+  KillEvent,
+  MapStat,
+  Match,
+  MatchRound,
+  PauseState,
+  PlayerStat,
+  Veto,
+  VetoSide
+} from "@/api/types";
 import { useEventSource } from "@/composables/useEventSource";
 
 /**
@@ -26,6 +36,10 @@ const emit = defineEmits<{
   playerstats: [players: PlayerStat[]];
   vetoes: [vetoes: Veto[]];
   vetosides: [sides: VetoSide[]];
+  rounds: [rounds: MatchRound[]];
+  kills: [kills: KillEvent[]];
+  bombs: [bombs: BombEvent[]];
+  pause: [pause: PauseState | null];
 }>();
 
 const list = <T,>(data: unknown) => (Array.isArray(data) ? (data as T[]) : []);
@@ -35,6 +49,10 @@ const { connected } = useEventSource(matches.liveStreamUrl(props.matchId), {
   mapstats: (data) => emit("mapstats", list<MapStat>(data)),
   playerstats: (data) => emit("playerstats", list<PlayerStat>(data)),
   vetodata: (data) => emit("vetoes", list<Veto>(data)),
-  vetosidedata: (data) => emit("vetosides", list<VetoSide>(data))
+  vetosidedata: (data) => emit("vetosides", list<VetoSide>(data)),
+  rounds: (data) => emit("rounds", list<MatchRound>(data)),
+  kills: (data) => emit("kills", list<KillEvent>(data)),
+  bombs: (data) => emit("bombs", list<BombEvent>(data)),
+  pause: (data: PauseState | null) => emit("pause", data)
 });
 </script>

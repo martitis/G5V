@@ -81,6 +81,8 @@ export interface MapStat {
   start_time: string | null;
   end_time: string | null;
   demoFile?: string | null;
+  /** "failed" when MatchZy reported a failed demo upload. */
+  demo_status?: string | null;
   [key: string]: unknown;
 }
 
@@ -264,4 +266,67 @@ export interface ResolvedMember {
   steam_id: string | null;
   name: string | null;
   image: string | null;
+}
+
+/** GET /matches/:id/timeline and the live stream's rounds/kills/bombs/pause events. */
+export interface MatchRound {
+  map_id: number;
+  /** Rounds played after this round (1 for the first round). */
+  round_number: number;
+  /** MatchZy's round_number (0 for the first round); kills and bombs carry this one. */
+  event_round: number | null;
+  winner: "team1" | "team2" | null;
+  winner_side: "ct" | "t" | null;
+  /** CS2 round end reason (1 bomb exploded, 7 defused, 8/9 elimination, 12 time ran out, ...). */
+  reason: number | null;
+  team1_score: number;
+  team2_score: number;
+  round_time: number | null;
+}
+
+export interface KillEvent {
+  id: number;
+  map_id: number;
+  round_number: number;
+  round_time: number;
+  player_steam_id: string;
+  player_name: string;
+  player_side: string;
+  attacker_steam_id: string | null;
+  attacker_name: string | null;
+  attacker_side: string | null;
+  weapon: string;
+  headshot: number | boolean;
+  thru_smoke: number | boolean;
+  attacker_blind: number | boolean;
+  no_scope: number | boolean;
+  suicide: number | boolean;
+  friendly_fire: number | boolean;
+  assister_name: string | null;
+  flash_assist: number | boolean | null;
+  bomb: number | boolean | null;
+}
+
+export interface BombEvent {
+  id: number;
+  map_id: number;
+  round_number: number;
+  round_time: number | null;
+  site: string | null;
+  defused: number | boolean;
+  bomb_time_remaining: number | null;
+  player_name: string | null;
+}
+
+export interface PauseState {
+  paused: number | boolean;
+  pause_type: string | null;
+  team_paused: string | null;
+}
+
+export interface MatchTimeline {
+  rounds: MatchRound[];
+  kills: KillEvent[];
+  bombs: BombEvent[];
+  pause: PauseState | null;
 }

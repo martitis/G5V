@@ -31,11 +31,53 @@
           >
             {{ $t("PlayerStats.Download") }}
           </v-btn>
+          <v-chip
+            v-else-if="mapStat?.demo_status === 'failed'"
+            color="error"
+            size="small"
+            variant="flat"
+            prepend-icon="mdi-alert"
+            label
+          >
+            {{ $t("Match.DemoFailed") }}
+          </v-chip>
+          <v-chip
+            v-else-if="mapStat?.end_time"
+            size="small"
+            variant="outlined"
+            color="white"
+            prepend-icon="mdi-timer-sand"
+            label
+          >
+            {{ $t("Match.DemoPending") }}
+          </v-chip>
         </div>
       </v-img>
     </div>
 
     <v-card-text>
+      <template v-if="rounds.length">
+        <div class="text-title-small mb-2">{{ $t("Match.Rounds") }}</div>
+        <RoundHistory
+          :rounds="rounds"
+          :bombs="bombs"
+          :team1="match.team1_string"
+          :team2="match.team2_string"
+          class="mb-4"
+        />
+      </template>
+      <v-expansion-panels
+        v-if="kills.length"
+        :model-value="live ? [0] : []"
+        variant="accordion"
+        class="mb-4"
+      >
+        <v-expansion-panel :title="$t('Match.KillFeed')">
+          <v-expansion-panel-text>
+            <KillFeed :kills="kills" />
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-expansion-panels>
       <div v-if="!players.length" class="text-medium-emphasis">
         {{ $t("PlayerStats.NoStatFound") }}
       </div>
@@ -93,18 +135,27 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import type { MapStat, Match, PlayerStat } from "@/api/types";
+import type { BombEvent, KillEvent, MapStat, Match, MatchRound, PlayerStat } from "@/api/types";
+import KillFeed from "@/components/match/KillFeed.vue";
+import RoundHistory from "@/components/match/RoundHistory.vue";
 import { apiUrl } from "@/config";
 import { adr, fpr, hsp, kdr, mapDisplayName, mapImageUrl, rating } from "@/utils/format";
 
-const props = defineProps<{
-  match: Match;
-  mapStat: MapStat | null;
-  /** Index of the map in the series (0-based). */
-  mapNumber: number;
-  players: PlayerStat[];
-  live: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    match: Match;
+    mapStat: MapStat | null;
+    /** Index of the map in the series (0-based). */
+    mapNumber: number;
+    players: PlayerStat[];
+    live: boolean;
+    /** This map's rounds, kills (newest first) and bomb events. */
+    rounds?: MatchRound[];
+    kills?: KillEvent[];
+    bombs?: BombEvent[];
+  }>(),
+  { rounds: () => [], kills: () => [], bombs: () => [] }
+);
 
 const { t } = useI18n();
 const n = (value: unknown) => Number(value) || 0;

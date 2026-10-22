@@ -23,10 +23,25 @@
             @playerstats="(list) => (playerStats = list)"
             @vetoes="(list) => (vetoList = list)"
             @vetosides="(list) => (vetoSides = list)"
+            @rounds="(list) => (rounds = list)"
+            @kills="(list) => (kills = list)"
+            @bombs="(list) => (bombs = list)"
+            @pause="(state) => (pause = state)"
           />
           <MatchAdminMenu v-if="adminTools" :match="match" @changed="reload" />
         </template>
       </MatchHeader>
+
+      <v-alert
+        v-if="live && pauseText"
+        type="warning"
+        variant="tonal"
+        prominent
+        icon="mdi-pause-circle"
+        class="mb-4"
+      >
+        {{ pauseText }}
+      </v-alert>
 
       <VetoList v-if="vetoList.length" :vetoes="vetoList" :sides="vetoSides" class="mb-4" />
 
@@ -37,6 +52,9 @@
         :map-stat="map.stat"
         :map-number="map.number"
         :players="map.players"
+        :rounds="map.rounds"
+        :kills="map.kills"
+        :bombs="map.bombs"
         :live="live && map.stat?.end_time == null"
         class="mb-4"
       />
@@ -49,7 +67,20 @@
 import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { matches, servers, stats, teams, vetoes } from "@/api";
-import type { MapStat, Match, PlayerStat, Server, Team, Veto, VetoSide } from "@/api/types";
+import { useI18n } from "vue-i18n";
+import type {
+  BombEvent,
+  KillEvent,
+  MapStat,
+  Match,
+  MatchRound,
+  PauseState,
+  PlayerStat,
+  Server,
+  Team,
+  Veto,
+  VetoSide
+} from "@/api/types";
 import MapScoreboard from "@/components/match/MapScoreboard.vue";
 import MatchAdminMenu from "@/components/match/MatchAdminMenu.vue";
 import MatchHeader from "@/components/match/MatchHeader.vue";
@@ -60,6 +91,7 @@ import { useUiStore } from "@/stores/ui";
 import { isFinished } from "@/utils/format";
 
 const route = useRoute();
+const { t } = useI18n();
 const auth = useAuthStore();
 const ui = useUiStore();
 
@@ -71,6 +103,10 @@ const mapStats = ref<MapStat[]>([]);
 const playerStats = ref<PlayerStat[]>([]);
 const vetoList = ref<Veto[]>([]);
 const vetoSides = ref<VetoSide[]>([]);
+const rounds = ref<MatchRound[]>([]);
+const kills = ref<KillEvent[]>([]);
+const bombs = ref<BombEvent[]>([]);
+const pause = ref<PauseState | null>(null);
 const loading = ref(true);
 
 /** Live (or waiting to start): the event stream replaces the one-off requests. */
@@ -88,25 +124,41 @@ const score = computed<[number, number]>(() => {
   return [m.team1_score ?? 0, m.team2_score ?? 0];
 });
 
+const pauseText = computed(() => {
+  const state = pause.value;
+  if (!state || !(state.paused === true || Number(state.paused) === 1)) return "";
+  if (!state.team_paused || state.team_paused === "Admin") return t("Match.PausedAdmin");
+  return t("Match.PausedBanner", { team: state.team_paused, type: state.pause_type ?? "" });
+});
+
 /** One entry per played map, with its players (stats rows can arrive before the map row). */
 const maps = computed(() => {
   const byMap = new Map<number, PlayerStat[]>();
   for (const player of playerStats.value) {
     byMap.set(player.map_id, [...(byMap.get(player.map_id) ?? []), player]);
   }
-  const entries: { key: number; stat: MapStat | null; number: number; players: PlayerStat[] }[] = [
-    ...mapStats.value
-  ]
+  const timeline = (mapId: number) => ({
+    rounds: rounds.value.filter((round) => round.map_id === mapId),
+    kills: kills.value.filter((kill) => kill.map_id === mapId),
+    bombs: bombs.value.filter((bomb) => bomb.map_id === mapId)
+  });
+  const entries: ({
+    key: number;
+    stat: MapStat | null;
+    number: number;
+    players: PlayerStat[];
+  } & ReturnType<typeof timeline>)[] = [...mapStats.value]
     .sort((a, b) => a.map_number - b.map_number)
     .map((stat) => ({
       key: stat.id,
       stat,
       number: stat.map_number,
-      players: byMap.get(stat.id) ?? []
+      players: byMap.get(stat.id) ?? [],
+      ...timeline(stat.id)
     }));
   for (const [mapId, players] of byMap) {
     if (!mapStats.value.some((stat) => stat.id === mapId)) {
-      entries.push({ key: mapId, stat: null, number: entries.length, players });
+      entries.push({ key: mapId, stat: null, number: entries.length, players, ...timeline(mapId) });
     }
   }
   return entries;
@@ -140,12 +192,21 @@ async function load() {
     team2.value = t2;
     // A live match gets everything from its event stream (MatchStreams).
     if (isFinished(found)) {
-      [mapStats.value, playerStats.value, vetoList.value, vetoSides.value] = await Promise.all([
+      const [mapList, playerList, vetoRows, sideRows, timeline] = await Promise.all([
         stats.maps(id),
         stats.ofMatch(id),
         vetoes.ofMatch(id),
-        vetoes.sidesOfMatch(id)
+        vetoes.sidesOfMatch(id),
+        matches.timeline(id).catch(() => null)
       ]);
+      mapStats.value = mapList;
+      playerStats.value = playerList;
+      vetoList.value = vetoRows;
+      vetoSides.value = sideRows;
+      rounds.value = timeline?.rounds ?? [];
+      kills.value = timeline?.kills ?? [];
+      bombs.value = timeline?.bombs ?? [];
+      pause.value = null;
     }
   } catch (error) {
     match.value = null;
