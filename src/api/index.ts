@@ -23,6 +23,7 @@ import type {
   SearchResults,
   Season,
   Server,
+  ReadyState,
   StatusPlayer,
   SummaryQuery,
   Team,
@@ -142,6 +143,9 @@ export const matches = {
     get<{ reachable: boolean; status: Record<string, unknown> | null }>(
       `/matches/${id}/server/status`
     ),
+  /** Team ready state, null unless the match is running on its server. */
+  ready: async (id: number) =>
+    (await get<{ ready: ReadyState | null }>(`/matches/${id}/ready`)).ready,
   /** Players on the match's server, from CS2's status (no Steam IDs there). */
   serverPlayers: (id: number) =>
     get<{ reachable: boolean; players: StatusPlayer[] }>(`/matches/${id}/server/players`),

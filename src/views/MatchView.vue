@@ -53,6 +53,8 @@
         {{ $t("Schedule.NoShow", { n: waitingMinutes }) }}
       </v-alert>
 
+      <ReadyStatus v-if="waitingMinutes != null" :match="match" />
+
       <MatchControlPanel v-if="adminTools" :match="match" class="mb-4" />
 
       <VetoList v-if="vetoList.length" :vetoes="vetoList" :sides="vetoSides" class="mb-4" />
@@ -98,6 +100,7 @@ import MatchAdminMenu from "@/components/match/MatchAdminMenu.vue";
 import MatchControlPanel from "@/components/match/MatchControlPanel.vue";
 import MatchHeader from "@/components/match/MatchHeader.vue";
 import MatchStreams from "@/components/match/MatchStreams.vue";
+import ReadyStatus from "@/components/match/ReadyStatus.vue";
 import VetoList from "@/components/match/VetoList.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";

@@ -731,6 +731,11 @@
       "Delete": "Delete template",
       "Deleted": "Template deleted."
     },
+    "Ready": {
+      "Ready": "Ready",
+      "NotReady": "Not ready",
+      "Connected": "{n} connected"
+    },
     "Schedule": {
       "When": "When",
       "Now": "Now",
@@ -1483,6 +1488,11 @@
       "Saved": "Modèle enregistré.",
       "Delete": "Supprimer le modèle",
       "Deleted": "Modèle supprimé."
+    },
+    "Ready": {
+      "Ready": "Prêt",
+      "NotReady": "Pas prêt",
+      "Connected": "{n} connecté(s)"
     },
     "Schedule": {
       "When": "Quand",
@@ -2237,6 +2247,11 @@
       "Saved": "テンプレートを保存しました。",
       "Delete": "テンプレートを削除",
       "Deleted": "テンプレートを削除しました。"
+    },
+    "Ready": {
+      "Ready": "準備完了",
+      "NotReady": "未準備",
+      "Connected": "{n} 人接続中"
     },
     "Schedule": {
       "When": "開始時刻",

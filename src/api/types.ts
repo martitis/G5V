@@ -102,6 +102,13 @@ export interface PlayerStat {
   [key: string]: unknown;
 }
 
+/** MatchZy's per-team ready state (get5_status); there is no per-player ready state. */
+export interface ReadyState {
+  gamestate: string;
+  team1: { ready: boolean; connected_clients: number } | null;
+  team2: { ready: boolean; connected_clients: number } | null;
+}
+
 /** A row of CS2's `status` players section; `userid` is what kickid takes. */
 export interface StatusPlayer {
   userid: number;
