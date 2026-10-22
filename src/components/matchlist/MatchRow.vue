@@ -153,7 +153,7 @@ import type { MatchSummary } from "@/api/types";
 import TeamLogo from "@/components/TeamLogo.vue";
 import { useUiStore } from "@/stores/ui";
 import { copyText } from "@/utils/clipboard";
-import { formatDateTime, mapDisplayName, mapImageUrl } from "@/utils/format";
+import { connectLinks, formatDateTime, mapDisplayName, mapImageUrl } from "@/utils/format";
 
 const props = defineProps<{ match: MatchSummary }>();
 /** A loaded match still waiting for its first map after this long gets a no-show warning. */
@@ -171,16 +171,12 @@ function open() {
 const connect = computed(() => {
   const server = props.match.server;
   if (!server) return null;
-  return {
-    address: `${server.ip}:${server.port}`,
-    play: `steam://connect/${server.ip}:${server.port}`,
-    gotv: server.gotv_port ? `steam://connect/${server.ip}:${server.gotv_port}` : null
-  };
+  return connectLinks(server.ip, server.port, server.gotv_port, server.password);
 });
 
 async function copyConnect() {
   if (!connect.value) return;
-  if (await copyText(`connect ${connect.value.address}`)) ui.notify(t("Match.Copied"), "success");
+  if (await copyText(connect.value.command)) ui.notify(t("Match.Copied"), "success");
   else ui.notify(t("misc.CopyFailed"), "warning");
 }
 

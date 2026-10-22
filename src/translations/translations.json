@@ -352,6 +352,9 @@
       "ShowMyServers": "Show My Servers"
     },
     "ServerCreate": {
+      "FormJoinPassword": "Join password (optional)",
+      "JoinPasswordHint": "Set as sv_password when a match loads and added to connect links.",
+      "JoinPasswordInvalid": "Letters, digits and _ . - ! @ * + = ~ only.",
       "HostInvalid": "Enter only the host name or IP address, without the port.",
       "InfoWillNotBeExposed": "Your server information will not be exposed to other users.",
       "MatchZyHelp": "The game server needs <a href=\"https://shobhit-pathak.github.io/MatchZy/\" target=\"_blank\" rel=\"noopener\">MatchZy</a> installed and its RCON password set here. It must be able to reach this panel's API URL, which MatchZy uses to load matches and send events, demos and backups.",
@@ -1110,6 +1113,9 @@
       "ShowMyServers": "Montrer mes serveurs"
     },
     "ServerCreate": {
+      "FormJoinPassword": "Mot de passe du serveur (facultatif)",
+      "JoinPasswordHint": "Appliqué en sv_password au chargement d'un match et ajouté aux liens de connexion.",
+      "JoinPasswordInvalid": "Lettres, chiffres et _ . - ! @ * + = ~ uniquement.",
       "HostInvalid": "Saisissez uniquement le nom d'hôte ou l'adresse IP, sans le port.",
       "InfoWillNotBeExposed": "Les informations de votre serveur ne seront pas exposées aux autres utilisateurs.",
       "MatchZyHelp": "Le serveur de jeu doit avoir <a href=\"https://shobhit-pathak.github.io/MatchZy/\" target=\"_blank\" rel=\"noopener\">MatchZy</a> installé et son mot de passe RCON renseigné ici. Il doit pouvoir joindre l'URL de l'API de ce panneau, que MatchZy utilise pour charger les matchs et envoyer événements, démos et sauvegardes.",
@@ -1869,6 +1875,9 @@
       "ShowMyServers": "マイサーバーの表示"
     },
     "ServerCreate": {
+      "FormJoinPassword": "参加パスワード（任意）",
+      "JoinPasswordHint": "試合の読み込み時に sv_password として設定され、接続リンクに追加されます。",
+      "JoinPasswordInvalid": "英数字と _ . - ! @ * + = ~ のみ使用できます。",
       "HostInvalid": "ポートを含めず、ホスト名またはIPアドレスのみを入力してください。",
       "InfoWillNotBeExposed": "あなたのサーバー情報は他のユーザーには公開されません。",
       "MatchZyHelp": "ゲームサーバーには<a href=\"https://shobhit-pathak.github.io/MatchZy/\" target=\"_blank\" rel=\"noopener\">MatchZy</a>がインストールされ、ここにRCONパスワードを設定する必要があります。MatchZyは試合の読み込みやイベント・デモ・バックアップの送信にこのパネルのAPI URLを使うため、サーバーからそのURLに到達できる必要があります。",

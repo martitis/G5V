@@ -40,6 +40,15 @@
             </v-col>
           </v-row>
           <v-text-field
+            v-model="draft.join_password"
+            :label="$t('ServerCreate.FormJoinPassword')"
+            :hint="$t('ServerCreate.JoinPasswordHint')"
+            persistent-hint
+            :rules="[joinPasswordRule]"
+            maxlength="64"
+            class="mb-2"
+          />
+          <v-text-field
             v-model="draft.rcon_password"
             :label="$t('ServerCreate.FormRCONPassword')"
             :type="showPass ? 'text' : 'password'"
@@ -110,6 +119,7 @@ const emptyDraft = () => ({
   port: 27015 as number | null,
   gotv_port: null as number | null,
   rcon_password: "",
+  join_password: "",
   public_server: false,
   flag: null as string | null
 });
@@ -124,6 +134,7 @@ watch(show, (open) => {
       ip_string: props.server.ip_string ?? "",
       port: props.server.port ?? 27015,
       gotv_port: props.server.gotv_port ?? null,
+      join_password: props.server.join_password ?? "",
       public_server: Boolean(props.server.public_server),
       flag: props.server.flag || null
     });
@@ -137,6 +148,9 @@ const hostRule = (value: string) =>
   /^[A-Za-z0-9.-]+$/.test(value ?? "") || t("ServerCreate.HostInvalid");
 const portRule = (value: number) =>
   (Number.isInteger(value) && value > 0 && value < 65536) || t("ServerCreate.PortRangeIncorrect");
+// Same characters as the API allows (safe in sv_password and in a steam:// link).
+const joinPasswordRule = (value: string) =>
+  !value || /^[A-Za-z0-9_.\-!@*+=~]{1,64}$/.test(value) || t("ServerCreate.JoinPasswordInvalid");
 const optionalPortRule = (value: number | null | "") =>
   value == null || value === "" || portRule(value as number);
 
@@ -149,6 +163,8 @@ async function save() {
       ip_string: draft.ip_string,
       port: draft.port,
       gotv_port: draft.gotv_port || null,
+      // Empty = no join password.
+      join_password: draft.join_password,
       // Empty keeps the stored password on edit.
       rcon_password: draft.rcon_password || undefined,
       public_server: draft.public_server ? 1 : 0,

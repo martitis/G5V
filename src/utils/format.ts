@@ -207,4 +207,20 @@ export function matchTitle(title: string | null | undefined): string {
 }
 
 /** Valid SteamID64 (individual account). */
+/** Connect links for a game server; the join password goes into the link and the console command. */
+export function connectLinks(
+  host: string,
+  port: number | string | undefined,
+  gotvPort: number | null | undefined,
+  password?: string | null
+) {
+  const address = `${host}:${port}`;
+  return {
+    address,
+    play: `steam://connect/${address}${password ? `/${encodeURIComponent(password)}` : ""}`,
+    command: password ? `connect ${address}; password ${password}` : `connect ${address}`,
+    gotv: gotvPort ? `steam://connect/${host}:${gotvPort}` : null
+  };
+}
+
 export const isSteamId64 = (value: string) => /^7656\d{13}$/.test(value.trim());

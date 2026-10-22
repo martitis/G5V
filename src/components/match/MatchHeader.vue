@@ -97,7 +97,7 @@ import type { Match, Server, Team } from "@/api/types";
 import TeamSide from "@/components/match/TeamSide.vue";
 import { useUiStore } from "@/stores/ui";
 import { copyText } from "@/utils/clipboard";
-import { formatDateTime, isFinished, matchTitle } from "@/utils/format";
+import { connectLinks, formatDateTime, isFinished, matchTitle } from "@/utils/format";
 import { matchStatus } from "@/utils/matchStatus";
 
 const props = defineProps<{
@@ -135,16 +135,14 @@ const connect = computed(() => {
   const server = props.server;
   if (isFinished(props.match) || !server?.ip_string) return null;
   return {
-    address: `${server.ip_string}:${server.port}`,
-    play: `steam://connect/${server.ip_string}:${server.port}`,
-    gotv: server.gotv_port ? `steam://connect/${server.ip_string}:${server.gotv_port}` : null,
+    ...connectLinks(server.ip_string, server.port, server.gotv_port, server.join_password),
     name: server.display_name
   };
 });
 
 async function copyConnect() {
   if (!connect.value) return;
-  if (await copyText(`connect ${connect.value.address}`)) ui.notify(t("Match.Copied"), "success");
+  if (await copyText(connect.value.command)) ui.notify(t("Match.Copied"), "success");
   else ui.notify(t("misc.CopyFailed"), "warning");
 }
 </script>

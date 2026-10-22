@@ -126,6 +126,8 @@ export interface Server {
   ip_string?: string;
   port?: number;
   gotv_port?: number | null;
+  /** sv_password; only returned to those who may connect. */
+  join_password?: string | null;
   public_server: number | boolean;
   in_use?: number | boolean;
   /** In use by MatchZy practice mode, not a match. */
@@ -266,7 +268,14 @@ export interface MatchSummary {
   pause: { type: string | null; team: string | null } | null;
   /** Minutes since the match was loaded while its first map hasn't gone live. */
   waiting_minutes: number | null;
-  server: { name: string | null; ip: string; port: number; gotv_port: number | null } | null;
+  server: {
+    name: string | null;
+    ip: string;
+    port: number;
+    gotv_port: number | null;
+    /** The join password, if the server has one. */
+    password: string | null;
+  } | null;
 }
 
 export interface SummaryQuery {
