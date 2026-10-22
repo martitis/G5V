@@ -9,6 +9,8 @@ declare module "vue-router" {
     requiresAuth?: boolean;
     /** Only for admins and super admins. */
     requiresAdmin?: boolean;
+    /** Only for super admins. */
+    requiresSuperAdmin?: boolean;
     /** Lists only the user's own items ("My ..." pages). */
     mine?: boolean;
   }
@@ -62,6 +64,12 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true }
   },
   { path: "/user/:id", name: "User", component: () => import("@/views/UserView.vue") },
+  {
+    path: "/admin",
+    name: "Admin",
+    component: () => import("@/views/AdminView.vue"),
+    meta: { requiresAuth: true, requiresSuperAdmin: true }
+  },
   { path: "/metrics", name: "Metrics", component: () => import("@/views/MetricsView.vue") },
   {
     path: "/leaderboard",
@@ -105,7 +113,10 @@ router.beforeEach(async (to) => {
     return { name: "Home" };
   }
   // The API refuses these actions too; this only keeps users off pages they can't use.
-  if (to.meta.requiresAdmin && !auth.isAdmin) {
+  if (
+    (to.meta.requiresAdmin && !auth.isAdmin) ||
+    (to.meta.requiresSuperAdmin && !auth.isSuperAdmin)
+  ) {
     useUiStore().notify(i18n.global.t("misc.AdminRequired"), "warning");
     return { name: "Home" };
   }

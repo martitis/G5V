@@ -330,3 +330,36 @@ export interface MatchTimeline {
   bombs: BombEvent[];
   pause: PauseState | null;
 }
+
+/** GET /admin/users */
+export interface AdminUser {
+  id: number;
+  name: string;
+  steam_id: string;
+  small_image: string | null;
+  admin: number;
+  super_admin: number;
+  /** 0 for local accounts whose Steam ID was never proven; they can't be admins. */
+  steam_verified: number;
+  /** 1 when the roles come from the config lists (the next Steam login sets them again). */
+  roles_from_config: number;
+  /** Local login name, if the account has one. */
+  username: string | null;
+  created_at: string | null;
+  matches: number;
+  teams: number;
+  servers: number;
+}
+
+/** GET /admin/audit */
+export interface AuditEntry {
+  id: number;
+  time: string;
+  user_id: number | null;
+  user_name: string | null;
+  action: string;
+  target_type: string | null;
+  target_id: number | null;
+  status_code: number | null;
+  detail: string | null;
+}

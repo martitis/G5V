@@ -80,6 +80,10 @@
       />
       <v-divider class="my-2" />
       <v-list-item to="/leaderboard" :title="$t('Navbar.PlayerLeader')" prepend-icon="mdi-podium" />
+      <template v-if="auth.isSuperAdmin">
+        <v-divider class="my-2" />
+        <v-list-item to="/admin" :title="$t('Navbar.Admin')" prepend-icon="mdi-shield-crown" />
+      </template>
     </v-list>
   </v-navigation-drawer>
 

@@ -4,6 +4,8 @@
  */
 import { del, get, orEmpty, post, put, type MessageResponse } from "./http";
 import type {
+  AdminUser,
+  AuditEntry,
   BackupEntry,
   LeaderboardPlayer,
   MapListEntry,
@@ -235,4 +237,16 @@ export const leaderboard = {
         { leaderboard: [] }
       )
     ).leaderboard
+};
+
+/** Super admins only. */
+export const admin = {
+  users: async () => (await get<{ users: AdminUser[] }>("/admin/users")).users,
+  audit: (query: { action?: string; user_id?: number; limit?: number; offset?: number }) => {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(query)) {
+      if (value !== undefined && value !== "") params.set(key, String(value));
+    }
+    return get<{ entries: AuditEntry[]; total: number }>(`/admin/audit?${params.toString()}`);
+  }
 };

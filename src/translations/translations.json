@@ -14,7 +14,8 @@
       "Logout": "Logout",
       "DarkMode": "Toggle Dark Mode",
       "PlayerLeader": "Player Leaderboard",
-      "Home": "Home"
+      "Home": "Home",
+      "Admin": "Admin"
     },
     "Login": {
       "SteamIdInvalid": "Enter a valid SteamID64 (17 digits, starting with 7656) to register.",
@@ -515,6 +516,32 @@
       "company": "Phlex Plexico",
       "metrics": "Metrics",
       "powered": "Powered by Steam"
+    },
+    "Admin": {
+      "Title": "Admin",
+      "TabUsers": "Users",
+      "TabLive": "Live matches",
+      "TabServers": "Servers",
+      "TabAudit": "Audit log",
+      "Role": "Role",
+      "RoleUser": "User",
+      "RoleAdmin": "Admin",
+      "RoleSuperAdmin": "Super admin",
+      "FromConfig": "From config",
+      "FromConfigHint": "Set by admins/super_admins.steam_ids in the API config; the next Steam login sets it again.",
+      "Unverified": "Steam not verified",
+      "UnverifiedHint": "Local account that never signed in with Steam; it can't be an admin.",
+      "LocalLogin": "Local login",
+      "Counts": "Matches / teams / servers",
+      "RoleSaved": "Role saved.",
+      "Time": "Time",
+      "Who": "Who",
+      "Action": "Action",
+      "Target": "Target",
+      "Result": "Result",
+      "Detail": "Detail",
+      "AllActions": "All actions",
+      "NoEntries": "Nothing logged yet."
     }
   },
   "fr": {
@@ -532,7 +559,8 @@
       "Logout": "Déconnexion",
       "DarkMode": "Action le mode sombre",
       "PlayerLeader": "Classement des joueurs",
-      "Home": "Accueil"
+      "Home": "Accueil",
+      "Admin": "Administration"
     },
     "Login": {
       "SteamIdInvalid": "Entrez un SteamID64 valide (17 chiffres, commençant par 7656) pour vous inscrire.",
@@ -1034,6 +1062,32 @@
       "company": "Phlex Plexico",
       "metrics": "Metrics",
       "powered": "Powered by Steam"
+    },
+    "Admin": {
+      "Title": "Administration",
+      "TabUsers": "Utilisateurs",
+      "TabLive": "Matchs en direct",
+      "TabServers": "Serveurs",
+      "TabAudit": "Journal d'audit",
+      "Role": "Rôle",
+      "RoleUser": "Utilisateur",
+      "RoleAdmin": "Admin",
+      "RoleSuperAdmin": "Super admin",
+      "FromConfig": "Depuis la config",
+      "FromConfigHint": "Défini par admins/super_admins.steam_ids dans la config de l'API ; la prochaine connexion Steam le rétablit.",
+      "Unverified": "Steam non vérifié",
+      "UnverifiedHint": "Compte local jamais connecté via Steam ; il ne peut pas être admin.",
+      "LocalLogin": "Connexion locale",
+      "Counts": "Matchs / équipes / serveurs",
+      "RoleSaved": "Rôle enregistré.",
+      "Time": "Heure",
+      "Who": "Qui",
+      "Action": "Action",
+      "Target": "Cible",
+      "Result": "Résultat",
+      "Detail": "Détail",
+      "AllActions": "Toutes les actions",
+      "NoEntries": "Rien d'enregistré pour l'instant."
     }
   },
   "ja": {
@@ -1051,7 +1105,8 @@
       "Logout": "ログアウト",
       "DarkMode": "ダークモードを切り替えます",
       "PlayerLeader": "プレイヤーリーダーボード",
-      "Home": "ホーム"
+      "Home": "ホーム",
+      "Admin": "管理"
     },
     "Login": {
       "SteamIdInvalid": "登録するには有効なSteamID64（7656で始まる17桁）を入力してください。",
@@ -1554,6 +1609,32 @@
       "company": "Phlex Plexico",
       "metrics": "メトリック",
       "powered": "Powered by Steam"
+    },
+    "Admin": {
+      "Title": "管理",
+      "TabUsers": "ユーザー",
+      "TabLive": "ライブ中の試合",
+      "TabServers": "サーバー",
+      "TabAudit": "監査ログ",
+      "Role": "役割",
+      "RoleUser": "ユーザー",
+      "RoleAdmin": "管理者",
+      "RoleSuperAdmin": "スーパー管理者",
+      "FromConfig": "設定から",
+      "FromConfigHint": "APIの設定（admins/super_admins.steam_ids）で設定されています。次回のSteamログインで再設定されます。",
+      "Unverified": "Steam未確認",
+      "UnverifiedHint": "Steamでログインしたことのないローカルアカウントです。管理者にはできません。",
+      "LocalLogin": "ローカルログイン",
+      "Counts": "試合 / チーム / サーバー",
+      "RoleSaved": "役割を保存しました。",
+      "Time": "時刻",
+      "Who": "誰が",
+      "Action": "操作",
+      "Target": "対象",
+      "Result": "結果",
+      "Detail": "詳細",
+      "AllActions": "すべての操作",
+      "NoEntries": "まだ記録はありません。"
     }
   }
 }
