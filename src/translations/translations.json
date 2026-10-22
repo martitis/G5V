@@ -676,6 +676,13 @@
       "TypeMore": "Type at least 2 characters."
     },
     "Control": {
+      "Players": "Connected players",
+      "PlayersHint": "From the server's status. Move players or add a late sub with the match menu (by Steam ID).",
+      "PlayerName": "Name",
+      "Ping": "Ping",
+      "State": "State",
+      "Kick": "Kick",
+      "NoPlayers": "Nobody is connected.",
       "Title": "Match control",
       "Flow": "Match flow",
       "ForceStart": "Force start",
@@ -1422,6 +1429,13 @@
       "TypeMore": "Saisissez au moins 2 caractères."
     },
     "Control": {
+      "Players": "Joueurs connectés",
+      "PlayersHint": "D'après le status du serveur. Déplacez un joueur ou ajoutez un remplaçant depuis le menu du match (par Steam ID).",
+      "PlayerName": "Nom",
+      "Ping": "Ping",
+      "State": "État",
+      "Kick": "Expulser",
+      "NoPlayers": "Personne n'est connecté.",
       "Title": "Contrôle du match",
       "Flow": "Déroulement",
       "ForceStart": "Forcer le départ",
@@ -2169,6 +2183,13 @@
       "TypeMore": "2文字以上入力してください。"
     },
     "Control": {
+      "Players": "接続中のプレイヤー",
+      "PlayersHint": "サーバーの status から取得。プレイヤーの移動や交代要員の追加は試合メニューから（Steam ID）。",
+      "PlayerName": "名前",
+      "Ping": "Ping",
+      "State": "状態",
+      "Kick": "キック",
+      "NoPlayers": "誰も接続していません。",
       "Title": "試合コントロール",
       "Flow": "進行",
       "ForceStart": "強制開始",

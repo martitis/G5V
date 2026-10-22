@@ -205,6 +205,70 @@
         <pre v-if="reply" class="console mt-3">{{ reply }}</pre>
       </v-expansion-panel-text>
     </v-expansion-panel>
+
+    <v-expansion-panel value="players">
+      <v-expansion-panel-title>
+        <v-icon class="mr-2">mdi-account-network</v-icon>{{ $t("Control.Players") }}
+        <v-chip v-if="players" size="x-small" variant="tonal" label class="ml-2">
+          {{ players.length }}
+        </v-chip>
+      </v-expansion-panel-title>
+      <v-expansion-panel-text>
+        <div class="d-flex align-center mb-2">
+          <span class="text-body-small text-medium-emphasis">{{ $t("Control.PlayersHint") }}</span>
+          <v-spacer />
+          <v-btn
+            size="small"
+            variant="text"
+            prepend-icon="mdi-refresh"
+            :loading="loadingPlayers"
+            @click="loadPlayers"
+          >
+            {{ $t("Control.Refresh") }}
+          </v-btn>
+        </div>
+        <v-alert v-if="playersReachable === false" type="error" variant="tonal" density="compact">
+          {{ $t("Control.Unreachable") }}
+        </v-alert>
+        <v-table v-else-if="players?.length" density="compact">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>{{ $t("Control.PlayerName") }}</th>
+              <th>{{ $t("Control.Ping") }}</th>
+              <th>{{ $t("Control.State") }}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="player in players" :key="player.userid">
+              <td>{{ player.userid }}</td>
+              <td>
+                {{ player.name }}
+                <v-chip v-if="player.bot" size="x-small" label class="ml-1">BOT</v-chip>
+              </td>
+              <td>{{ player.ping ?? "–" }}</td>
+              <td>{{ player.state }}</td>
+              <td class="text-right">
+                <v-btn
+                  size="small"
+                  variant="text"
+                  color="error"
+                  prepend-icon="mdi-account-remove"
+                  :loading="busy === `kick${player.userid}`"
+                  @click="askKick(player)"
+                >
+                  {{ $t("Control.Kick") }}
+                </v-btn>
+              </td>
+            </tr>
+          </tbody>
+        </v-table>
+        <div v-else-if="players" class="text-body-medium text-medium-emphasis">
+          {{ $t("Control.NoPlayers") }}
+        </div>
+      </v-expansion-panel-text>
+    </v-expansion-panel>
   </v-expansion-panels>
 
   <v-dialog :model-value="pending !== null" max-width="440" @update:model-value="pending = null">
@@ -219,10 +283,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { matches } from "@/api";
-import type { Match } from "@/api/types";
+import type { Match, StatusPlayer } from "@/api/types";
 import { useUiStore } from "@/stores/ui";
 import { mapDisplayName } from "@/utils/format";
 
@@ -253,9 +317,17 @@ const teamNames = reactive<Record<1 | 2, string>>({ 1: "", 2: "" });
 const message = ref("");
 const cvar = ref(CVARS[0].name);
 const cvarValue = ref<string>("");
-const pending = ref<{ action: string; args: Record<string, unknown>; label: string } | null>(null);
+const pending = ref<{
+  action: string;
+  args: Record<string, unknown>;
+  label: string;
+  kick?: StatusPlayer;
+} | null>(null);
 const health = ref<{ reachable: boolean; status: Record<string, unknown> | null } | null>(null);
 const checking = ref(false);
+const players = ref<StatusPlayer[] | null>(null);
+const playersReachable = ref<boolean | null>(null);
+const loadingPlayers = ref(false);
 
 const flowButtons = computed(() => [
   { action: "start", label: t("Control.ForceStart"), icon: "mdi-play-circle", confirm: true },
@@ -316,8 +388,48 @@ function ask(action: string, args: Record<string, unknown>, label: string) {
 async function confirmPending() {
   const next = pending.value;
   pending.value = null;
-  if (next) await send(next.action, next.args);
+  if (next?.kick) await kick(next.kick);
+  else if (next) await send(next.action, next.args);
 }
+
+async function loadPlayers() {
+  loadingPlayers.value = true;
+  try {
+    const result = await matches.serverPlayers(props.match.id);
+    playersReachable.value = result.reachable;
+    players.value = result.players;
+  } catch (error) {
+    ui.notifyError(error);
+  } finally {
+    loadingPlayers.value = false;
+  }
+}
+
+function askKick(player: StatusPlayer) {
+  pending.value = {
+    action: "kick",
+    args: {},
+    label: `${t("Control.Kick")}: ${player.name}`,
+    kick: player
+  };
+}
+async function kick(player: StatusPlayer) {
+  busy.value = `kick${player.userid}`;
+  try {
+    const result = await matches.kick(props.match.id, player.userid, player.name);
+    ui.notify(result.message, "success");
+    await loadPlayers();
+  } catch (error) {
+    ui.notifyError(error);
+  } finally {
+    busy.value = null;
+  }
+}
+
+// Loaded when the panel is first opened.
+watch(openPanels, (open) => {
+  if (open.includes("players") && players.value === null) void loadPlayers();
+});
 
 async function sendMessage() {
   if (!message.value.trim()) return;

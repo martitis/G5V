@@ -5,13 +5,6 @@
 import { del, get, orEmpty, post, put, type MessageResponse } from "./http";
 import type { MatchTemplateSettings } from "@/utils/matchPresets";
 import type {
-  ScheduledMatch,
-  SearchResults,
-  OpenPugQueue,
-  PugPlayer,
-  PugQueue,
-  TournamentDetail,
-  TournamentSummary,
   AdminUser,
   AuditEntry,
   BackupEntry,
@@ -21,13 +14,21 @@ import type {
   Match,
   MatchSummary,
   MatchTimeline,
-  ResolvedMember,
+  OpenPugQueue,
   PlayerStat,
+  PugPlayer,
+  PugQueue,
+  ResolvedMember,
+  ScheduledMatch,
+  SearchResults,
   Season,
   Server,
+  StatusPlayer,
   SummaryQuery,
   Team,
   TeamStanding,
+  TournamentDetail,
+  TournamentSummary,
   User,
   Veto,
   VetoSide
@@ -140,6 +141,14 @@ export const matches = {
   serverStatus: (id: number) =>
     get<{ reachable: boolean; status: Record<string, unknown> | null }>(
       `/matches/${id}/server/status`
+    ),
+  /** Players on the match's server, from CS2's status (no Steam IDs there). */
+  serverPlayers: (id: number) =>
+    get<{ reachable: boolean; players: StatusPlayer[] }>(`/matches/${id}/server/players`),
+  kick: (id: number, userid: number, name: string) =>
+    post<MessageResponse & { response?: string }>(
+      `/matches/${id}/server/kick`,
+      wrap({ userid, name })
     ),
   /** Re-sends the API's event/backup/demo URLs to the server (after the API's address changed). */
   updateCallbacks: (id: number) =>

@@ -102,6 +102,15 @@ export interface PlayerStat {
   [key: string]: unknown;
 }
 
+/** A row of CS2's `status` players section; `userid` is what kickid takes. */
+export interface StatusPlayer {
+  userid: number;
+  name: string;
+  ping: number | null;
+  state: string;
+  bot: boolean;
+}
+
 export interface Server {
   id: number;
   user_id?: number;
