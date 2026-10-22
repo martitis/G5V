@@ -4,6 +4,34 @@
     <v-form v-else ref="formRef" @submit.prevent="create">
       <div class="text-headline-small mb-4">{{ $t("CreateMatch.Title") }}</div>
 
+      <!-- Presets and saved templates fill in the form below. -->
+      <v-card class="mb-4">
+        <v-card-text class="d-flex align-center flex-wrap ga-2">
+          <v-select
+            v-model="presetChoice"
+            :items="presetItems"
+            :label="$t('Preset.StartFrom')"
+            :hint="presetHint"
+            persistent-hint
+            density="compact"
+            style="max-width: 420px"
+            @update:model-value="applyPreset"
+          />
+          <v-btn
+            v-if="presetChoice?.startsWith('template:')"
+            icon="mdi-delete"
+            variant="text"
+            color="error"
+            :title="$t('Preset.Delete')"
+            @click="deleteTemplate"
+          />
+          <v-spacer />
+          <v-btn variant="tonal" prepend-icon="mdi-content-save" @click="saveDialog = true">
+            {{ $t("Preset.Save") }}
+          </v-btn>
+        </v-card-text>
+      </v-card>
+
       <!-- Server & season -->
       <v-card class="mb-4" :title="$t('CreateMatch.SectionServer')">
         <v-card-text>
@@ -263,6 +291,33 @@
     </v-form>
 
     <ServerDialog v-model="serverDialog" :server="null" @saved="onServerAdded" />
+
+    <v-dialog v-model="saveDialog" max-width="440">
+      <v-card :title="$t('Preset.Save')">
+        <v-card-text>
+          <v-text-field
+            v-model="templateName"
+            :label="$t('Preset.Name')"
+            counter="60"
+            maxlength="60"
+            autofocus
+            @keydown.enter="saveTemplate"
+          />
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn variant="text" @click="saveDialog = false">{{ $t("misc.Cancel") }}</v-btn>
+          <v-btn
+            color="primary"
+            :loading="savingTemplate"
+            :disabled="!templateName.trim()"
+            @click="saveTemplate"
+          >
+            {{ $t("misc.Save") }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -275,6 +330,7 @@ import {
   matches,
   pugs,
   seasons as seasonsApi,
+  templates as templatesApi,
   servers as serversApi,
   teams as teamsApi
 } from "@/api";
@@ -284,6 +340,7 @@ import MapPoolPicker from "@/components/MapPoolPicker.vue";
 import ServerDialog from "@/components/ServerDialog.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
+import { MATCH_PRESETS, type MatchTemplateSettings } from "@/utils/matchPresets";
 import { emptyDefaults, parseSeasonCvars } from "@/utils/seasonDefaults";
 
 const router = useRouter();
@@ -422,6 +479,105 @@ watch(
   }
 );
 
+// Presets and templates: "preset:official" / "template:12".
+const savedTemplates = ref<{ id: number; name: string; settings: MatchTemplateSettings | null }[]>(
+  []
+);
+const presetChoice = ref<string | null>(null);
+const saveDialog = ref(false);
+const templateName = ref("");
+const savingTemplate = ref(false);
+
+const presetItems = computed(() => [
+  { value: null, title: t("Preset.Blank") },
+  ...MATCH_PRESETS.map((preset) => ({ value: `preset:${preset.key}`, title: t(preset.label) })),
+  ...savedTemplates.value
+    .filter((template) => template.settings)
+    .map((template) => ({ value: `template:${template.id}`, title: `★ ${template.name}` }))
+]);
+const presetHint = computed(() => {
+  const preset = MATCH_PRESETS.find((entry) => `preset:${entry.key}` === presetChoice.value);
+  return preset ? t(preset.hint) : "";
+});
+
+/** Fills the series, veto, ready and cvar settings (and a template's map pool) from a preset or template. */
+function applyPreset(choice: string | null) {
+  if (!choice) return;
+  let name = "";
+  let settings: Partial<MatchTemplateSettings> | null = null;
+  if (choice.startsWith("preset:")) {
+    const preset = MATCH_PRESETS.find((entry) => `preset:${entry.key}` === choice);
+    if (preset) [name, settings] = [t(preset.label), preset.settings];
+  } else {
+    const template = savedTemplates.value.find((entry) => `template:${entry.id}` === choice);
+    if (template?.settings) [name, settings] = [template.name, template.settings];
+  }
+  if (!settings) return;
+  Object.assign(defaults, {
+    maps_to_win: settings.maps_to_win ?? defaults.maps_to_win,
+    side_type: settings.side_type ?? defaults.side_type,
+    skip_veto: settings.skip_veto ?? defaults.skip_veto,
+    players_per_team: settings.players_per_team ?? defaults.players_per_team,
+    min_players_to_ready: settings.min_players_to_ready ?? defaults.min_players_to_ready,
+    min_spectators_to_ready: settings.min_spectators_to_ready ?? defaults.min_spectators_to_ready,
+    wingman: settings.wingman ?? defaults.wingman
+  });
+  // Only maps the user can pick; a preset keeps the current pool.
+  if (settings.map_pool?.length) {
+    defaults.map_pool = settings.map_pool.filter((map) =>
+      mapList.value.some((m) => m.map_name === map)
+    );
+  }
+  if (settings.veto_first) form.veto_first = settings.veto_first;
+  cvars.value = { ...(settings.cvars ?? {}) };
+  ui.notify(t("Preset.Applied", { name }), "info");
+}
+
+async function loadTemplates() {
+  savedTemplates.value = await templatesApi.mine().catch(() => []);
+}
+
+async function saveTemplate() {
+  const name = templateName.value.trim();
+  if (!name || savingTemplate.value) return;
+  savingTemplate.value = true;
+  try {
+    const result = await templatesApi.save(name, {
+      maps_to_win: defaults.maps_to_win,
+      map_pool: defaults.map_pool,
+      veto_first: form.veto_first as MatchTemplateSettings["veto_first"],
+      side_type: defaults.side_type,
+      skip_veto: defaults.skip_veto,
+      players_per_team: defaults.players_per_team || 5,
+      min_players_to_ready: defaults.min_players_to_ready || 1,
+      min_spectators_to_ready: defaults.min_spectators_to_ready || 0,
+      wingman: defaults.wingman,
+      cvars: cvars.value
+    });
+    ui.notify(t("Preset.Saved"), "success");
+    saveDialog.value = false;
+    await loadTemplates();
+    presetChoice.value = `template:${result.id}`;
+  } catch (error) {
+    ui.notifyError(error);
+  } finally {
+    savingTemplate.value = false;
+  }
+}
+
+async function deleteTemplate() {
+  const id = Number(presetChoice.value?.split(":")[1]);
+  if (!id) return;
+  try {
+    await templatesApi.remove(id);
+    ui.notify(t("Preset.Deleted"), "success");
+    presetChoice.value = null;
+    await loadTemplates();
+  } catch (error) {
+    ui.notifyError(error);
+  }
+}
+
 /** The user's own servers first, then public ones. */
 async function loadServers() {
   const list = await serversApi.available();
@@ -452,7 +608,8 @@ onMounted(async () => {
       teamsApi.mine(),
       seasonsApi.available(),
       userId != null ? maps.enabled(userId) : Promise.resolve([]),
-      loadServers()
+      loadServers(),
+      loadTemplates()
     ]);
     // Own teams first, then public ones (admins see every team).
     const mine = new Set(myTeams.map((team) => team.id));

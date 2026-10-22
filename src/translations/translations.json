@@ -702,6 +702,24 @@
       "Sent": "Sent to the server.",
       "Reply": "Server reply",
       "HistoryHint": "↑/↓: previous commands"
+    },
+    "Preset": {
+      "StartFrom": "Start from",
+      "Blank": "Blank form",
+      "BuiltIn": "Presets",
+      "Mine": "My templates",
+      "Official": "Official",
+      "OfficialHint": "BO3 with veto, knife round, overtime, no .stop, pause after a restore.",
+      "Scrim": "Scrim",
+      "ScrimHint": "BO1, no knife, all 24 rounds, no overtime, .stop and tech pauses allowed.",
+      "Pug": "PUG",
+      "PugHint": "BO1, random first veto, knife round, overtime.",
+      "Applied": "Settings from \"{name}\" applied.",
+      "Save": "Save as template",
+      "Name": "Template name",
+      "Saved": "Template saved.",
+      "Delete": "Delete template",
+      "Deleted": "Template deleted."
     }
   },
   "fr": {
@@ -1408,6 +1426,24 @@
       "Sent": "Envoyé au serveur.",
       "Reply": "Réponse du serveur",
       "HistoryHint": "↑/↓ : commandes précédentes"
+    },
+    "Preset": {
+      "StartFrom": "Partir de",
+      "Blank": "Formulaire vide",
+      "BuiltIn": "Préréglages",
+      "Mine": "Mes modèles",
+      "Official": "Officiel",
+      "OfficialHint": "BO3 avec veto, couteau, prolongations, sans .stop, pause après une restauration.",
+      "Scrim": "Scrim",
+      "ScrimHint": "BO1, sans couteau, 24 manches, sans prolongation, .stop et pauses techniques autorisés.",
+      "Pug": "PUG",
+      "PugHint": "BO1, premier veto aléatoire, couteau, prolongations.",
+      "Applied": "Paramètres de « {name} » appliqués.",
+      "Save": "Enregistrer comme modèle",
+      "Name": "Nom du modèle",
+      "Saved": "Modèle enregistré.",
+      "Delete": "Supprimer le modèle",
+      "Deleted": "Modèle supprimé."
     }
   },
   "ja": {
@@ -2115,6 +2151,24 @@
       "Sent": "サーバーに送信しました。",
       "Reply": "サーバーの応答",
       "HistoryHint": "↑/↓：過去のコマンド"
+    },
+    "Preset": {
+      "StartFrom": "テンプレート",
+      "Blank": "空のフォーム",
+      "BuiltIn": "プリセット",
+      "Mine": "マイテンプレート",
+      "Official": "公式戦",
+      "OfficialHint": "拒否ありBO3、ナイフラウンド、延長戦、.stopなし、復元後に一時停止。",
+      "Scrim": "スクリム",
+      "ScrimHint": "BO1、ナイフなし、全24ラウンド、延長なし、.stopと技術的一時停止あり。",
+      "Pug": "PUG",
+      "PugHint": "BO1、最初の拒否はランダム、ナイフラウンド、延長戦。",
+      "Applied": "「{name}」の設定を適用しました。",
+      "Save": "テンプレートとして保存",
+      "Name": "テンプレート名",
+      "Saved": "テンプレートを保存しました。",
+      "Delete": "テンプレートを削除",
+      "Deleted": "テンプレートを削除しました。"
     }
   }
 }

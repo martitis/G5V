@@ -3,6 +3,7 @@
  * Write endpoints read `req.body[0]` on the API, so bodies are sent as a one-element array.
  */
 import { del, get, orEmpty, post, put, type MessageResponse } from "./http";
+import type { MatchTemplateSettings } from "@/utils/matchPresets";
 import type {
   SearchResults,
   OpenPugQueue,
@@ -300,3 +301,17 @@ export const pugs = {
 
 /** Teams, players, matches and tournaments whose name contains q (2+ characters). */
 export const search = (q: string) => get<SearchResults>(`/search?q=${encodeURIComponent(q)}`);
+
+/** The logged-in user's saved create-match settings. */
+export const templates = {
+  mine: async () =>
+    (
+      await get<{
+        templates: { id: number; name: string; settings: MatchTemplateSettings | null }[];
+      }>("/templates")
+    ).templates,
+  /** Same name replaces the saved one. */
+  save: (name: string, settings: MatchTemplateSettings) =>
+    post<MessageResponse & { id: number }>("/templates", wrap({ name, settings })),
+  remove: (id: number) => del<MessageResponse>(`/templates/${id}`)
+};
