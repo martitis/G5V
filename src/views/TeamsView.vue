@@ -22,7 +22,7 @@
           >
             {{ $t("Teams.ImportTeam") }}
           </v-btn>
-          <v-btn color="primary" prepend-icon="mdi-plus" to="/teams/create">
+          <v-btn color="primary" prepend-icon="mdi-plus" @click="openEditor(null)">
             {{ $t("Navbar.CreateTeam") }}
           </v-btn>
         </template>
@@ -54,6 +54,16 @@
         </template>
         <template #[`item.members`]="{ item }">
           {{ Object.keys(item.auth_name ?? {}).length }}
+        </template>
+        <template #[`item.actions`]="{ item }">
+          <v-btn
+            v-if="auth.canEdit(item.user_id)"
+            icon="mdi-pencil"
+            size="small"
+            variant="text"
+            :title="$t('Team.Edit')"
+            @click="openEditor(item)"
+          />
         </template>
         <template #[`item.owner`]="{ item }">
           <router-link :to="`/user/${item.user_id}`" class="app-link">{{ item.owner }}</router-link>
@@ -90,15 +100,18 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <TeamEditorDialog v-model="editorOpen" :team="editing" @saved="onSaved" />
   </v-container>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { teams as teamsApi } from "@/api";
 import type { Team } from "@/api/types";
+import TeamEditorDialog from "@/components/team/TeamEditorDialog.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
 import { flagUrl } from "@/utils/format";
@@ -129,7 +142,8 @@ const headers = computed(() => [
   { title: t("Team.TeamTag"), key: "tag", sortable: false },
   { title: t("Team.Flag"), key: "flag" },
   { title: t("Team.Members"), key: "members", sortable: false },
-  { title: t("Team.Owner"), key: "owner" }
+  { title: t("Team.Owner"), key: "owner" },
+  { title: "", key: "actions", sortable: false, align: "end" as const }
 ]);
 
 async function load() {
@@ -160,5 +174,26 @@ async function importTeams() {
   }
 }
 
-onMounted(load);
+const router = useRouter();
+const editorOpen = ref(false);
+const editing = ref<Team | null>(null);
+
+async function openEditor(team: Team | null) {
+  // The list has no avatars; load the full team so the editor shows them.
+  editing.value = team ? await teamsApi.get(team.id).catch(() => team) : null;
+  editorOpen.value = true;
+}
+
+async function onSaved() {
+  await load();
+}
+
+onMounted(async () => {
+  await load();
+  // /teams/create redirects here with ?create=1.
+  if (route.query.create && auth.loggedIn) {
+    void router.replace({ query: {} });
+    void openEditor(null);
+  }
+});
 </script>

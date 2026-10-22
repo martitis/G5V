@@ -119,6 +119,13 @@
             :title="$t('Match.GOTVConnect')"
             @click.stop
           />
+          <v-btn
+            size="small"
+            variant="tonal"
+            icon="mdi-content-copy"
+            :title="$t('Match.CopyConnect')"
+            @click.stop="copyConnect"
+          />
         </template>
         <div v-else-if="match.start_time" class="text-body-small text-medium-emphasis text-right">
           {{ formatDateTime(match.end_time ?? match.start_time) }}
@@ -134,11 +141,14 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import type { MatchSummary } from "@/api/types";
 import TeamLogo from "@/components/TeamLogo.vue";
+import { useUiStore } from "@/stores/ui";
+import { copyText } from "@/utils/clipboard";
 import { formatDateTime, mapDisplayName, mapImageUrl } from "@/utils/format";
 
 const props = defineProps<{ match: MatchSummary }>();
 const { t } = useI18n();
 const router = useRouter();
+const ui = useUiStore();
 
 const linkable = computed(() => props.match.status !== "cancelled");
 function open() {
@@ -150,10 +160,17 @@ const connect = computed(() => {
   const server = props.match.server;
   if (!server) return null;
   return {
+    address: `${server.ip}:${server.port}`,
     play: `steam://connect/${server.ip}:${server.port}`,
     gotv: server.gotv_port ? `steam://connect/${server.ip}:${server.gotv_port}` : null
   };
 });
+
+async function copyConnect() {
+  if (!connect.value) return;
+  if (await copyText(`connect ${connect.value.address}`)) ui.notify(t("Match.Copied"), "success");
+  else ui.notify(t("misc.CopyFailed"), "warning");
+}
 
 const live = computed(() => props.match.status === "live" || props.match.status === "paused");
 const finished = computed(() => props.match.status === "finished");

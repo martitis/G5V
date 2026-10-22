@@ -332,6 +332,18 @@
       "PortRangeIncorrect": "Please input a port between 0 and 65536."
     },
     "Team": {
+      "TooMany": "At most 50 players at once.",
+      "Edit": "Edit team",
+      "Saved": "Team saved.",
+      "CaptainShort": "Captain",
+      "NicknameShort": "Nickname",
+      "WaitResolving": "Wait until all players are looked up.",
+      "FixMembers": "Remove or fix the players marked in red first.",
+      "AlreadyListed": "{n} already in the team, skipped.",
+      "NotSteam": "Not a Steam account",
+      "Resolving": "Looking up…",
+      "AddPlayersHint": "Paste one or many Steam IDs or profile links (one per line, or separated by spaces or commas), then press Enter.",
+      "AddPlayersLabel": "Add players",
       "LogoInvalid": "The logo must be a PNG or SVG image.",
       "CaptainBadge": "Captain",
       "NoMembers": "No players yet. Only listed players can join the server.",
@@ -444,6 +456,7 @@
       "TDiff": "Round Difference"
     },
     "misc": {
+      "Add": "Add",
       "CopyFailed": "Couldn't copy; select the text and copy it by hand.",
       "AdminRequired": "Only admins can open this page.",
       "Search": "Search",
@@ -815,6 +828,18 @@
       "PortRangeIncorrect": "veuillez entrer un port entre 0 et 65536."
     },
     "Team": {
+      "TooMany": "50 joueurs maximum à la fois.",
+      "Edit": "Modifier l'équipe",
+      "Saved": "Équipe enregistrée.",
+      "CaptainShort": "Capitaine",
+      "NicknameShort": "Surnom",
+      "WaitResolving": "Attendez que tous les joueurs soient trouvés.",
+      "FixMembers": "Retirez ou corrigez d'abord les joueurs marqués en rouge.",
+      "AlreadyListed": "{n} déjà dans l'équipe, ignoré(s).",
+      "NotSteam": "Pas un compte Steam",
+      "Resolving": "Recherche…",
+      "AddPlayersHint": "Collez un ou plusieurs Steam IDs ou liens de profil (un par ligne, ou séparés par des espaces ou des virgules), puis appuyez sur Entrée.",
+      "AddPlayersLabel": "Ajouter des joueurs",
       "LogoInvalid": "Le logo doit être une image PNG ou SVG.",
       "CaptainBadge": "Capitaine",
       "NoMembers": "Aucun joueur pour l'instant. Seuls les joueurs listés peuvent rejoindre le serveur.",
@@ -927,6 +952,7 @@
       "TDiff": "Round Difference"
     },
     "misc": {
+      "Add": "Ajouter",
       "CopyFailed": "Copie impossible ; sélectionnez le texte et copiez-le manuellement.",
       "AdminRequired": "Seuls les administrateurs peuvent ouvrir cette page.",
       "Search": "Rechercher",
@@ -1299,6 +1325,18 @@
       "PortRangeIncorrect": "ポートは0～65536の間で入力してください。"
     },
     "Team": {
+      "TooMany": "一度に追加できるのは50人までです。",
+      "Edit": "チームを編集",
+      "Saved": "チームを保存しました。",
+      "CaptainShort": "キャプテン",
+      "NicknameShort": "ニックネーム",
+      "WaitResolving": "すべてのプレイヤーの検索が終わるまでお待ちください。",
+      "FixMembers": "先に赤で表示されたプレイヤーを削除または修正してください。",
+      "AlreadyListed": "{n}人はすでにチームにいるためスキップしました。",
+      "NotSteam": "Steamアカウントではありません",
+      "Resolving": "検索中…",
+      "AddPlayersHint": "Steam IDまたはプロフィールリンクを1つ以上貼り付けて（1行に1つ、またはスペース・カンマ区切り）Enterを押してください。",
+      "AddPlayersLabel": "プレイヤーを追加",
       "LogoInvalid": "ロゴはPNGまたはSVG画像である必要があります。",
       "CaptainBadge": "キャプテン",
       "NoMembers": "まだプレイヤーがいません。登録されたプレイヤーのみサーバーに参加できます。",
@@ -1411,6 +1449,7 @@
       "TDiff": "丸差"
     },
     "misc": {
+      "Add": "追加",
       "CopyFailed": "コピーできませんでした。テキストを選択して手動でコピーしてください。",
       "AdminRequired": "このページは管理者のみ開けます。",
       "Search": "検索",

@@ -10,6 +10,7 @@ import type {
   MapStat,
   Match,
   MatchSummary,
+  ResolvedMember,
   PlayerStat,
   Season,
   Server,
@@ -70,7 +71,10 @@ export const teams = {
   /** Deletes the team, or only one member when `steam_id` is given. */
   remove: (body: Body) => del<MessageResponse>("/teams", wrap(body)),
   importChallonge: (tournament_id: string) =>
-    post<MessageResponse>("/teams/challonge", wrap({ tournament_id }))
+    post<MessageResponse>("/teams/challonge", wrap({ tournament_id })),
+  /** SteamID64, Steam name and avatar for any Steam identifiers (max 50); steam_id null when invalid. */
+  resolveMembers: async (ids: string[]) =>
+    (await post<{ members: ResolvedMember[] }>("/teams/members/resolve", wrap({ ids }))).members
 };
 
 export const matches = {

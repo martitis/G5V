@@ -257,3 +257,11 @@ export interface SummaryQuery {
   limit?: number;
   offset?: number;
 }
+
+/** POST /teams/members/resolve: one entry per identifier sent. */
+export interface ResolvedMember {
+  input: string;
+  steam_id: string | null;
+  name: string | null;
+  image: string | null;
+}

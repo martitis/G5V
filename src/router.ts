@@ -37,12 +37,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import("@/views/TeamsView.vue"),
     meta: { requiresAuth: true, mine: true }
   },
-  {
-    path: "/teams/create",
-    name: "CreateTeam",
-    component: () => import("@/views/TeamView.vue"),
-    meta: { requiresAuth: true }
-  },
+  // Teams are created in a dialog on the teams list now; keep the old URL working.
+  { path: "/teams/create", redirect: { path: "/teams", query: { create: "1" } } },
   { path: "/teams/:id(\\d+)", name: "Team", component: () => import("@/views/TeamView.vue") },
   { path: "/servers", name: "Servers", component: () => import("@/views/ServersView.vue") },
   {
