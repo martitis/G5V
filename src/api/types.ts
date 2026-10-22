@@ -404,6 +404,8 @@ export interface TournamentSettings {
   min_players_to_ready: number;
   side_type: string;
   skip_veto: boolean;
+  /** Challonge tournament id that results are reported to. */
+  challonge_url?: string;
 }
 
 export interface TournamentSummary {

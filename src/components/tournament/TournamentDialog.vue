@@ -170,6 +170,16 @@
             color="primary"
             hide-details
           />
+          <v-text-field
+            v-model="settings.challonge_url"
+            :label="$t('Tournament.ChallongeUrl')"
+            :hint="$t('Tournament.ChallongeHint')"
+            persistent-hint
+            :rules="[challongeRule]"
+            prepend-inner-icon="mdi-tournament"
+            clearable
+            class="mt-3"
+          />
           <MapPoolPicker
             v-model="settings.map_pool"
             :maps="mapList"
@@ -240,8 +250,21 @@ const settings = reactive<TournamentSettings>({
   players_per_team: 5,
   min_players_to_ready: 5,
   side_type: "standard",
-  skip_veto: false
+  skip_veto: false,
+  challonge_url: undefined
 });
+
+/** A Challonge tournament id ("abc123", "sub-abc123"); a pasted challonge.com link is cut down to it. */
+const challongeRule = (value: string | null | undefined) =>
+  !value || /^[A-Za-z0-9_-]{1,100}$/.test(challongeId(value)) || t("Tournament.ChallongeInvalid");
+function challongeId(value: string) {
+  const link =
+    /^https?:\/\/(?:([A-Za-z0-9-]+)\.)?challonge\.com\/(?:[a-z]{2}\/)?([A-Za-z0-9_]+)\/?$/.exec(
+      value.trim()
+    );
+  if (!link) return value.trim();
+  return link[1] && link[1] !== "www" ? `${link[1]}-${link[2]}` : link[2];
+}
 
 /** Teams and format are fixed once the bracket exists. */
 const started = computed(() => props.detail != null && props.detail.tournament.status !== "draft");
@@ -265,6 +288,7 @@ watch(show, async (open) => {
     min_players_to_ready: 5,
     side_type: "standard",
     skip_veto: false,
+    challonge_url: undefined,
     ...(existing?.tournament.settings ?? {})
   });
   try {
@@ -338,7 +362,11 @@ async function save() {
     const body: Record<string, unknown> = {
       name: draft.name.trim(),
       season_id: draft.season_id,
-      settings: { ...settings, swiss_rounds: settings.swiss_rounds || undefined }
+      settings: {
+        ...settings,
+        swiss_rounds: settings.swiss_rounds || undefined,
+        challonge_url: settings.challonge_url ? challongeId(settings.challonge_url) : undefined
+      }
     };
     if (!started.value) Object.assign(body, { format: draft.format, team_ids: draft.team_ids });
     let id: number;

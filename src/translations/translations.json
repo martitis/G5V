@@ -564,6 +564,9 @@
       "NoEntries": "Nothing logged yet."
     },
     "Tournament": {
+      "ChallongeUrl": "Challonge tournament (optional)",
+      "ChallongeHint": "Its id or link; scores and results are reported there with your Challonge API key. Teams must be imported from it.",
+      "ChallongeInvalid": "Not a Challonge tournament id or link.",
       "Title": "Tournaments",
       "New": "New tournament",
       "Edit": "Edit tournament",
@@ -1325,6 +1328,9 @@
       "NoEntries": "Rien d'enregistré pour l'instant."
     },
     "Tournament": {
+      "ChallongeUrl": "Tournoi Challonge (facultatif)",
+      "ChallongeHint": "Son identifiant ou lien ; les scores et résultats y sont envoyés avec votre clé API Challonge. Les équipes doivent en être importées.",
+      "ChallongeInvalid": "Ce n'est pas un identifiant ou un lien de tournoi Challonge.",
       "Title": "Tournois",
       "New": "Nouveau tournoi",
       "Edit": "Modifier le tournoi",
@@ -2087,6 +2093,9 @@
       "NoEntries": "まだ記録はありません。"
     },
     "Tournament": {
+      "ChallongeUrl": "Challonge トーナメント（任意）",
+      "ChallongeHint": "ID またはリンク。スコアと結果はあなたの Challonge API キーで送信されます。チームはそこからインポートしてください。",
+      "ChallongeInvalid": "Challonge トーナメントの ID またはリンクではありません。",
       "Title": "トーナメント",
       "New": "新しいトーナメント",
       "Edit": "トーナメントを編集",
