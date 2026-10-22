@@ -30,6 +30,7 @@
       "NewPasswordLabel": "New Password"
     },
     "MatchAdmin": {
+      "UpdateCallbacks": "Send panel address to server",
       "Done": "Done.",
       "TeamWins": "{team} wins",
       "ConfigPreview": "Show MatchZy config",
@@ -525,6 +526,7 @@
       "NewPasswordLabel": "Nouveau mot de passe"
     },
     "MatchAdmin": {
+      "UpdateCallbacks": "Envoyer l'adresse du panneau au serveur",
       "Done": "Terminé.",
       "TeamWins": "{team} gagne",
       "ConfigPreview": "Afficher la config MatchZy",
@@ -1021,6 +1023,7 @@
       "NewPasswordLabel": "新しいパスワード"
     },
     "MatchAdmin": {
+      "UpdateCallbacks": "パネルのアドレスをサーバーに送信",
       "Done": "完了しました。",
       "TeamWins": "{team}の勝利",
       "ConfigPreview": "MatchZy設定を表示",

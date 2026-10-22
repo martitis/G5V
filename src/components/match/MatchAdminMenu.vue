@@ -47,6 +47,11 @@
           @click="open('rcon')"
         />
         <v-list-item
+          prepend-icon="mdi-link-variant"
+          :title="$t('MatchAdmin.UpdateCallbacks')"
+          @click="updateCallbacks"
+        />
+        <v-list-item
           prepend-icon="mdi-code-json"
           :title="$t('MatchAdmin.ConfigPreview')"
           @click="showConfig"
@@ -340,6 +345,7 @@ async function run(
   }
 }
 
+const updateCallbacks = () => run(() => matches.updateCallbacks(props.match.id));
 const pause = () => run(() => matches.pause(props.match.id));
 const unpause = () => run(() => matches.unpause(props.match.id));
 

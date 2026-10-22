@@ -120,6 +120,9 @@ export const matches = {
     put<MessageResponse & { response?: string }>(`/matches/${id}/rcon`, wrap({ rcon_command })),
   backups: async (id: number) =>
     (await get<{ response: BackupEntry[] }>(`/matches/${id}/backup`)).response ?? [],
+  /** Re-sends the API's event/backup/demo URLs to the server (after the API's address changed). */
+  updateCallbacks: (id: number) =>
+    post<MessageResponse & { response?: string }>(`/matches/${id}/callbacks`),
   restoreBackup: (id: number, backup_name: string) =>
     post<MessageResponse & { response?: string }>(`/matches/${id}/backup`, wrap({ backup_name })),
   remoteBackups: async (id: number) =>
