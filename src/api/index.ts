@@ -292,6 +292,8 @@ export const admin = {
 export const tournaments = {
   all: async () => (await get<{ tournaments: TournamentSummary[] }>("/tournaments")).tournaments,
   get: (id: number | string) => get<TournamentDetail>(`/tournaments/${id}`),
+  /** SSE: "tournament" (same data as get) on every bracket or match change. */
+  streamUrl: (id: number | string) => `/tournaments/${id}/stream`,
   /** Admins only. team_ids in seed order. */
   create: (body: Body) => post<MessageResponse & { id: number }>("/tournaments", wrap(body)),
   update: (id: number, body: Body) => put<MessageResponse>(`/tournaments/${id}`, wrap(body)),

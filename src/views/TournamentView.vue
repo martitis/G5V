@@ -6,6 +6,12 @@
     }}</v-alert>
 
     <template v-else>
+      <TournamentStream
+        v-if="info.status === 'running'"
+        :key="info.id"
+        :tournament-id="info.id"
+        @tournament="(next) => (detail = next)"
+      />
       <v-card class="mb-4">
         <v-card-text class="d-flex align-center flex-wrap ga-3">
           <div class="flex-grow-1">
@@ -175,7 +181,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { matches, servers as serversApi, tournaments } from "@/api";
@@ -184,6 +190,7 @@ import BracketView from "@/components/tournament/BracketView.vue";
 import StandingsTable from "@/components/tournament/StandingsTable.vue";
 import TournamentDialog from "@/components/tournament/TournamentDialog.vue";
 import TournamentNodeCard from "@/components/tournament/TournamentNodeCard.vue";
+import TournamentStream from "@/components/tournament/TournamentStream.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
 import { canCreateMatch, roundLabel } from "@/utils/tournament";
@@ -389,18 +396,6 @@ async function remove() {
     busy.value = false;
   }
 }
-
-// A running tournament changes as its matches end; refresh it regularly.
-let timer: ReturnType<typeof setInterval> | null = null;
-onMounted(() => {
-  timer = setInterval(() => {
-    if (detail.value?.tournament.status === "running" && document.visibilityState === "visible")
-      void load();
-  }, 15000);
-});
-onBeforeUnmount(() => {
-  if (timer) clearInterval(timer);
-});
 
 watch(
   () => route.params.id,
