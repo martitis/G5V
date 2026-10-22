@@ -429,3 +429,56 @@ export interface TournamentDetail {
   nodes: TournamentNode[];
   standings: TournamentStanding[] | null;
 }
+
+export type PugFormation = "random" | "balanced" | "captains";
+export type PugStatus =
+  "open" | "ready_check" | "picking" | "loading" | "loaded" | "failed" | "cancelled";
+
+export interface PugSettings {
+  players_per_team: number;
+  formation: PugFormation;
+  max_maps: number;
+  map_pool: string[];
+  side_type: string;
+  skip_veto: boolean;
+  ready_seconds: number;
+}
+
+export interface PugQueue {
+  id: number;
+  user_id: number | null;
+  title: string | null;
+  status: PugStatus;
+  server_id: number | null;
+  season_id: number | null;
+  match_id: number | null;
+  error: string | null;
+  ready_deadline: string | null;
+  expires_at: string | null;
+  created_at: string;
+  settings: PugSettings;
+  size: number;
+  /** While captains pick: whose turn it is. */
+  picking_team: 1 | 2 | null;
+  picking_captain: number | null;
+}
+
+export interface PugPlayer {
+  user_id: number;
+  steam_id: string;
+  name: string | null;
+  image: string | null;
+  ready: boolean;
+  team: 1 | 2 | null;
+  captain: boolean;
+  rating: number;
+}
+
+export interface OpenPugQueue {
+  id: number;
+  title: string | null;
+  status: PugStatus;
+  created_at: string;
+  joined: number;
+  size: number;
+}

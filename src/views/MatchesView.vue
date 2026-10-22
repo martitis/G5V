@@ -1,5 +1,6 @@
 <template>
   <v-container fluid>
+    <OpenQueues />
     <MatchList
       ref="list"
       :key="mine ? 'mine' : 'all'"
@@ -33,6 +34,7 @@ import { useRoute } from "vue-router";
 import { matches } from "@/api";
 import type { MatchSummary } from "@/api/types";
 import MatchList from "@/components/matchlist/MatchList.vue";
+import OpenQueues from "@/components/pug/OpenQueues.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
 

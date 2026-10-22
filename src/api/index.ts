@@ -4,6 +4,9 @@
  */
 import { del, get, orEmpty, post, put, type MessageResponse } from "./http";
 import type {
+  OpenPugQueue,
+  PugPlayer,
+  PugQueue,
   TournamentDetail,
   TournamentSummary,
   AdminUser,
@@ -262,4 +265,20 @@ export const tournaments = {
   remove: (id: number) => del<MessageResponse>(`/tournaments/${id}`),
   start: (id: number) => post<MessageResponse>(`/tournaments/${id}/start`),
   refresh: (id: number) => post<MessageResponse>(`/tournaments/${id}/refresh`)
+};
+
+export const pugs = {
+  open: async () => (await get<{ queues: OpenPugQueue[] }>("/pugs")).queues,
+  get: (id: number | string) => get<{ queue: PugQueue; players: PugPlayer[] }>(`/pugs/${id}`),
+  /** "queue" events with the same data as get(). */
+  streamUrl: (id: number | string) => `/pugs/${id}/stream`,
+  /** Admins only. */
+  create: (body: Body) => post<MessageResponse & { id: number }>("/pugs", wrap(body)),
+  join: (id: number) => post<MessageResponse>(`/pugs/${id}/join`),
+  leave: (id: number) => post<MessageResponse>(`/pugs/${id}/leave`),
+  ready: (id: number) => post<MessageResponse>(`/pugs/${id}/ready`),
+  pick: (id: number, user_id: number) =>
+    post<MessageResponse>(`/pugs/${id}/pick`, wrap({ user_id })),
+  retry: (id: number) => post<MessageResponse>(`/pugs/${id}/retry`),
+  cancel: (id: number) => post<MessageResponse>(`/pugs/${id}/cancel`)
 };

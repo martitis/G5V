@@ -64,6 +64,7 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true }
   },
   { path: "/user/:id", name: "User", component: () => import("@/views/UserView.vue") },
+  { path: "/pug/:id(\\d+)", name: "Pug", component: () => import("@/views/PugView.vue") },
   {
     path: "/tournaments",
     name: "Tournaments",

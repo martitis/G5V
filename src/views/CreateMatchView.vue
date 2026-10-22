@@ -14,7 +14,7 @@
                 :items="serverItems"
                 :label="$t('CreateMatch.ServerLabel')"
                 :no-data-text="$t('CreateMatch.NoServers')"
-                :rules="[(v: number | null) => v != null || $t('misc.Required')]"
+                :rules="[(v: number | null) => mode === 'pug' || v != null || $t('misc.Required')]"
               >
                 <template #append>
                   <v-btn
@@ -43,7 +43,58 @@
       <!-- Teams -->
       <v-card class="mb-4" :title="$t('CreateMatch.SectionTeams')">
         <v-card-text>
-          <v-row density="compact" class="align-center">
+          <div class="text-body-medium mb-1">{{ $t("Pug.TeamMode") }}</div>
+          <v-btn-toggle
+            v-model="mode"
+            mandatory
+            color="primary"
+            variant="outlined"
+            divided
+            class="mb-4"
+          >
+            <v-btn value="teams" prepend-icon="mdi-shield-account">{{
+              $t("Pug.ExistingTeams")
+            }}</v-btn>
+            <v-btn value="pug" prepend-icon="mdi-account-multiple-plus">{{
+              $t("Pug.Queue")
+            }}</v-btn>
+          </v-btn-toggle>
+          <template v-if="mode === 'pug'">
+            <v-alert type="info" variant="tonal" density="compact" class="mb-4">{{
+              $t("Pug.QueueHint")
+            }}</v-alert>
+            <v-row density="compact">
+              <v-col cols="12" sm="4">
+                <v-select
+                  v-model="pug.formation"
+                  :items="formationItems"
+                  :label="$t('Pug.Formation')"
+                />
+              </v-col>
+              <v-col cols="6" sm="4">
+                <v-number-input
+                  v-model="pug.ready_seconds"
+                  :label="$t('Pug.ReadySeconds')"
+                  :min="20"
+                  :max="300"
+                  :step="10"
+                  control-variant="split"
+                />
+              </v-col>
+              <v-col cols="6" sm="4">
+                <v-number-input
+                  v-model="pug.expires_minutes"
+                  :label="$t('Pug.ExpiresMinutes')"
+                  :min="0"
+                  :max="1440"
+                  :step="15"
+                  clearable
+                  control-variant="split"
+                />
+              </v-col>
+            </v-row>
+          </template>
+          <v-row v-else density="compact" class="align-center">
             <v-col cols="12" md="5">
               <v-autocomplete
                 v-model="form.team1_id"
@@ -66,6 +117,7 @@
           </v-row>
           <v-text-field
             v-model="form.title"
+            :class="{ 'mt-2': mode === 'pug' }"
             :label="$t('CreateMatch.FormMatchTitle')"
             counter="60"
             :rules="[
@@ -221,6 +273,7 @@ import { useI18n } from "vue-i18n";
 import {
   maps,
   matches,
+  pugs,
   seasons as seasonsApi,
   servers as serversApi,
   teams as teamsApi
@@ -255,16 +308,33 @@ const form = reactive({
   title: "",
   veto_first: "team1"
 });
+/** Existing teams, or a PUG queue that forms the teams when it fills. */
+const mode = ref<"teams" | "pug">("teams");
+const pug = reactive({
+  formation: "balanced" as "balanced" | "random" | "captains",
+  ready_seconds: 60 as number | null,
+  expires_minutes: null as number | null
+});
 /** Series, ready and veto settings; a season pre-fills them. */
 const defaults = reactive(emptyDefaults());
 const cvars = ref<Record<string, string>>({});
 const seasonApplied = ref(false);
 
-const serverItems = computed(() =>
-  servers.value.map((server) => ({
-    value: server.id,
+const serverItems = computed(() => [
+  // A PUG queue can take whichever server is free once it fills.
+  ...(mode.value === "pug"
+    ? [{ value: null as number | null, title: t("Pug.AnyFreeServer") }]
+    : []),
+  ...servers.value.map((server) => ({
+    value: server.id as number | null,
     title:
       server.display_name + (server.public_server && server.user_id !== auth.user?.id ? " 🌐" : "")
+  }))
+]);
+const formationItems = computed(() =>
+  (["balanced", "random", "captains"] as const).map((value) => ({
+    value,
+    title: t(`Pug.${value}`)
   }))
 );
 const teamItems = computed(() =>
@@ -301,6 +371,7 @@ const mapLabel = (name: string | undefined) =>
   name ? (mapList.value.find((map) => map.map_name === name)?.map_display_name ?? name) : undefined;
 
 const teamRule = (value: number | null) => {
+  if (mode.value === "pug") return true;
   if (value == null) return t("CreateMatch.TeamRequired");
   if (form.team1_id != null && form.team1_id === form.team2_id)
     return t("CreateMatch.TeamCannotBeEqual");
@@ -403,6 +474,25 @@ async function create() {
   creating.value = true;
   try {
     const playersPerTeam = defaults.players_per_team || 5;
+    if (mode.value === "pug") {
+      const queue = await pugs.create({
+        title: form.title.trim() || undefined,
+        server_id: form.server_id,
+        season_id: form.season_id,
+        expires_minutes: pug.expires_minutes || undefined,
+        settings: {
+          players_per_team: playersPerTeam,
+          formation: pug.formation,
+          max_maps: defaults.maps_to_win,
+          map_pool: defaults.map_pool,
+          side_type: defaults.side_type,
+          skip_veto: defaults.skip_veto,
+          ready_seconds: pug.ready_seconds || 60
+        }
+      });
+      await router.push(`/pug/${queue.id}`);
+      return;
+    }
     const result = await matches.create({
       server_id: form.server_id,
       season_id: form.season_id,

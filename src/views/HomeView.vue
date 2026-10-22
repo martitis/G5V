@@ -1,5 +1,6 @@
 <template>
   <v-container fluid>
+    <OpenQueues />
     <MatchList
       :title="$t('Team.RecentMatches')"
       :filters="false"
@@ -26,6 +27,7 @@
 
 <script setup lang="ts">
 import MatchList from "@/components/matchlist/MatchList.vue";
+import OpenQueues from "@/components/pug/OpenQueues.vue";
 import TeamLeaderboardTable from "@/components/TeamLeaderboardTable.vue";
 import PlayerLeaderboardTable from "@/components/PlayerLeaderboardTable.vue";
 </script>
