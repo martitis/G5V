@@ -98,6 +98,7 @@ import { useI18n } from "vue-i18n";
 import type { Match, Server, Team } from "@/api/types";
 import TeamSide from "@/components/match/TeamSide.vue";
 import { useUiStore } from "@/stores/ui";
+import { copyText } from "@/utils/clipboard";
 import { formatDateTime, isFinished } from "@/utils/format";
 import { matchStatus } from "@/utils/matchStatus";
 
@@ -144,12 +145,8 @@ const connect = computed(() => {
 
 async function copyConnect() {
   if (!connect.value) return;
-  try {
-    await navigator.clipboard.writeText(`connect ${connect.value.address}`);
-    ui.notify(t("Match.Copied"), "success");
-  } catch (error) {
-    ui.notifyError(error);
-  }
+  if (await copyText(`connect ${connect.value.address}`)) ui.notify(t("Match.Copied"), "success");
+  else ui.notify(t("misc.CopyFailed"), "warning");
 }
 </script>
 

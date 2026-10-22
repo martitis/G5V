@@ -92,22 +92,12 @@
             <v-radio :label="$t('CreateMatch.KnifeAlways')" value="always_knife" />
           </v-radio-group>
 
-          <div class="text-body-medium mt-2">{{ $t("CreateMatch.FormMapPool") }}</div>
-          <div class="text-body-small text-medium-emphasis">
-            {{ $t("CreateMatch.FormMapExplanation") }}
-          </div>
-          <v-chip-group v-model="defaults.map_pool" multiple column selected-class="text-primary">
-            <v-chip
-              v-for="map in mapList"
-              :key="map.id"
-              :value="map.map_name"
-              filter
-              variant="outlined"
-            >
-              {{ map.map_display_name }}
-            </v-chip>
-          </v-chip-group>
-          <div v-if="mapPoolError" class="text-error text-body-small mb-2">{{ mapPoolError }}</div>
+          <MapPoolPicker
+            v-model="defaults.map_pool"
+            :maps="mapList"
+            :error="mapPoolError"
+            class="mt-2"
+          />
 
           <v-row v-if="defaults.skip_veto" density="compact" class="mt-2">
             <v-col v-for="index in defaults.maps_to_win" :key="index" cols="12" sm="6" md="4">
@@ -153,6 +143,7 @@ import { useI18n } from "vue-i18n";
 import { maps, seasons } from "@/api";
 import type { MapListEntry, Season } from "@/api/types";
 import CvarEditor from "@/components/CvarEditor.vue";
+import MapPoolPicker from "@/components/MapPoolPicker.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
 import { toDateInput } from "@/utils/format";

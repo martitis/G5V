@@ -92,22 +92,7 @@
             <v-btn v-for="n in [1, 2, 3, 5, 7]" :key="n" :value="n">BO{{ n }}</v-btn>
           </v-btn-toggle>
 
-          <div class="text-body-medium">{{ $t("CreateMatch.FormMapPool") }}</div>
-          <div class="text-body-small text-medium-emphasis">
-            {{ $t("CreateMatch.FormMapExplanation") }}
-          </div>
-          <v-chip-group v-model="defaults.map_pool" multiple column selected-class="text-primary">
-            <v-chip
-              v-for="map in mapList"
-              :key="map.id"
-              :value="map.map_name"
-              filter
-              variant="outlined"
-            >
-              {{ map.map_display_name }}
-            </v-chip>
-          </v-chip-group>
-          <div v-if="mapPoolError" class="text-error text-body-small mb-2">{{ mapPoolError }}</div>
+          <MapPoolPicker v-model="defaults.map_pool" :maps="mapList" :error="mapPoolError" />
 
           <v-row density="compact" class="mt-2">
             <v-col cols="12" sm="6">
@@ -204,13 +189,6 @@
       <!-- Advanced -->
       <v-card class="mb-4" :title="$t('CreateMatch.SectionAdvanced')">
         <v-card-text>
-          <v-switch
-            v-model="form.private_match"
-            :label="$t('CreateMatch.PrivateMatch')"
-            color="primary"
-            hide-details
-            class="mb-2"
-          />
           <div class="text-body-medium mb-2">{{ $t("CreateMatch.FormCVARS") }}</div>
           <CvarEditor v-model="cvars" />
         </v-card-text>
@@ -249,6 +227,7 @@ import {
 } from "@/api";
 import type { MapListEntry, Season, Server, Team } from "@/api/types";
 import CvarEditor from "@/components/CvarEditor.vue";
+import MapPoolPicker from "@/components/MapPoolPicker.vue";
 import ServerDialog from "@/components/ServerDialog.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
@@ -274,8 +253,7 @@ const form = reactive({
   team1_id: null as number | null,
   team2_id: null as number | null,
   title: "",
-  veto_first: "team1",
-  private_match: false
+  veto_first: "team1"
 });
 /** Series, ready and veto settings; a season pre-fills them. */
 const defaults = reactive(emptyDefaults());
@@ -448,7 +426,6 @@ async function create() {
       min_spectators_to_ready: defaults.min_spectators_to_ready || 0,
       wingman: defaults.wingman,
       spectator_auths: defaults.spectators.length ? defaults.spectators : null,
-      private_match: form.private_match ? 1 : 0,
       match_cvars: cvars.value
     });
     ui.notify(t("CreateMatch.MessageRegisterSuccess"), "success");

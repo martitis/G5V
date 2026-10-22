@@ -9,7 +9,7 @@
       @loaded="onLoaded"
     >
       <template #actions>
-        <v-btn v-if="auth.loggedIn" color="primary" prepend-icon="mdi-plus" to="/match/create">
+        <v-btn v-if="auth.isAdmin" color="primary" prepend-icon="mdi-plus" to="/match/create">
           {{ $t("CreateMatch.Title") }}
         </v-btn>
         <v-btn

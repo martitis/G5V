@@ -7,6 +7,8 @@ declare module "vue-router" {
   interface RouteMeta {
     /** Only for logged-in users; others are sent to the home page. */
     requiresAuth?: boolean;
+    /** Only for admins and super admins. */
+    requiresAdmin?: boolean;
     /** Lists only the user's own items ("My ..." pages). */
     mine?: boolean;
   }
@@ -25,7 +27,7 @@ const routes: RouteRecordRaw[] = [
     path: "/match/create",
     name: "CreateMatch",
     component: () => import("@/views/CreateMatchView.vue"),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, requiresAdmin: true }
   },
   { path: "/match/:id(\\d+)", name: "Match", component: () => import("@/views/MatchView.vue") },
   { path: "/teams", name: "Teams", component: () => import("@/views/TeamsView.vue") },
@@ -99,12 +101,19 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  if (!to.meta.requiresAuth) return true;
+  if (!to.meta.requiresAuth && !to.meta.requiresAdmin) return true;
   const auth = useAuthStore();
   await auth.load();
-  if (auth.loggedIn) return true;
-  useUiStore().notify(i18n.global.t("misc.LoginRequired"), "warning");
-  return { name: "Home" };
+  if (!auth.loggedIn) {
+    useUiStore().notify(i18n.global.t("misc.LoginRequired"), "warning");
+    return { name: "Home" };
+  }
+  // The API refuses these actions too; this only keeps users off pages they can't use.
+  if (to.meta.requiresAdmin && !auth.isAdmin) {
+    useUiStore().notify(i18n.global.t("misc.AdminRequired"), "warning");
+    return { name: "Home" };
+  }
+  return true;
 });
 
 export default router;

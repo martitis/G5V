@@ -145,6 +145,7 @@ import PlayerStatsSummary from "@/components/PlayerStatsSummary.vue";
 import UserMapList from "@/components/UserMapList.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
+import { copyText } from "@/utils/clipboard";
 import { isSteamId64, steamProfileUrl } from "@/utils/format";
 
 const route = useRoute();
@@ -214,12 +215,8 @@ async function load() {
 }
 
 async function copyApiKey() {
-  try {
-    await navigator.clipboard.writeText(profile.value?.api_key ?? "");
-    ui.notify(t("User.Copied"), "success");
-  } catch (error) {
-    ui.notifyError(error);
-  }
+  if (await copyText(profile.value?.api_key ?? "")) ui.notify(t("User.Copied"), "success");
+  else ui.notify(t("misc.CopyFailed"), "warning");
 }
 
 async function resetApiKey() {

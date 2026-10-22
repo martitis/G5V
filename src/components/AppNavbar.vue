@@ -37,6 +37,7 @@
           prepend-icon="mdi-account-details"
         />
         <v-list-item
+          v-if="auth.isAdmin"
           to="/match/create"
           :title="$t('Navbar.CreateMatch')"
           prepend-icon="mdi-plus-box"

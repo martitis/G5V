@@ -94,6 +94,8 @@
       "GOTVConnect": "Connect to GOTV!"
     },
     "CreateMatch": {
+      "ClearMaps": "Clear",
+      "SelectAllMaps": "Select all",
       "SideT": "Team 1 starts T",
       "Creating": "Loading the match on the server…",
       "PrivateMatch": "Private match",
@@ -442,6 +444,8 @@
       "TDiff": "Round Difference"
     },
     "misc": {
+      "CopyFailed": "Couldn't copy; select the text and copy it by hand.",
+      "AdminRequired": "Only admins can open this page.",
       "Search": "Search",
       "Versus": "vs",
       "NoData": "Nothing here yet.",
@@ -572,6 +576,8 @@
       "ConnectButtonAt": "Se connecter à "
     },
     "CreateMatch": {
+      "ClearMaps": "Effacer",
+      "SelectAllMaps": "Tout sélectionner",
       "SideT": "L'équipe 1 commence T",
       "Creating": "Chargement du match sur le serveur…",
       "PrivateMatch": "Match privé",
@@ -921,6 +927,8 @@
       "TDiff": "Round Difference"
     },
     "misc": {
+      "CopyFailed": "Copie impossible ; sélectionnez le texte et copiez-le manuellement.",
+      "AdminRequired": "Seuls les administrateurs peuvent ouvrir cette page.",
       "Search": "Rechercher",
       "Versus": "vs",
       "NoData": "Rien pour le moment.",
@@ -1052,6 +1060,8 @@
       "GOTVConnect": "GOTVに接続"
     },
     "CreateMatch": {
+      "ClearMaps": "クリア",
+      "SelectAllMaps": "すべて選択",
       "SideT": "チーム1がTスタート",
       "Creating": "サーバーに試合を読み込んでいます…",
       "PrivateMatch": "非公開の試合",
@@ -1401,6 +1411,8 @@
       "TDiff": "丸差"
     },
     "misc": {
+      "CopyFailed": "コピーできませんでした。テキストを選択して手動でコピーしてください。",
+      "AdminRequired": "このページは管理者のみ開けます。",
       "Search": "検索",
       "Versus": "vs",
       "NoData": "まだ何もありません。",
