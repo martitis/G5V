@@ -363,3 +363,69 @@ export interface AuditEntry {
   status_code: number | null;
   detail: string | null;
 }
+
+export type TournamentFormat = "single_elim" | "double_elim" | "round_robin" | "swiss";
+
+export interface TournamentSettings {
+  best_of: number;
+  final_best_of: number;
+  swiss_rounds?: number;
+  map_pool: string[];
+  players_per_team: number;
+  min_players_to_ready: number;
+  side_type: string;
+  skip_veto: boolean;
+}
+
+export interface TournamentSummary {
+  id: number;
+  name: string;
+  format: TournamentFormat;
+  status: "draft" | "running" | "finished";
+  season_id: number | null;
+  user_id: number | null;
+  owner: string | null;
+  created_at: string;
+  team_count: number;
+}
+
+export interface TournamentNode {
+  id: number;
+  key: string;
+  bracket: "upper" | "lower" | "grand_final" | "round_robin" | "swiss";
+  round: number;
+  position: number;
+  final: boolean;
+  team1_id: number | null;
+  team2_id: number | null;
+  winner_id: number | null;
+  status: "pending" | "ready" | "live" | "done" | "bye" | "empty";
+  match_id: number | null;
+  best_of: number;
+  /** Series score of the linked match, in the node's team order. */
+  score: [number, number] | null;
+}
+
+export interface TournamentStanding {
+  team_id: number;
+  played: number;
+  wins: number;
+  losses: number;
+  maps_won: number;
+  maps_lost: number;
+  buchholz: number;
+}
+
+export interface TournamentDetail {
+  tournament: Omit<TournamentSummary, "team_count"> & { settings: TournamentSettings };
+  teams: {
+    seed: number;
+    id: number;
+    name: string;
+    tag: string | null;
+    logo: string | null;
+    flag: string | null;
+  }[];
+  nodes: TournamentNode[];
+  standings: TournamentStanding[] | null;
+}

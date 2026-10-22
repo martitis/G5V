@@ -4,6 +4,8 @@
  */
 import { del, get, orEmpty, post, put, type MessageResponse } from "./http";
 import type {
+  TournamentDetail,
+  TournamentSummary,
   AdminUser,
   AuditEntry,
   BackupEntry,
@@ -249,4 +251,15 @@ export const admin = {
     }
     return get<{ entries: AuditEntry[]; total: number }>(`/admin/audit?${params.toString()}`);
   }
+};
+
+export const tournaments = {
+  all: async () => (await get<{ tournaments: TournamentSummary[] }>("/tournaments")).tournaments,
+  get: (id: number | string) => get<TournamentDetail>(`/tournaments/${id}`),
+  /** Admins only. team_ids in seed order. */
+  create: (body: Body) => post<MessageResponse & { id: number }>("/tournaments", wrap(body)),
+  update: (id: number, body: Body) => put<MessageResponse>(`/tournaments/${id}`, wrap(body)),
+  remove: (id: number) => del<MessageResponse>(`/tournaments/${id}`),
+  start: (id: number) => post<MessageResponse>(`/tournaments/${id}/start`),
+  refresh: (id: number) => post<MessageResponse>(`/tournaments/${id}/refresh`)
 };

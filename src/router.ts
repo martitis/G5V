@@ -65,6 +65,16 @@ const routes: RouteRecordRaw[] = [
   },
   { path: "/user/:id", name: "User", component: () => import("@/views/UserView.vue") },
   {
+    path: "/tournaments",
+    name: "Tournaments",
+    component: () => import("@/views/TournamentsView.vue")
+  },
+  {
+    path: "/tournament/:id(\\d+)",
+    name: "Tournament",
+    component: () => import("@/views/TournamentView.vue")
+  },
+  {
     path: "/admin",
     name: "Admin",
     component: () => import("@/views/AdminView.vue"),

@@ -71,6 +71,11 @@
           @click="serverDialog = true"
         />
       </template>
+      <v-list-item
+        to="/tournaments"
+        :title="$t('Navbar.Tournaments')"
+        prepend-icon="mdi-tournament"
+      />
       <v-list-item to="/seasons" :title="$t('Navbar.AllSeasons')" prepend-icon="mdi-trophy" />
       <v-list-item
         v-if="auth.loggedIn"
