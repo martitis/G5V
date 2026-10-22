@@ -5,6 +5,7 @@
 import { del, get, orEmpty, post, put, type MessageResponse } from "./http";
 import type { MatchTemplateSettings } from "@/utils/matchPresets";
 import type {
+  ScheduledMatch,
   SearchResults,
   OpenPugQueue,
   PugPlayer,
@@ -314,4 +315,14 @@ export const templates = {
   save: (name: string, settings: MatchTemplateSettings) =>
     post<MessageResponse & { id: number }>("/templates", wrap({ name, settings })),
   remove: (id: number) => del<MessageResponse>(`/templates/${id}`)
+};
+
+/** Matches the API creates at a set time. */
+export const scheduled = {
+  list: async () => (await get<{ scheduled: ScheduledMatch[] }>("/scheduled")).scheduled,
+  /** match: the create-match body (server_id empty = first free server at that time). */
+  create: (run_at: string, match: Body) =>
+    post<MessageResponse & { id: number }>("/scheduled", wrap({ run_at, match })),
+  cancel: (id: number) => post<MessageResponse>(`/scheduled/${id}/cancel`),
+  run: (id: number) => post<MessageResponse & { scheduled: ScheduledMatch }>(`/scheduled/${id}/run`)
 };

@@ -35,6 +35,33 @@
       <!-- Server & season -->
       <v-card class="mb-4" :title="$t('CreateMatch.SectionServer')">
         <v-card-text>
+          <div v-if="mode === 'teams'" class="d-flex align-center flex-wrap ga-3 mb-3">
+            <span class="text-body-medium">{{ $t("Schedule.When") }}</span>
+            <v-btn-toggle
+              v-model="when"
+              mandatory
+              color="primary"
+              variant="outlined"
+              divided
+              density="compact"
+            >
+              <v-btn value="now" prepend-icon="mdi-play">{{ $t("Schedule.Now") }}</v-btn>
+              <v-btn value="later" prepend-icon="mdi-calendar-clock">{{
+                $t("Schedule.Later")
+              }}</v-btn>
+            </v-btn-toggle>
+            <v-text-field
+              v-if="when === 'later'"
+              v-model="runAt"
+              type="datetime-local"
+              :label="$t('Schedule.RunAt')"
+              :min="minRunAt"
+              density="compact"
+              hide-details="auto"
+              :rules="[(v: string) => !!v || $t('misc.Required')]"
+              style="max-width: 260px"
+            />
+          </div>
           <v-row density="compact">
             <v-col cols="12" md="7">
               <v-select
@@ -42,7 +69,10 @@
                 :items="serverItems"
                 :label="$t('CreateMatch.ServerLabel')"
                 :no-data-text="$t('CreateMatch.NoServers')"
-                :rules="[(v: number | null) => mode === 'pug' || v != null || $t('misc.Required')]"
+                :rules="[
+                  (v: number | null) =>
+                    mode === 'pug' || when === 'later' || v != null || $t('misc.Required')
+                ]"
               >
                 <template #append>
                   <v-btn
@@ -330,6 +360,7 @@ import {
   matches,
   pugs,
   seasons as seasonsApi,
+  scheduled as scheduledApi,
   templates as templatesApi,
   servers as serversApi,
   teams as teamsApi
@@ -379,10 +410,12 @@ const cvars = ref<Record<string, string>>({});
 const seasonApplied = ref(false);
 
 const serverItems = computed(() => [
-  // A PUG queue can take whichever server is free once it fills.
+  // A PUG queue or a scheduled match can take whichever server is free when it starts.
   ...(mode.value === "pug"
     ? [{ value: null as number | null, title: t("Pug.AnyFreeServer") }]
-    : []),
+    : when.value === "later"
+      ? [{ value: null as number | null, title: t("Schedule.AnyFreeServer") }]
+      : []),
   ...servers.value.map((server) => ({
     value: server.id as number | null,
     title:
@@ -478,6 +511,15 @@ watch(
     }
   }
 );
+
+/** Create now, or let the API create the match at runAt (local date and time). */
+const when = ref<"now" | "later">("now");
+const runAt = ref("");
+const localInput = (date: Date) => {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
+const minRunAt = computed(() => localInput(new Date()));
 
 // Presets and templates: "preset:official" / "template:12".
 const savedTemplates = ref<{ id: number; name: string; settings: MatchTemplateSettings | null }[]>(
@@ -651,7 +693,7 @@ async function create() {
       await router.push(`/pug/${queue.id}`);
       return;
     }
-    const result = await matches.create({
+    const body = {
       server_id: form.server_id,
       season_id: form.season_id,
       team1_id: form.team1_id,
@@ -675,7 +717,16 @@ async function create() {
       wingman: defaults.wingman,
       spectator_auths: defaults.spectators.length ? defaults.spectators : null,
       match_cvars: cvars.value
-    });
+    };
+    if (when.value === "later") {
+      // datetime-local is the browser's local time; the API stores UTC.
+      const at = new Date(runAt.value);
+      await scheduledApi.create(at.toISOString(), body);
+      ui.notify(t("Schedule.Scheduled", { time: at.toLocaleString() }), "success");
+      await router.push("/matches");
+      return;
+    }
+    const result = await matches.create(body);
     ui.notify(t("CreateMatch.MessageRegisterSuccess"), "success");
     await router.push(`/match/${result.id}`);
   } catch (error) {

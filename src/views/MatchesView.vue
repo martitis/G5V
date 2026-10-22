@@ -1,6 +1,7 @@
 <template>
   <v-container fluid>
     <OpenQueues />
+    <ScheduledMatches v-if="auth.isAdmin" @changed="list?.reload()" />
     <MatchList
       ref="list"
       :key="mine ? 'mine' : 'all'"
@@ -44,6 +45,7 @@ import { matches } from "@/api";
 import type { MatchSummary } from "@/api/types";
 import MatchList from "@/components/matchlist/MatchList.vue";
 import OpenQueues from "@/components/pug/OpenQueues.vue";
+import ScheduledMatches from "@/components/matchlist/ScheduledMatches.vue";
 import { useOnlyMine } from "@/composables/useOnlyMine";
 import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";

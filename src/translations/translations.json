@@ -720,6 +720,25 @@
       "Saved": "Template saved.",
       "Delete": "Delete template",
       "Deleted": "Template deleted."
+    },
+    "Schedule": {
+      "When": "When",
+      "Now": "Now",
+      "Later": "Schedule",
+      "RunAt": "Start at",
+      "AnyFreeServer": "Any free server at that time",
+      "Scheduled": "Match scheduled for {time}.",
+      "Title": "Scheduled matches",
+      "StatusPending": "Waiting",
+      "StatusRunning": "Creating",
+      "StatusLoaded": "Created",
+      "StatusFailed": "Failed",
+      "StatusCancelled": "Cancelled",
+      "RunNow": "Start now",
+      "Cancel": "Cancel",
+      "Open": "Open match",
+      "NoShow": "No-show? The match was loaded {n} minutes ago and hasn't started.",
+      "Waiting": "Waiting {n} min"
     }
   },
   "fr": {
@@ -1444,6 +1463,25 @@
       "Saved": "Modèle enregistré.",
       "Delete": "Supprimer le modèle",
       "Deleted": "Modèle supprimé."
+    },
+    "Schedule": {
+      "When": "Quand",
+      "Now": "Maintenant",
+      "Later": "Programmer",
+      "RunAt": "Commencer à",
+      "AnyFreeServer": "N'importe quel serveur libre à ce moment",
+      "Scheduled": "Match programmé pour {time}.",
+      "Title": "Matchs programmés",
+      "StatusPending": "En attente",
+      "StatusRunning": "Création",
+      "StatusLoaded": "Créé",
+      "StatusFailed": "Échec",
+      "StatusCancelled": "Annulé",
+      "RunNow": "Lancer maintenant",
+      "Cancel": "Annuler",
+      "Open": "Ouvrir le match",
+      "NoShow": "Absence ? Le match est chargé depuis {n} minutes et n'a pas commencé.",
+      "Waiting": "Attente {n} min"
     }
   },
   "ja": {
@@ -2169,6 +2207,25 @@
       "Saved": "テンプレートを保存しました。",
       "Delete": "テンプレートを削除",
       "Deleted": "テンプレートを削除しました。"
+    },
+    "Schedule": {
+      "When": "開始時刻",
+      "Now": "今すぐ",
+      "Later": "予約",
+      "RunAt": "開始日時",
+      "AnyFreeServer": "その時点で空いているサーバー",
+      "Scheduled": "{time}に試合を予約しました。",
+      "Title": "予約済みの試合",
+      "StatusPending": "待機中",
+      "StatusRunning": "作成中",
+      "StatusLoaded": "作成済み",
+      "StatusFailed": "失敗",
+      "StatusCancelled": "取り消し",
+      "RunNow": "今すぐ開始",
+      "Cancel": "取り消す",
+      "Open": "試合を開く",
+      "NoShow": "未参加？試合は{n}分前に読み込まれましたが、まだ始まっていません。",
+      "Waiting": "{n}分待機中"
     }
   }
 }

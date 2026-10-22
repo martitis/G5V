@@ -246,6 +246,8 @@ export interface MatchSummary {
     team1_side: "ct" | "t" | null;
   } | null;
   pause: { type: string | null; team: string | null } | null;
+  /** Minutes since the match was loaded while its first map hasn't gone live. */
+  waiting_minutes: number | null;
   server: { name: string | null; ip: string; port: number; gotv_port: number | null } | null;
 }
 
@@ -502,4 +504,21 @@ export interface SearchResults {
     cancelled: number | null;
   }[];
   tournaments: { id: number; name: string; format: string; status: string }[];
+}
+
+/** GET /scheduled */
+export interface ScheduledMatch {
+  id: number;
+  user_id: number;
+  owner: string | null;
+  /** ISO time in UTC. */
+  run_at: string;
+  status: "pending" | "running" | "loaded" | "failed" | "cancelled";
+  match_id: number | null;
+  error: string | null;
+  title: string | null;
+  team1_id: number | null;
+  team2_id: number | null;
+  server_id: number | null;
+  max_maps: number | null;
 }

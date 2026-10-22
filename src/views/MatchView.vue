@@ -43,6 +43,16 @@
         {{ pauseText }}
       </v-alert>
 
+      <v-alert
+        v-if="waitingMinutes != null && waitingMinutes >= 10"
+        type="warning"
+        variant="tonal"
+        icon="mdi-account-clock"
+        class="mb-4"
+      >
+        {{ $t("Schedule.NoShow", { n: waitingMinutes }) }}
+      </v-alert>
+
       <MatchControlPanel v-if="adminTools" :match="match" class="mb-4" />
 
       <VetoList v-if="vetoList.length" :vetoes="vetoList" :sides="vetoSides" class="mb-4" />
@@ -66,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { matches, servers, stats, teams, vetoes } from "@/api";
 import { useI18n } from "vue-i18n";
@@ -126,6 +136,16 @@ const score = computed<[number, number]>(() => {
     return [mapStats.value[0].team1_score, mapStats.value[0].team2_score];
   return [m.team1_score ?? 0, m.team2_score ?? 0];
 });
+
+/** Minutes since the match was loaded while no map has gone live yet (no-show check). */
+const now = ref(Date.now());
+const waitingMinutes = computed(() => {
+  const m = match.value;
+  if (!m || isFinished(m) || mapStats.value.length || !m.start_time) return null;
+  return Math.max(0, Math.floor((now.value - new Date(m.start_time).getTime()) / 60000));
+});
+const clock = setInterval(() => (now.value = Date.now()), 30000);
+onBeforeUnmount(() => clearInterval(clock));
 
 const pauseText = computed(() => {
   const state = pause.value;

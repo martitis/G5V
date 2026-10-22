@@ -93,6 +93,16 @@
             {{ mapDisplayName(map.name) }} {{ map.team1_score }}:{{ map.team2_score }}
           </v-chip>
         </div>
+        <v-chip
+          v-if="match.waiting_minutes != null && match.waiting_minutes >= NO_SHOW_MINUTES"
+          color="warning"
+          size="x-small"
+          variant="tonal"
+          prepend-icon="mdi-account-clock"
+          label
+        >
+          {{ $t("Schedule.Waiting", { n: match.waiting_minutes }) }}
+        </v-chip>
         <div v-if="match.forfeit" class="text-body-small text-medium-emphasis">
           {{ $t("Matches.ByForfeit") }}
         </div>
@@ -146,6 +156,8 @@ import { copyText } from "@/utils/clipboard";
 import { formatDateTime, mapDisplayName, mapImageUrl } from "@/utils/format";
 
 const props = defineProps<{ match: MatchSummary }>();
+/** A loaded match still waiting for its first map after this long gets a no-show warning. */
+const NO_SHOW_MINUTES = 10;
 const { t } = useI18n();
 const router = useRouter();
 const ui = useUiStore();
