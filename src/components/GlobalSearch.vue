@@ -163,8 +163,9 @@ function openFirst() {
 </script>
 
 <style scoped>
+/* Shrinks before it can touch the buttons next to it. */
 .global-search {
-  width: 340px;
-  max-width: 40vw;
+  flex: 0 1 340px;
+  min-width: 140px;
 }
 </style>

@@ -1,285 +1,444 @@
 <template>
-  <v-expansion-panels v-model="openPanels" variant="accordion" multiple>
-    <v-expansion-panel value="control">
-      <v-expansion-panel-title>
-        <v-icon class="mr-2">mdi-tune</v-icon>{{ $t("Control.Title") }}
-        <v-spacer />
-        <v-chip
-          v-if="health"
-          :color="health.reachable ? 'success' : 'error'"
-          size="x-small"
-          variant="tonal"
-          label
-          class="mr-2"
-        >
-          {{ health.reachable ? $t("Control.Reachable") : $t("Control.Unreachable") }}
-        </v-chip>
-      </v-expansion-panel-title>
-      <v-expansion-panel-text>
-        <v-row>
-          <!-- Match flow -->
-          <v-col cols="12" md="6">
-            <div class="text-title-small mb-2">{{ $t("Control.Flow") }}</div>
-            <div class="d-flex flex-wrap ga-2 mb-3">
-              <v-btn
-                v-for="button in flowButtons"
-                :key="button.action"
-                size="small"
-                variant="tonal"
-                :color="button.confirm ? 'warning' : undefined"
-                :prepend-icon="button.icon"
-                :loading="busy === button.action"
-                @click="button.confirm ? ask(button.action, {}, button.label) : send(button.action)"
-              >
-                {{ button.label }}
-              </v-btn>
-            </div>
-            <div class="d-flex align-center ga-2 mb-2">
-              <v-number-input
-                v-model="readyCount"
-                :label="$t('Control.ReadyRequired')"
-                :min="0"
-                :max="10"
-                density="compact"
-                hide-details
-                control-variant="split"
-                style="max-width: 280px"
-              />
-              <v-btn
-                size="small"
-                :loading="busy === 'ready_required'"
-                @click="send('ready_required', { count: readyCount ?? 0 })"
-              >
-                {{ $t("Control.Set") }}
-              </v-btn>
-            </div>
-            <div class="d-flex align-center flex-wrap ga-2 mb-2">
-              <span class="text-body-medium">{{ $t("Control.AddReadyTime") }}</span>
-              <v-btn
-                v-for="seconds in [60, 120, 300]"
-                :key="seconds"
-                size="small"
-                variant="outlined"
-                :loading="busy === 'add_ready_time'"
-                @click="send('add_ready_time', { seconds })"
-              >
-                +{{ seconds / 60 }} min
-              </v-btn>
-            </div>
-            <div class="d-flex align-center ga-2">
-              <v-select
-                v-model="mapChoice"
-                :items="mapItems"
-                :label="$t('Control.ChangeMap')"
-                density="compact"
-                hide-details
-                style="max-width: 280px"
-              />
-              <v-btn
-                size="small"
-                color="warning"
-                variant="tonal"
-                :disabled="!mapChoice"
-                @click="
-                  ask('change_map', { map: mapChoice }, `${$t('Control.ChangeMap')}: ${mapChoice}`)
-                "
-              >
-                {{ $t("Control.Set") }}
-              </v-btn>
-            </div>
-          </v-col>
-
-          <!-- Team names and chat -->
-          <v-col cols="12" md="6">
-            <div class="text-title-small mb-2">{{ $t("Control.TeamNames") }}</div>
-            <div v-for="team in [1, 2] as const" :key="team" class="d-flex align-center ga-2 mb-2">
-              <v-text-field
-                v-model="teamNames[team]"
-                :label="team === 1 ? match.team1_string : match.team2_string"
-                density="compact"
-                hide-details
-                counter="32"
-                maxlength="32"
-              />
-              <v-btn
-                size="small"
-                :disabled="!teamNames[team]?.trim()"
-                :loading="busy === `team_name${team}`"
-                @click="send('team_name', { team, name: teamNames[team] }, `team_name${team}`)"
-              >
-                {{ $t("Control.Rename") }}
-              </v-btn>
-            </div>
-
-            <div class="text-title-small mt-4 mb-2">{{ $t("Control.Messages") }}</div>
-            <div class="d-flex flex-wrap ga-1 mb-2">
-              <v-chip
-                v-for="template in templates"
-                :key="template"
-                size="small"
-                variant="outlined"
-                @click="message = template"
-              >
-                {{ template }}
-              </v-chip>
-            </div>
-            <div class="d-flex align-center ga-2">
-              <v-text-field
-                v-model="message"
-                density="compact"
-                hide-details
-                counter="120"
-                maxlength="120"
-                @keydown.enter="sendMessage"
-              />
-              <v-btn
-                size="small"
-                color="primary"
-                prepend-icon="mdi-send"
-                :disabled="!message.trim()"
-                :loading="busy === 'say'"
-                @click="sendMessage"
-              >
-                {{ $t("Control.Send") }}
-              </v-btn>
-            </div>
-          </v-col>
-
-          <!-- Live cvars and server health -->
-          <v-col cols="12" md="6">
-            <div class="text-title-small mb-2">{{ $t("Control.LiveCvars") }}</div>
-            <div class="d-flex align-center ga-2">
-              <v-select
-                v-model="cvar"
-                :items="CVARS"
-                item-title="name"
-                item-value="name"
-                density="compact"
-                hide-details
-                style="max-width: 280px"
-              />
-              <v-text-field
-                v-model="cvarValue"
-                :label="$t('Control.Value')"
-                type="number"
-                :hint="cvarHint"
-                persistent-hint
-                density="compact"
-                style="max-width: 140px"
-              />
-              <v-btn
-                size="small"
-                :disabled="cvarValue === ''"
-                :loading="busy === 'cvar'"
-                @click="send('cvar', { cvar, value: Number(cvarValue) })"
-              >
-                {{ $t("Control.Set") }}
-              </v-btn>
-            </div>
-          </v-col>
-          <v-col cols="12" md="6">
-            <div class="d-flex align-center mb-2">
-              <span class="text-title-small">{{ $t("Control.Server") }}</span>
-              <v-spacer />
-              <v-btn
-                size="small"
-                variant="text"
-                prepend-icon="mdi-refresh"
-                :loading="checking"
-                @click="checkHealth"
-              >
-                {{ $t("Control.Refresh") }}
-              </v-btn>
-            </div>
-            <v-table v-if="health?.status" density="compact">
-              <tbody>
-                <tr v-for="[key, value] in statusRows" :key="key">
-                  <td class="text-medium-emphasis">{{ key }}</td>
-                  <td>{{ value }}</td>
-                </tr>
-              </tbody>
-            </v-table>
-          </v-col>
-        </v-row>
-
-        <pre v-if="reply" class="console mt-3">{{ reply }}</pre>
-      </v-expansion-panel-text>
-    </v-expansion-panel>
-
-    <v-expansion-panel value="players">
-      <v-expansion-panel-title>
-        <v-icon class="mr-2">mdi-account-network</v-icon>{{ $t("Control.Players") }}
-        <v-chip v-if="players" size="x-small" variant="tonal" label class="ml-2">
-          {{ players.length }}
-        </v-chip>
-      </v-expansion-panel-title>
-      <v-expansion-panel-text>
-        <div class="d-flex align-center mb-2">
-          <span class="text-body-small text-medium-emphasis">{{ $t("Control.PlayersHint") }}</span>
+  <div>
+    <v-expansion-panels v-model="openPanels" variant="accordion" multiple>
+      <v-expansion-panel value="control">
+        <v-expansion-panel-title color="accent">
+          <v-icon class="mr-2">mdi-shield-crown</v-icon>
+          <span class="font-weight-medium">{{ $t("Control.Title") }}</span>
           <v-spacer />
-          <v-btn
-            size="small"
-            variant="text"
-            prepend-icon="mdi-refresh"
-            :loading="loadingPlayers"
-            @click="loadPlayers"
+          <v-chip
+            v-if="health"
+            :color="health.reachable ? 'success' : 'error'"
+            size="x-small"
+            variant="flat"
+            label
+            class="mr-2"
           >
-            {{ $t("Control.Refresh") }}
-          </v-btn>
-        </div>
-        <v-alert v-if="playersReachable === false" type="error" variant="tonal" density="compact">
-          {{ $t("Control.Unreachable") }}
-        </v-alert>
-        <v-table v-else-if="players?.length" density="compact">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>{{ $t("Control.PlayerName") }}</th>
-              <th>{{ $t("Control.Ping") }}</th>
-              <th>{{ $t("Control.State") }}</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="player in players" :key="player.userid">
-              <td>{{ player.userid }}</td>
-              <td>
-                {{ player.name }}
-                <v-chip v-if="player.bot" size="x-small" label class="ml-1">BOT</v-chip>
-              </td>
-              <td>{{ player.ping ?? "–" }}</td>
-              <td>{{ player.state }}</td>
-              <td class="text-right">
+            {{ health.reachable ? $t("Control.Reachable") : $t("Control.Unreachable") }}
+          </v-chip>
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <v-tabs v-model="tab" density="comfortable" show-arrows class="mb-4">
+            <v-tab value="match" prepend-icon="mdi-flag-checkered">{{
+              $t("Control.TabMatch")
+            }}</v-tab>
+            <v-tab value="players" prepend-icon="mdi-account-group">
+              {{ $t("Control.TabPlayers") }}
+            </v-tab>
+            <v-tab value="server" prepend-icon="mdi-server">{{ $t("Control.TabServer") }}</v-tab>
+            <v-tab value="chat" prepend-icon="mdi-message-cog">{{ $t("Control.TabChat") }}</v-tab>
+          </v-tabs>
+
+          <v-window v-model="tab">
+            <!-- Match: pause, flow, ready, map, ending the match -->
+            <v-window-item value="match">
+              <v-row>
+                <v-col cols="12" md="6">
+                  <div class="text-title-small mb-2">{{ $t("Control.Flow") }}</div>
+                  <div class="d-flex flex-wrap ga-2 mb-3">
+                    <v-btn
+                      size="small"
+                      variant="tonal"
+                      color="warning"
+                      prepend-icon="mdi-pause"
+                      :loading="actions?.busy"
+                      @click="actions?.pause()"
+                    >
+                      {{ $t("MatchAdmin.PauseMatch") }}
+                    </v-btn>
+                    <v-btn
+                      size="small"
+                      variant="flat"
+                      color="success"
+                      prepend-icon="mdi-play"
+                      :loading="actions?.busy"
+                      @click="actions?.unpause()"
+                    >
+                      {{ $t("MatchAdmin.UnpauseMatch") }}
+                    </v-btn>
+                    <v-btn
+                      v-for="button in flowButtons"
+                      :key="button.action"
+                      size="small"
+                      :variant="button.variant"
+                      :color="button.color"
+                      :prepend-icon="button.icon"
+                      :loading="busy === button.action"
+                      @click="
+                        button.confirm ? ask(button.action, {}, button.label) : send(button.action)
+                      "
+                    >
+                      {{ button.label }}
+                    </v-btn>
+                  </div>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <div class="d-flex align-center ga-2 mb-2">
+                    <v-number-input
+                      v-model="readyCount"
+                      :label="$t('Control.ReadyRequired')"
+                      :min="0"
+                      :max="10"
+                      density="compact"
+                      hide-details
+                      control-variant="split"
+                      style="max-width: 280px"
+                    />
+                    <v-btn
+                      size="small"
+                      color="primary"
+                      variant="tonal"
+                      :loading="busy === 'ready_required'"
+                      @click="send('ready_required', { count: readyCount ?? 0 })"
+                    >
+                      {{ $t("Control.Set") }}
+                    </v-btn>
+                  </div>
+                  <div class="d-flex align-center flex-wrap ga-2 mb-2">
+                    <span class="text-body-medium">{{ $t("Control.AddReadyTime") }}</span>
+                    <v-btn
+                      v-for="seconds in [60, 120, 300]"
+                      :key="seconds"
+                      size="small"
+                      variant="outlined"
+                      color="primary"
+                      :loading="busy === 'add_ready_time'"
+                      @click="send('add_ready_time', { seconds })"
+                    >
+                      +{{ seconds / 60 }} min
+                    </v-btn>
+                  </div>
+                  <div class="d-flex align-center ga-2">
+                    <v-select
+                      v-model="mapChoice"
+                      :items="mapItems"
+                      :label="$t('Control.ChangeMap')"
+                      density="compact"
+                      hide-details
+                      style="max-width: 280px"
+                    />
+                    <v-btn
+                      size="small"
+                      color="warning"
+                      variant="tonal"
+                      :disabled="!mapChoice"
+                      @click="
+                        ask(
+                          'change_map',
+                          { map: mapChoice },
+                          `${$t('Control.ChangeMap')}: ${mapChoice}`
+                        )
+                      "
+                    >
+                      {{ $t("Control.Set") }}
+                    </v-btn>
+                  </div>
+                </v-col>
+              </v-row>
+              <v-divider class="my-4" />
+              <div class="text-title-small mb-2">{{ $t("Control.EndSection") }}</div>
+              <div class="d-flex flex-wrap ga-2">
+                <v-btn
+                  size="small"
+                  variant="tonal"
+                  color="warning"
+                  prepend-icon="mdi-flag"
+                  @click="actions?.open('forfeit')"
+                >
+                  {{ $t("MatchAdmin.ForfeitMatch") }}
+                </v-btn>
+                <v-btn
+                  size="small"
+                  variant="tonal"
+                  color="warning"
+                  prepend-icon="mdi-restart"
+                  @click="actions?.open('restart')"
+                >
+                  {{ $t("MatchAdmin.MatchRestart") }}
+                </v-btn>
+                <v-btn
+                  size="small"
+                  variant="tonal"
+                  color="error"
+                  prepend-icon="mdi-cancel"
+                  @click="actions?.open('cancel')"
+                >
+                  {{ $t("MatchAdmin.CancelMatch") }}
+                </v-btn>
+              </div>
+            </v-window-item>
+
+            <!-- Players: who is connected (kick), add / remove from the match -->
+            <v-window-item value="players">
+              <div class="d-flex align-center flex-wrap ga-2 mb-2">
+                <v-btn
+                  size="small"
+                  variant="flat"
+                  color="primary"
+                  prepend-icon="mdi-account-plus"
+                  @click="actions?.open('add')"
+                >
+                  {{ $t("MatchAdmin.AddPlayerToServer") }}
+                </v-btn>
+                <v-btn
+                  size="small"
+                  variant="tonal"
+                  prepend-icon="mdi-account-remove"
+                  @click="actions?.open('remove')"
+                >
+                  {{ $t("MatchAdmin.RemovePlayer") }}
+                </v-btn>
+                <v-spacer />
                 <v-btn
                   size="small"
                   variant="text"
-                  color="error"
-                  prepend-icon="mdi-account-remove"
-                  :loading="busy === `kick${player.userid}`"
-                  @click="askKick(player)"
+                  prepend-icon="mdi-refresh"
+                  :loading="loadingPlayers"
+                  @click="loadPlayers"
                 >
-                  {{ $t("Control.Kick") }}
+                  {{ $t("Control.Refresh") }}
                 </v-btn>
-              </td>
-            </tr>
-          </tbody>
-        </v-table>
-        <div v-else-if="players" class="text-body-medium text-medium-emphasis">
-          {{ $t("Control.NoPlayers") }}
-        </div>
-      </v-expansion-panel-text>
-    </v-expansion-panel>
-  </v-expansion-panels>
+              </div>
+              <div class="text-body-small text-medium-emphasis mb-2">
+                {{ $t("Control.PlayersHint") }}
+              </div>
+              <v-alert
+                v-if="playersReachable === false"
+                type="error"
+                variant="tonal"
+                density="compact"
+              >
+                {{ $t("Control.Unreachable") }}
+              </v-alert>
+              <v-table v-else-if="players?.length" density="compact">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>{{ $t("Control.PlayerName") }}</th>
+                    <th>{{ $t("Control.Ping") }}</th>
+                    <th>{{ $t("Control.State") }}</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="player in players" :key="player.userid">
+                    <td>{{ player.userid }}</td>
+                    <td>
+                      {{ player.name }}
+                      <v-chip v-if="player.bot" size="x-small" label class="ml-1">BOT</v-chip>
+                    </td>
+                    <td>{{ player.ping ?? "–" }}</td>
+                    <td>{{ player.state }}</td>
+                    <td class="text-right">
+                      <v-btn
+                        size="small"
+                        variant="text"
+                        color="error"
+                        prepend-icon="mdi-account-remove"
+                        :loading="busy === `kick${player.userid}`"
+                        @click="askKick(player)"
+                      >
+                        {{ $t("Control.Kick") }}
+                      </v-btn>
+                    </td>
+                  </tr>
+                </tbody>
+              </v-table>
+              <div v-else-if="players" class="text-body-medium text-medium-emphasis">
+                {{ $t("Control.NoPlayers") }}
+              </div>
+            </v-window-item>
 
-  <v-dialog :model-value="pending !== null" max-width="440" @update:model-value="pending = null">
-    <v-card :title="$t('Control.ConfirmTitle')" :text="pending?.label">
-      <v-card-actions>
-        <v-spacer />
-        <v-btn variant="text" @click="pending = null">{{ $t("misc.Cancel") }}</v-btn>
-        <v-btn color="warning" @click="confirmPending">{{ $t("misc.Confirm") }}</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+            <!-- Server: health, backups, server change, callbacks, RCON, config -->
+            <v-window-item value="server">
+              <div class="d-flex flex-wrap ga-2 mb-4">
+                <v-btn
+                  size="small"
+                  variant="flat"
+                  color="primary"
+                  prepend-icon="mdi-backup-restore"
+                  @click="actions?.openBackups()"
+                >
+                  {{ $t("MatchAdmin.ListBackups") }}
+                </v-btn>
+                <v-btn
+                  size="small"
+                  variant="tonal"
+                  prepend-icon="mdi-server-network"
+                  @click="actions?.openServerChange()"
+                >
+                  {{ $t("MatchAdmin.ChangeServer") }}
+                </v-btn>
+                <v-btn
+                  size="small"
+                  variant="tonal"
+                  color="info"
+                  prepend-icon="mdi-link-variant"
+                  @click="actions?.updateCallbacks()"
+                >
+                  {{ $t("MatchAdmin.UpdateCallbacks") }}
+                </v-btn>
+                <v-btn
+                  size="small"
+                  variant="tonal"
+                  prepend-icon="mdi-console"
+                  @click="actions?.open('rcon')"
+                >
+                  {{ $t("MatchAdmin.SendRCON") }}
+                </v-btn>
+                <v-btn
+                  size="small"
+                  variant="tonal"
+                  prepend-icon="mdi-code-json"
+                  @click="actions?.showConfig()"
+                >
+                  {{ $t("MatchAdmin.ConfigPreview") }}
+                </v-btn>
+              </div>
+              <div class="d-flex align-center mb-2">
+                <span class="text-title-small">{{ $t("Control.Server") }}</span>
+                <v-spacer />
+                <v-btn
+                  size="small"
+                  variant="text"
+                  prepend-icon="mdi-refresh"
+                  :loading="checking"
+                  @click="checkHealth"
+                >
+                  {{ $t("Control.Refresh") }}
+                </v-btn>
+              </div>
+              <v-table v-if="health?.status" density="compact">
+                <tbody>
+                  <tr v-for="[key, value] in statusRows" :key="key">
+                    <td class="text-medium-emphasis">{{ key }}</td>
+                    <td>{{ value }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </v-window-item>
+
+            <!-- Chat and settings: team names, messages, live cvars -->
+            <v-window-item value="chat">
+              <v-row>
+                <v-col cols="12" md="6">
+                  <div class="text-title-small mb-2">{{ $t("Control.TeamNames") }}</div>
+                  <div
+                    v-for="team in [1, 2] as const"
+                    :key="team"
+                    class="d-flex align-center ga-2 mb-2"
+                  >
+                    <v-text-field
+                      v-model="teamNames[team]"
+                      :label="team === 1 ? match.team1_string : match.team2_string"
+                      density="compact"
+                      hide-details
+                      counter="32"
+                      maxlength="32"
+                    />
+                    <v-btn
+                      size="small"
+                      color="primary"
+                      variant="tonal"
+                      :disabled="!teamNames[team]?.trim()"
+                      :loading="busy === `team_name${team}`"
+                      @click="
+                        send('team_name', { team, name: teamNames[team] }, `team_name${team}`)
+                      "
+                    >
+                      {{ $t("Control.Rename") }}
+                    </v-btn>
+                  </div>
+
+                  <div class="text-title-small mt-4 mb-2">{{ $t("Control.LiveCvars") }}</div>
+                  <div class="d-flex align-center ga-2">
+                    <v-select
+                      v-model="cvar"
+                      :items="CVARS"
+                      item-title="name"
+                      item-value="name"
+                      density="compact"
+                      hide-details
+                      style="max-width: 280px"
+                    />
+                    <v-text-field
+                      v-model="cvarValue"
+                      :label="$t('Control.Value')"
+                      type="number"
+                      :hint="cvarHint"
+                      persistent-hint
+                      density="compact"
+                      style="max-width: 140px"
+                    />
+                    <v-btn
+                      size="small"
+                      color="primary"
+                      variant="tonal"
+                      :disabled="cvarValue === ''"
+                      :loading="busy === 'cvar'"
+                      @click="send('cvar', { cvar, value: Number(cvarValue) })"
+                    >
+                      {{ $t("Control.Set") }}
+                    </v-btn>
+                  </div>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <div class="text-title-small mb-2">{{ $t("Control.Messages") }}</div>
+                  <div class="d-flex flex-wrap ga-1 mb-2">
+                    <v-chip
+                      v-for="template in templates"
+                      :key="template"
+                      size="small"
+                      variant="outlined"
+                      @click="message = template"
+                    >
+                      {{ template }}
+                    </v-chip>
+                  </div>
+                  <div class="d-flex align-center ga-2">
+                    <v-text-field
+                      v-model="message"
+                      density="compact"
+                      hide-details
+                      counter="120"
+                      maxlength="120"
+                      @keydown.enter="sendMessage"
+                    />
+                    <v-btn
+                      size="small"
+                      color="primary"
+                      variant="flat"
+                      prepend-icon="mdi-send"
+                      :disabled="!message.trim()"
+                      :loading="busy === 'say'"
+                      @click="sendMessage"
+                    >
+                      {{ $t("Control.Send") }}
+                    </v-btn>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-window-item>
+          </v-window>
+
+          <pre v-if="reply" class="console mt-3">{{ reply }}</pre>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
+
+    <!-- The admin menu's dialogs (players, backups, server, RCON, config, restart, cancel, forfeit). -->
+    <MatchAdminDialogs ref="actions" :match="match" @changed="emit('changed')" />
+
+    <v-dialog :model-value="pending !== null" max-width="440" @update:model-value="pending = null">
+      <v-card :title="$t('Control.ConfirmTitle')" :text="pending?.label">
+        <v-card-actions>
+          <v-spacer />
+          <v-btn variant="text" @click="pending = null">{{ $t("misc.Cancel") }}</v-btn>
+          <v-btn color="warning" @click="confirmPending">{{ $t("misc.Confirm") }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -289,6 +448,7 @@ import { matches } from "@/api";
 import type { Match, StatusPlayer } from "@/api/types";
 import { useUiStore } from "@/stores/ui";
 import { mapDisplayName } from "@/utils/format";
+import MatchAdminDialogs from "@/components/match/MatchAdminDialogs.vue";
 
 /** Live cvars the API accepts (same list and limits as utility/matchcontrol.ts). */
 const CVARS = [
@@ -303,12 +463,20 @@ const CVARS = [
   { name: "matchzy_pause_after_restore", min: 0, max: 1 }
 ];
 
-/** MatchZy admin commands for a running match (owner or admin; the API checks and audits each one). */
+/**
+ * Everything an owner or admin can do to a running match, in one place: match flow, players, the game server,
+ * and chat/settings. MatchZy commands go through POST /matches/:id/control; the rest opens the admin menu's dialogs.
+ * The API checks and audits every action.
+ */
 const props = defineProps<{ match: Match }>();
+const emit = defineEmits<{ changed: [] }>();
 
 const { t } = useI18n();
 const ui = useUiStore();
+// Collapsed by default; admins open it when they need it.
 const openPanels = ref<string[]>([]);
+const tab = ref<"match" | "players" | "server" | "chat">("match");
+const actions = ref<InstanceType<typeof MatchAdminDialogs> | null>(null);
 const busy = ref<string | null>(null);
 const reply = ref("");
 const readyCount = ref<number | null>(0);
@@ -329,21 +497,47 @@ const players = ref<StatusPlayer[] | null>(null);
 const playersReachable = ref<boolean | null>(null);
 const loadingPlayers = ref(false);
 
+/** Match flow buttons; the often used ones are coloured, toggles stay neutral. */
 const flowButtons = computed(() => [
-  { action: "start", label: t("Control.ForceStart"), icon: "mdi-play-circle", confirm: true },
-  { action: "skip_veto", label: t("Control.SkipVeto"), icon: "mdi-debug-step-over", confirm: true },
-  { action: "toggle_knife", label: t("Control.ToggleKnife"), icon: "mdi-knife", confirm: false },
+  {
+    action: "start",
+    label: t("Control.ForceStart"),
+    icon: "mdi-play-circle",
+    confirm: true,
+    color: "success",
+    variant: "flat" as const
+  },
+  {
+    action: "skip_veto",
+    label: t("Control.SkipVeto"),
+    icon: "mdi-debug-step-over",
+    confirm: true,
+    color: "primary",
+    variant: "tonal" as const
+  },
+  {
+    action: "toggle_knife",
+    label: t("Control.ToggleKnife"),
+    icon: "mdi-knife",
+    confirm: false,
+    color: undefined,
+    variant: "tonal" as const
+  },
   {
     action: "toggle_playout",
     label: t("Control.TogglePlayout"),
     icon: "mdi-format-list-numbered",
-    confirm: false
+    confirm: false,
+    color: undefined,
+    variant: "tonal" as const
   },
   {
     action: "toggle_whitelist",
     label: t("Control.ToggleWhitelist"),
     icon: "mdi-account-lock",
-    confirm: false
+    confirm: false,
+    color: undefined,
+    variant: "tonal" as const
   }
 ]);
 const templates = computed(() => [
@@ -426,9 +620,15 @@ async function kick(player: StatusPlayer) {
   }
 }
 
-// Loaded when the panel is first opened.
-watch(openPanels, (open) => {
-  if (open.includes("players") && players.value === null) void loadPlayers();
+// Loaded the first time the Players tab is opened.
+watch(tab, (current) => {
+  if (current === "players" && players.value === null) void loadPlayers();
+});
+
+// The server state banner opens the same dialogs (restore, restart, forfeit, cancel).
+defineExpose({
+  open: (dialog: "restart" | "forfeit" | "cancel") => actions.value?.open(dialog),
+  openBackups: () => actions.value?.openBackups()
 });
 
 async function sendMessage() {

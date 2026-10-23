@@ -6,12 +6,29 @@
     <template #append>
       <!-- Nothing until the login check has answered, so logged-in users don't see the login buttons flash. -->
       <template v-if="auth.loaded && !auth.loggedIn">
-        <v-btn :href="apiUrl('/auth/steam')" class="mr-2" variant="text" rounded>
-          <img :src="`${base}img/login_small.png`" alt="Sign in through Steam" />
-        </v-btn>
-        <v-btn icon="mdi-login-variant" variant="text" @click="loginDialog = true">
-          <v-icon>mdi-login-variant</v-icon>
-          <v-tooltip activator="parent" location="bottom">{{ $t("Login.title") }}</v-tooltip>
+        <!-- With panel accounts enabled, one button opens the choice (Steam first); otherwise Steam is one click. -->
+        <template v-if="auth.localLogin">
+          <!-- Icon only on narrow screens, so it never crowds the search field. -->
+          <v-btn
+            v-if="smAndDown"
+            icon="mdi-login-variant"
+            variant="tonal"
+            class="ml-2 mr-1"
+            :aria-label="$t('Login.SignIn')"
+            @click="loginDialog = true"
+          />
+          <v-btn
+            v-else
+            variant="tonal"
+            prepend-icon="mdi-login-variant"
+            class="ml-4 mr-2"
+            @click="loginDialog = true"
+          >
+            {{ $t("Login.SignIn") }}
+          </v-btn>
+        </template>
+        <v-btn v-else :href="apiUrl('/auth/steam')" class="ml-4 mr-2" variant="text" rounded>
+          <img :src="`${base}img/login_small.png`" :alt="$t('Login.WithSteam')" />
         </v-btn>
       </template>
       <template v-else-if="auth.loggedIn">
@@ -69,7 +86,7 @@ const base = import.meta.env.BASE_URL;
 const auth = useAuthStore();
 const route = useRoute();
 const router = useRouter();
-const { mdAndUp } = useDisplay();
+const { mdAndUp, smAndDown } = useDisplay();
 
 const drawer = ref(mdAndUp.value);
 const loginDialog = ref(false);

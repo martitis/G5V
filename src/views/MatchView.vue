@@ -28,7 +28,17 @@
             @bombs="(list) => (bombs = list)"
             @pause="(state) => (pause = state)"
           />
-          <MatchAdminMenu v-if="adminTools" ref="adminMenu" :match="match" @changed="reload" />
+          <!-- Quick pause/resume for owners and admins (also in Admin actions). -->
+          <v-btn
+            v-if="adminTools"
+            :color="isPaused ? 'success' : 'warning'"
+            :variant="isPaused ? 'flat' : 'tonal'"
+            :prepend-icon="isPaused ? 'mdi-play' : 'mdi-pause'"
+            :loading="pausing"
+            @click="togglePause"
+          >
+            {{ isPaused ? $t("MatchAdmin.UnpauseMatch") : $t("MatchAdmin.PauseMatch") }}
+          </v-btn>
         </template>
       </MatchHeader>
 
@@ -63,7 +73,13 @@
 
       <ReadyStatus v-if="waitingMinutes != null" :match="match" />
 
-      <MatchControlPanel v-if="adminTools" :match="match" class="mb-4" />
+      <MatchControlPanel
+        v-if="adminTools"
+        ref="controlPanel"
+        :match="match"
+        class="mb-4"
+        @changed="reload"
+      />
 
       <VetoList v-if="vetoList.length" :vetoes="vetoList" :sides="vetoSides" class="mb-4" />
 
@@ -104,7 +120,6 @@ import type {
   VetoSide
 } from "@/api/types";
 import MapScoreboard from "@/components/match/MapScoreboard.vue";
-import MatchAdminMenu from "@/components/match/MatchAdminMenu.vue";
 import MatchControlPanel from "@/components/match/MatchControlPanel.vue";
 import MatchHeader from "@/components/match/MatchHeader.vue";
 import MatchStreams from "@/components/match/MatchStreams.vue";
@@ -121,7 +136,7 @@ const auth = useAuthStore();
 const ui = useUiStore();
 
 const match = ref<Match | null>(null);
-const adminMenu = ref<InstanceType<typeof MatchAdminMenu> | null>(null);
+const controlPanel = ref<InstanceType<typeof MatchControlPanel> | null>(null);
 const team1 = ref<Team | null>(null);
 const team2 = ref<Team | null>(null);
 const server = ref<Server | null>(null);
@@ -133,6 +148,26 @@ const rounds = ref<MatchRound[]>([]);
 const kills = ref<KillEvent[]>([]);
 const bombs = ref<BombEvent[]>([]);
 const pause = ref<PauseState | null>(null);
+const pausing = ref(false);
+const isPaused = computed(
+  () => pause.value != null && (pause.value.paused === true || Number(pause.value.paused) === 1)
+);
+
+/** MatchZy force pause / unpause; the pause banner and this button follow the live pause stream. */
+async function togglePause() {
+  if (!match.value) return;
+  pausing.value = true;
+  try {
+    const result = isPaused.value
+      ? await matches.unpause(match.value.id)
+      : await matches.pause(match.value.id);
+    ui.notify(result.message, "success");
+  } catch (error) {
+    ui.notifyError(error);
+  } finally {
+    pausing.value = false;
+  }
+}
 const loading = ref(true);
 
 /** Live (or waiting to start): the event stream replaces the one-off requests. */
@@ -150,10 +185,10 @@ const score = computed<[number, number]>(() => {
   return [m.team1_score ?? 0, m.team2_score ?? 0];
 });
 
-/** Recovery choices from the server state banner open the admin menu's dialogs. */
+/** Recovery choices from the server state banner open the control panel's dialogs. */
 function onServerAction(action: "restore" | "restart" | "forfeit" | "cancel") {
-  if (action === "restore") void adminMenu.value?.openBackups();
-  else adminMenu.value?.open(action);
+  if (action === "restore") void controlPanel.value?.openBackups();
+  else controlPanel.value?.open(action);
 }
 
 /** Minutes since the match was loaded while no map has gone live yet (no-show check). */

@@ -98,7 +98,7 @@
             </v-btn>
           </div>
 
-          <!-- Only local accounts have a password; Steam logins don't. -->
+          <!-- Accounts with a username can change their password; Steam-only accounts can add one. -->
           <v-btn
             v-if="profile.username"
             variant="tonal"
@@ -106,6 +106,14 @@
             @click="passwordDialog = true"
           >
             {{ $t("User.ResetPass") }}
+          </v-btn>
+          <v-btn
+            v-else-if="auth.localLogin"
+            variant="tonal"
+            prepend-icon="mdi-account-key"
+            @click="passwordDialog = true"
+          >
+            {{ $t("User.AddLogin") }}
           </v-btn>
         </v-card-text>
       </v-card>
@@ -118,7 +126,13 @@
       />
     </template>
 
-    <PasswordDialog v-if="profile?.id != null" v-model="passwordDialog" :user-id="profile.id" />
+    <PasswordDialog
+      v-if="profile?.id != null"
+      v-model="passwordDialog"
+      :user-id="profile.id"
+      :add-login="!profile.username"
+      @saved="load"
+    />
 
     <v-dialog v-model="confirmApiReset" max-width="480">
       <v-card :title="$t('User.ResetAPI')" :text="$t('User.ApiResetConfirm')">

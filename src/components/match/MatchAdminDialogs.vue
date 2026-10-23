@@ -1,81 +1,5 @@
 <template>
   <div>
-    <v-menu location="bottom end">
-      <template #activator="{ props: activator }">
-        <v-btn
-          v-bind="activator"
-          color="primary"
-          prepend-icon="mdi-shield-crown"
-          append-icon="mdi-menu-down"
-          :loading="busy"
-        >
-          {{ $t("MatchAdmin.AdminTools") }}
-        </v-btn>
-      </template>
-      <v-list density="compact" min-width="260">
-        <v-list-item prepend-icon="mdi-pause" :title="$t('MatchAdmin.PauseMatch')" @click="pause" />
-        <v-list-item
-          prepend-icon="mdi-play"
-          :title="$t('MatchAdmin.UnpauseMatch')"
-          @click="unpause"
-        />
-        <v-divider />
-        <v-list-item
-          prepend-icon="mdi-account-plus"
-          :title="$t('MatchAdmin.AddPlayerToServer')"
-          @click="open('add')"
-        />
-        <v-list-item
-          prepend-icon="mdi-account-remove"
-          :title="$t('MatchAdmin.RemovePlayer')"
-          @click="open('remove')"
-        />
-        <v-divider />
-        <v-list-item
-          prepend-icon="mdi-backup-restore"
-          :title="$t('MatchAdmin.ListBackups')"
-          @click="openBackups"
-        />
-        <v-list-item
-          prepend-icon="mdi-server-network"
-          :title="$t('MatchAdmin.ChangeServer')"
-          @click="openServerChange"
-        />
-        <v-list-item
-          prepend-icon="mdi-console"
-          :title="$t('MatchAdmin.SendRCON')"
-          @click="open('rcon')"
-        />
-        <v-list-item
-          prepend-icon="mdi-link-variant"
-          :title="$t('MatchAdmin.UpdateCallbacks')"
-          @click="updateCallbacks"
-        />
-        <v-list-item
-          prepend-icon="mdi-code-json"
-          :title="$t('MatchAdmin.ConfigPreview')"
-          @click="showConfig"
-        />
-        <v-divider />
-        <v-list-item
-          prepend-icon="mdi-restart"
-          :title="$t('MatchAdmin.MatchRestart')"
-          @click="open('restart')"
-        />
-        <v-list-item
-          prepend-icon="mdi-flag"
-          :title="$t('MatchAdmin.ForfeitMatch')"
-          @click="open('forfeit')"
-        />
-        <v-list-item
-          prepend-icon="mdi-cancel"
-          base-color="error"
-          :title="$t('MatchAdmin.CancelMatch')"
-          @click="open('cancel')"
-        />
-      </v-list>
-    </v-menu>
-
     <!-- Add / remove player -->
     <v-dialog
       :model-value="dialog === 'add' || dialog === 'remove'"
@@ -221,7 +145,8 @@
       @update:model-value="close"
     >
       <v-card
-        :title="
+        :title="dialog === 'restart' ? $t('MatchAdmin.MatchRestart') : $t('MatchAdmin.CancelMatch')"
+        :text="
           dialog === 'restart'
             ? $t('MatchAdmin.MatchRestartInfo')
             : $t('MatchAdmin.CancelMatchConfirm')
@@ -278,7 +203,7 @@ import type { BackupEntry, Match, Server } from "@/api/types";
 import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
 
-/** RCON actions on a running match (owner or admin; the API checks every action again). */
+/** The dialogs and RCON actions of the match control panel (owner or admin; the API checks every action again). */
 const props = defineProps<{ match: Match }>();
 const emit = defineEmits<{ changed: [] }>();
 
@@ -483,7 +408,16 @@ async function showConfig() {
 }
 
 // The server state banner on the match page opens the same dialogs (restore, restart, forfeit, cancel).
-defineExpose({ open, openBackups });
+defineExpose({
+  busy,
+  open,
+  openBackups,
+  openServerChange,
+  showConfig,
+  updateCallbacks,
+  pause,
+  unpause
+});
 </script>
 
 <style scoped>

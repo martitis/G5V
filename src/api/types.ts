@@ -147,6 +147,11 @@ export interface Server {
   in_use?: number | boolean;
   /** In use by MatchZy practice mode, not a match. */
   practice_mode?: number | boolean;
+  /** When the API's 10 s probe last got an RCON answer / last tried (UTC). */
+  last_seen?: string | null;
+  last_checked?: string | null;
+  /** MatchZy's game state at the last answer ("none" when no match is loaded). */
+  last_gamestate?: string | null;
   flag?: string;
   [key: string]: unknown;
 }

@@ -8,6 +8,9 @@ export const useAuthStore = defineStore("auth", () => {
   const user = ref<User | null>(null);
   /** False until the first /isLoggedIn answer (or failure); pages can wait for it. */
   const loaded = ref(false);
+  /** Whether username/password accounts are enabled, and the password length limits (GET /auth/options). */
+  const localLogin = ref(false);
+  const passwordMin = ref(8);
   let pending: Promise<void> | null = null;
 
   const loggedIn = computed(() => user.value?.id != null);
@@ -18,7 +21,12 @@ export const useAuthStore = defineStore("auth", () => {
     if (pending && !force) return pending;
     pending = (async () => {
       try {
-        user.value = await auth.me();
+        const [me, options] = await Promise.all([auth.me(), auth.options().catch(() => null)]);
+        user.value = me;
+        if (options) {
+          localLogin.value = options.local_login;
+          passwordMin.value = options.password_min;
+        }
       } catch (error) {
         // API unreachable: behave as logged out.
         console.error(error);
@@ -45,5 +53,16 @@ export const useAuthStore = defineStore("auth", () => {
     );
   }
 
-  return { user, loaded, loggedIn, isAdmin, isSuperAdmin, load, logout, canEdit };
+  return {
+    user,
+    loaded,
+    localLogin,
+    passwordMin,
+    loggedIn,
+    isAdmin,
+    isSuperAdmin,
+    load,
+    logout,
+    canEdit
+  };
 });

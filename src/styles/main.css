@@ -29,3 +29,11 @@
 .app-link:hover {
   text-decoration: underline;
 }
+
+/* Card and dialog titles wrap instead of being cut off with "..." (several confirmations are full sentences). */
+.v-card-title,
+.v-card-subtitle {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
