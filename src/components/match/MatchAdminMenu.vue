@@ -481,6 +481,9 @@ async function showConfig() {
     busy.value = false;
   }
 }
+
+// The server state banner on the match page opens the same dialogs (restore, restart, forfeit, cancel).
+defineExpose({ open, openBackups });
 </script>
 
 <style scoped>

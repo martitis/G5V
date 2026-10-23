@@ -83,7 +83,22 @@ export interface MapStat {
   demoFile?: string | null;
   /** "failed" when MatchZy reported a failed demo upload. */
   demo_status?: string | null;
+  /** Scores were resynced from the game server after missed events; player stats are incomplete. */
+  stats_incomplete?: number | boolean;
   [key: string]: unknown;
+}
+
+/** The API's heartbeat for a running match (GET /matches/:id/server/state). */
+export interface ServerState {
+  state: "ok" | "offline" | "interrupted";
+  reason: string | null;
+  checked_at: string | null;
+  last_seen: string | null;
+  gamestate: string | null;
+  server_matchid: string | null;
+  interrupted_at: string | null;
+  dismissed: boolean;
+  resynced_at: string | null;
 }
 
 export interface PlayerStat {
@@ -268,6 +283,8 @@ export interface MatchSummary {
   pause: { type: string | null; team: string | null } | null;
   /** Minutes since the match was loaded while its first map hasn't gone live. */
   waiting_minutes: number | null;
+  /** Set while the heartbeat sees the game server offline or the match interrupted. */
+  server_state: { state: "offline" | "interrupted"; dismissed: boolean } | null;
   server: {
     name: string | null;
     ip: string;

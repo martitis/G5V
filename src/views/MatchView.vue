@@ -28,7 +28,7 @@
             @bombs="(list) => (bombs = list)"
             @pause="(state) => (pause = state)"
           />
-          <MatchAdminMenu v-if="adminTools" :match="match" @changed="reload" />
+          <MatchAdminMenu v-if="adminTools" ref="adminMenu" :match="match" @changed="reload" />
         </template>
       </MatchHeader>
 
@@ -52,6 +52,14 @@
       >
         {{ $t("Schedule.NoShow", { n: waitingMinutes }) }}
       </v-alert>
+
+      <ServerStateBanner
+        v-if="live"
+        :match="match"
+        :admin="adminTools"
+        @action="onServerAction"
+        @changed="reload"
+      />
 
       <ReadyStatus v-if="waitingMinutes != null" :match="match" />
 
@@ -101,6 +109,7 @@ import MatchControlPanel from "@/components/match/MatchControlPanel.vue";
 import MatchHeader from "@/components/match/MatchHeader.vue";
 import MatchStreams from "@/components/match/MatchStreams.vue";
 import ReadyStatus from "@/components/match/ReadyStatus.vue";
+import ServerStateBanner from "@/components/match/ServerStateBanner.vue";
 import VetoList from "@/components/match/VetoList.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
@@ -112,6 +121,7 @@ const auth = useAuthStore();
 const ui = useUiStore();
 
 const match = ref<Match | null>(null);
+const adminMenu = ref<InstanceType<typeof MatchAdminMenu> | null>(null);
 const team1 = ref<Team | null>(null);
 const team2 = ref<Team | null>(null);
 const server = ref<Server | null>(null);
@@ -139,6 +149,12 @@ const score = computed<[number, number]>(() => {
     return [mapStats.value[0].team1_score, mapStats.value[0].team2_score];
   return [m.team1_score ?? 0, m.team2_score ?? 0];
 });
+
+/** Recovery choices from the server state banner open the admin menu's dialogs. */
+function onServerAction(action: "restore" | "restart" | "forfeit" | "cancel") {
+  if (action === "restore") void adminMenu.value?.openBackups();
+  else adminMenu.value?.open(action);
+}
 
 /** Minutes since the match was loaded while no map has gone live yet (no-show check). */
 const now = ref(Date.now());

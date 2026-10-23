@@ -56,6 +56,16 @@
     </div>
 
     <v-card-text>
+      <v-alert
+        v-if="mapStat?.stats_incomplete"
+        type="info"
+        variant="tonal"
+        density="compact"
+        icon="mdi-database-alert"
+        class="mb-4"
+      >
+        {{ $t("ServerState.StatsIncomplete") }}
+      </v-alert>
       <template v-if="rounds.length">
         <div class="text-title-small mb-2">{{ $t("Match.Rounds") }}</div>
         <RoundHistory

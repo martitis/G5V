@@ -18,12 +18,13 @@ import type {
   PlayerStat,
   PugPlayer,
   PugQueue,
+  ReadyState,
   ResolvedMember,
   ScheduledMatch,
   SearchResults,
   Season,
   Server,
-  ReadyState,
+  ServerState,
   StatusPlayer,
   SummaryQuery,
   Team,
@@ -146,6 +147,14 @@ export const matches = {
   /** Team ready state, null unless the match is running on its server. */
   ready: async (id: number) =>
     (await get<{ ready: ReadyState | null }>(`/matches/${id}/ready`)).ready,
+  /** The heartbeat's last check of the match's game server (public). */
+  serverState: async (id: number) =>
+    (await get<{ server_state: ServerState | null }>(`/matches/${id}/server/state`)).server_state,
+  /** Checks the server now and resyncs missed scores (owner/admin). */
+  serverCheck: (id: number) => post<MessageResponse>(`/matches/${id}/server/check`),
+  /** Loads the match onto its server again without wiping stats (owner/admin). */
+  serverReload: (id: number) => post<MessageResponse>(`/matches/${id}/server/reload`),
+  serverDismiss: (id: number) => post<MessageResponse>(`/matches/${id}/server/dismiss`),
   /** Players on the match's server, from CS2's status (no Steam IDs there). */
   serverPlayers: (id: number) =>
     get<{ reachable: boolean; players: StatusPlayer[] }>(`/matches/${id}/server/players`),

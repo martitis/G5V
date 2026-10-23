@@ -103,6 +103,24 @@
         >
           {{ $t("Schedule.Waiting", { n: match.waiting_minutes }) }}
         </v-chip>
+        <v-chip
+          v-if="match.server_state && !match.server_state.dismissed"
+          :color="match.server_state.state === 'interrupted' ? 'error' : 'warning'"
+          size="x-small"
+          variant="tonal"
+          :prepend-icon="
+            match.server_state.state === 'interrupted'
+              ? 'mdi-server-remove'
+              : 'mdi-server-network-off'
+          "
+          label
+        >
+          {{
+            match.server_state.state === "interrupted"
+              ? $t("ServerState.ChipInterrupted")
+              : $t("ServerState.ChipOffline")
+          }}
+        </v-chip>
         <div v-if="match.forfeit" class="text-body-small text-medium-emphasis">
           {{ $t("Matches.ByForfeit") }}
         </div>

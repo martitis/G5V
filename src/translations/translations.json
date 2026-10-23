@@ -742,6 +742,23 @@
       "NotReady": "Not ready",
       "Connected": "{n} connected"
     },
+    "ServerState": {
+      "Offline": "The game server is not responding",
+      "Interrupted": "The match was interrupted on the game server",
+      "LastSeen": "last answered {n} min ago",
+      "AdminsNotified": "The match admins see this too and can restore or reload the match.",
+      "Restore": "Restore a round",
+      "Reload": "Load match again",
+      "ReloadConfirm": "Loads the match onto the server again. MatchZy starts the series from the beginning; the panel keeps its stats. To continue where the match stopped, restore a round instead.",
+      "Restart": "Restart match",
+      "EndWithWinner": "End with a winner",
+      "Cancel": "Cancel match",
+      "CheckNow": "Check now",
+      "Dismiss": "Dismiss",
+      "StatsIncomplete": "Some events of this map were missed (the panel or its connection was down). The score was taken from the game server; player stats for the missed rounds are missing.",
+      "ChipOffline": "Server offline",
+      "ChipInterrupted": "Interrupted"
+    },
     "Schedule": {
       "When": "When",
       "Now": "Now",
@@ -1505,6 +1522,23 @@
       "Ready": "Prêt",
       "NotReady": "Pas prêt",
       "Connected": "{n} connecté(s)"
+    },
+    "ServerState": {
+      "Offline": "Le serveur de jeu ne répond pas",
+      "Interrupted": "Le match a été interrompu sur le serveur de jeu",
+      "LastSeen": "dernière réponse il y a {n} min",
+      "AdminsNotified": "Les admins du match le voient aussi et peuvent restaurer ou recharger le match.",
+      "Restore": "Restaurer une manche",
+      "Reload": "Recharger le match",
+      "ReloadConfirm": "Recharge le match sur le serveur. MatchZy reprend la série depuis le début ; le panel garde ses statistiques. Pour reprendre là où le match s'est arrêté, restaurez plutôt une manche.",
+      "Restart": "Redémarrer le match",
+      "EndWithWinner": "Terminer avec un vainqueur",
+      "Cancel": "Annuler le match",
+      "CheckNow": "Vérifier maintenant",
+      "Dismiss": "Ignorer",
+      "StatsIncomplete": "Des événements de cette carte ont été manqués (le panel ou sa connexion était coupé). Le score vient du serveur de jeu ; les statistiques des joueurs des manches manquées sont absentes.",
+      "ChipOffline": "Serveur hors ligne",
+      "ChipInterrupted": "Interrompu"
     },
     "Schedule": {
       "When": "Quand",
@@ -2270,6 +2304,23 @@
       "Ready": "準備完了",
       "NotReady": "未準備",
       "Connected": "{n} 人接続中"
+    },
+    "ServerState": {
+      "Offline": "ゲームサーバーが応答していません",
+      "Interrupted": "ゲームサーバー上で試合が中断されました",
+      "LastSeen": "最終応答 {n} 分前",
+      "AdminsNotified": "試合の管理者にも表示され、ラウンドの復元や試合の再読み込みができます。",
+      "Restore": "ラウンドを復元",
+      "Reload": "試合を再読み込み",
+      "ReloadConfirm": "試合をサーバーに再読み込みします。MatchZy はシリーズを最初から始めます（パネルの統計は残ります）。中断した所から再開するには、ラウンドを復元してください。",
+      "Restart": "試合を再開始",
+      "EndWithWinner": "勝者を決めて終了",
+      "Cancel": "試合をキャンセル",
+      "CheckNow": "今すぐ確認",
+      "Dismiss": "非表示",
+      "StatsIncomplete": "このマップの一部のイベントを受信できませんでした（パネルまたは接続が停止していました）。スコアはゲームサーバーから取得しましたが、欠落したラウンドのプレイヤー統計はありません。",
+      "ChipOffline": "サーバー停止",
+      "ChipInterrupted": "中断"
     },
     "Schedule": {
       "When": "開始時刻",
