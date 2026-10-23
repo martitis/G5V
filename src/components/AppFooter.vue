@@ -27,7 +27,7 @@
       </v-btn>
     </div>
     <div class="text-body-small py-2 text-center w-100">
-      {{ new Date().getFullYear() }} — <strong>{{ $t("Footer.company") }}</strong> —
+      {{ new Date().getFullYear() }} — <strong>{{ appTitle() }}</strong> —
       {{ $t("Footer.powered") }}
     </div>
   </v-footer>
@@ -37,6 +37,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTheme } from "vuetify";
+import { appTitle } from "@/config";
 import { languages, setLanguage } from "@/plugins/i18n";
 
 const { locale } = useI18n();

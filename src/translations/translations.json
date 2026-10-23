@@ -34,7 +34,7 @@
       "title": "Login/Register",
       "Login": "Login",
       "Register": "Register",
-      "Info": "Please ensure you have your Steam 64 ID and a username. Example - 76561198025644194",
+      "Info": "Please ensure you have your Steam 64 ID and a username. Example - 76561198000000042",
       "SteamIdLabel": "Steam ID",
       "UsernameLabel": "Username",
       "PasswordLabel": "Password",
@@ -533,7 +533,6 @@
       "OnlyMine": "Only mine"
     },
     "Footer": {
-      "company": "Phlex Plexico",
       "metrics": "Metrics",
       "powered": "Powered by Steam"
     },
@@ -814,7 +813,7 @@
       "title": "S'identifier / S'incrire",
       "Login": "S'identifier",
       "Register": "S'inscrire",
-      "Info": "Assurez-vous d'avoir votre identifiant Steam 64 et un nom d'utilisateur. Exemple - 76561198025644194",
+      "Info": "Assurez-vous d'avoir votre identifiant Steam 64 et un nom d'utilisateur. Exemple - 76561198000000042",
       "SteamIdLabel": "Steam ID",
       "UsernameLabel": "Nom d'utilisateur",
       "PasswordLabel": "Mot de passe",
@@ -1314,7 +1313,6 @@
       "OnlyMine": "Seulement les miens"
     },
     "Footer": {
-      "company": "Phlex Plexico",
       "metrics": "Metrics",
       "powered": "Powered by Steam"
     },
@@ -1595,7 +1593,7 @@
       "title": "ログイン/登録",
       "Login": "ログイン",
       "Register": "登録",
-      "Info": "Steam 64 IDとユーザー名をご確認ください。例）76561198025644194",
+      "Info": "Steam 64 IDとユーザー名をご確認ください。例）76561198000000042",
       "SteamIdLabel": "スチームID",
       "UsernameLabel": "ユーザー名",
       "PasswordLabel": "パスワード",
@@ -2096,7 +2094,6 @@
       "OnlyMine": "自分のもののみ"
     },
     "Footer": {
-      "company": "Phlex Plexico",
       "metrics": "メトリック",
       "powered": "Powered by Steam"
     },
