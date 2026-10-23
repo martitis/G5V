@@ -29,17 +29,25 @@
       "Stats": "Panel stats"
     },
     "Login": {
-      "SteamIdInvalid": "Enter a valid SteamID64 (17 digits, starting with 7656) to register.",
-      "SteamIdHint": "Only needed to register a local account.",
-      "title": "Login/Register",
-      "Login": "Login",
-      "Register": "Register",
-      "Info": "Please ensure you have your Steam 64 ID and a username. Example - 76561198000000042",
-      "SteamIdLabel": "Steam ID",
+      "SteamIdHint": "SteamID64 (7656…) or your profile link, e.g. steamcommunity.com/id/yourname",
+      "title": "Sign in",
+      "Login": "Sign in",
+      "Register": "Create account",
+      "SteamIdLabel": "Your Steam account",
       "UsernameLabel": "Username",
       "PasswordLabel": "Password",
       "OldPasswordLabel": "Old Password",
-      "NewPasswordLabel": "New Password"
+      "NewPasswordLabel": "New Password",
+      "SignIn": "Sign in",
+      "WithSteam": "Sign in with Steam",
+      "SteamHint": "Recommended. Admin rights and Steam-only features need a Steam sign-in.",
+      "OrPanelAccount": "or with a panel account",
+      "CreateAccount": "Create account",
+      "UsernameHint": "3–32 characters: letters, digits, dot, dash or underscore",
+      "PasswordHint": "At least {n} characters",
+      "RepeatPassword": "Repeat password",
+      "PasswordsDiffer": "The passwords don't match",
+      "AdminNote": "A panel account can't be an admin until you've signed in with Steam once."
     },
     "MatchAdmin": {
       "UpdateCallbacks": "Send panel address to server",
@@ -459,7 +467,10 @@
       "MapNew": "New Map",
       "ResetPass": "Reset Password",
       "Challonge": "Challonge API Key",
-      "ChallongeSave": "Save Challonge Key"
+      "ChallongeSave": "Save Challonge Key",
+      "AddLogin": "Add password login",
+      "AddLoginInfo": "Choose a username and password to sign in without Steam as well. You can keep using Steam.",
+      "LoginAdded": "Password login added."
     },
     "TeamCreate": {
       "FormTeamName": "Team Name",
@@ -808,17 +819,25 @@
       "Stats": "Statistiques du panneau"
     },
     "Login": {
-      "SteamIdInvalid": "Entrez un SteamID64 valide (17 chiffres, commençant par 7656) pour vous inscrire.",
-      "SteamIdHint": "Uniquement nécessaire pour créer un compte local.",
-      "title": "S'identifier / S'incrire",
-      "Login": "S'identifier",
-      "Register": "S'inscrire",
-      "Info": "Assurez-vous d'avoir votre identifiant Steam 64 et un nom d'utilisateur. Exemple - 76561198000000042",
-      "SteamIdLabel": "Steam ID",
+      "SteamIdHint": "SteamID64 (7656…) ou le lien de votre profil, par ex. steamcommunity.com/id/votrenom",
+      "title": "Connexion",
+      "Login": "Se connecter",
+      "Register": "Créer un compte",
+      "SteamIdLabel": "Votre compte Steam",
       "UsernameLabel": "Nom d'utilisateur",
       "PasswordLabel": "Mot de passe",
       "OldPasswordLabel": "Ancien mot de passe",
-      "NewPasswordLabel": "Nouveau mot de passe"
+      "NewPasswordLabel": "Nouveau mot de passe",
+      "SignIn": "Se connecter",
+      "WithSteam": "Se connecter avec Steam",
+      "SteamHint": "Recommandé. Les droits d'admin et les fonctions Steam demandent une connexion Steam.",
+      "OrPanelAccount": "ou avec un compte du panel",
+      "CreateAccount": "Créer le compte",
+      "UsernameHint": "3 à 32 caractères : lettres, chiffres, point, tiret ou tiret bas",
+      "PasswordHint": "Au moins {n} caractères",
+      "RepeatPassword": "Répéter le mot de passe",
+      "PasswordsDiffer": "Les mots de passe ne correspondent pas",
+      "AdminNote": "Un compte du panel ne peut pas être admin avant une première connexion Steam."
     },
     "MatchAdmin": {
       "UpdateCallbacks": "Envoyer l'adresse du panneau au serveur",
@@ -1239,7 +1258,10 @@
       "MapNew": "Nouvelle Map",
       "ResetPass": "Réinitialiser Mot de passe",
       "Challonge": "Clé API Challonge",
-      "ChallongeSave": "Sauver la clé Challonge"
+      "ChallongeSave": "Sauver la clé Challonge",
+      "AddLogin": "Ajouter une connexion par mot de passe",
+      "AddLoginInfo": "Choisissez un nom d'utilisateur et un mot de passe pour vous connecter aussi sans Steam. Steam reste disponible.",
+      "LoginAdded": "Connexion par mot de passe ajoutée."
     },
     "TeamCreate": {
       "FormTeamName": "Nom de l'équipe",
@@ -1588,17 +1610,25 @@
       "Stats": "パネル統計"
     },
     "Login": {
-      "SteamIdInvalid": "登録するには有効なSteamID64（7656で始まる17桁）を入力してください。",
-      "SteamIdHint": "ローカルアカウントの登録時のみ必要です。",
-      "title": "ログイン/登録",
-      "Login": "ログイン",
-      "Register": "登録",
-      "Info": "Steam 64 IDとユーザー名をご確認ください。例）76561198000000042",
-      "SteamIdLabel": "スチームID",
+      "SteamIdHint": "SteamID64（7656…）またはプロフィールのリンク（例: steamcommunity.com/id/yourname）",
+      "title": "サインイン",
+      "Login": "サインイン",
+      "Register": "アカウント作成",
+      "SteamIdLabel": "あなたの Steam アカウント",
       "UsernameLabel": "ユーザー名",
       "PasswordLabel": "パスワード",
       "OldPasswordLabel": "旧パスワード",
-      "NewPasswordLabel": "新しいパスワード"
+      "NewPasswordLabel": "新しいパスワード",
+      "SignIn": "サインイン",
+      "WithSteam": "Steam でサインイン",
+      "SteamHint": "推奨。管理者権限と Steam 機能には Steam でのサインインが必要です。",
+      "OrPanelAccount": "またはパネルのアカウントで",
+      "CreateAccount": "アカウントを作成",
+      "UsernameHint": "3〜32 文字：英数字、ドット、ハイフン、アンダースコア",
+      "PasswordHint": "{n} 文字以上",
+      "RepeatPassword": "パスワード（確認）",
+      "PasswordsDiffer": "パスワードが一致しません",
+      "AdminNote": "パネルのアカウントは、一度 Steam でサインインするまで管理者になれません。"
     },
     "MatchAdmin": {
       "UpdateCallbacks": "パネルのアドレスをサーバーに送信",
@@ -2020,7 +2050,10 @@
       "MapNew": "新しい地図",
       "ResetPass": "パスワードの再設定",
       "Challonge": "Challonge APIキー",
-      "ChallongeSave": "セーブチャレンジキー"
+      "ChallongeSave": "セーブチャレンジキー",
+      "AddLogin": "パスワードでのログインを追加",
+      "AddLoginInfo": "Steam なしでもサインインできるよう、ユーザー名とパスワードを設定します。Steam でのサインインも引き続き使えます。",
+      "LoginAdded": "パスワードでのログインを追加しました。"
     },
     "TeamCreate": {
       "FormTeamName": "チーム名",

@@ -6,12 +6,18 @@
     <template #append>
       <!-- Nothing until the login check has answered, so logged-in users don't see the login buttons flash. -->
       <template v-if="auth.loaded && !auth.loggedIn">
-        <v-btn :href="apiUrl('/auth/steam')" class="mr-2" variant="text" rounded>
-          <img :src="`${base}img/login_small.png`" alt="Sign in through Steam" />
+        <!-- With panel accounts enabled, one button opens the choice (Steam first); otherwise Steam is one click. -->
+        <v-btn
+          v-if="auth.localLogin"
+          variant="tonal"
+          prepend-icon="mdi-login-variant"
+          class="mr-2"
+          @click="loginDialog = true"
+        >
+          {{ $t("Login.SignIn") }}
         </v-btn>
-        <v-btn icon="mdi-login-variant" variant="text" @click="loginDialog = true">
-          <v-icon>mdi-login-variant</v-icon>
-          <v-tooltip activator="parent" location="bottom">{{ $t("Login.title") }}</v-tooltip>
+        <v-btn v-else :href="apiUrl('/auth/steam')" class="mr-2" variant="text" rounded>
+          <img :src="`${base}img/login_small.png`" :alt="$t('Login.WithSteam')" />
         </v-btn>
       </template>
       <template v-else-if="auth.loggedIn">

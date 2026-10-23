@@ -47,8 +47,14 @@ export const auth = {
   },
   login: (username: string, password: string) =>
     post<MessageResponse>("/login", { username, password }),
+  /** steam_id may be a SteamID64, a profile link or a custom profile name. */
   register: (username: string, password: string, steam_id: string) =>
     post<MessageResponse>("/register", { username, password, steam_id }),
+  /** How users can sign in on this panel. */
+  options: () =>
+    get<{ steam: boolean; local_login: boolean; password_min: number; password_max: number }>(
+      "/auth/options"
+    ),
   logout: () => post<MessageResponse>("/logout")
 };
 
