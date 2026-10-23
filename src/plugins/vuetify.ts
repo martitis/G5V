@@ -22,7 +22,7 @@ export default createVuetify({
     // Vuetify 4 defaults to the system theme; the panel has its own toggle.
     defaultTheme: savedTheme(),
     themes: {
-      // Cool off-white page with white cards and a deep blue that reads well on white.
+      // Soft grey-blue page, off-white cards (no pure white) and a dark slate top bar and footer.
       // appbar/footer: the top bar and the footer.
       light: {
         dark: false,
@@ -34,13 +34,13 @@ export default createVuetify({
           info: "#0284C7",
           success: "#16A34A",
           warning: "#D97706",
-          background: "#F4F6FA",
-          surface: "#FFFFFF",
-          "surface-bright": "#FFFFFF",
-          "surface-variant": "#E2E8F0",
+          background: "#E6EAF0",
+          surface: "#F6F8FB",
+          "surface-bright": "#FBFCFD",
+          "surface-variant": "#D9E0EA",
           "on-surface-variant": "#334155",
-          appbar: "#FFFFFF",
-          footer: "#FFFFFF"
+          appbar: "#1E293B",
+          footer: "#1E293B"
         }
       },
       // Neutral slate greys with the same blue as light mode, so dark pages don't glare.
