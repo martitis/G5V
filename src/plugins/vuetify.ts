@@ -1,0 +1,77 @@
+import "@mdi/font/css/materialdesignicons.css";
+import "@fontsource/roboto/300.css";
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
+import "vuetify/styles";
+import { createVuetify } from "vuetify";
+
+/** Saved by the theme toggle in the footer. */
+export function savedTheme(): "light" | "dark" {
+  try {
+    // The old panel stored "true" for dark mode.
+    const stored = localStorage.getItem("theme");
+    return stored === "dark" || stored === "true" ? "dark" : "light";
+  } catch {
+    return "light";
+  }
+}
+
+export default createVuetify({
+  theme: {
+    // Vuetify 4 defaults to the system theme; the panel has its own toggle.
+    defaultTheme: savedTheme(),
+    themes: {
+      // Soft grey-blue page, off-white cards (no pure white) and a dark slate top bar and footer.
+      // appbar/footer: the top bar and the footer.
+      light: {
+        dark: false,
+        colors: {
+          primary: "#2563EB",
+          secondary: "#64748B",
+          accent: "#7C3AED",
+          error: "#DC2626",
+          info: "#0284C7",
+          success: "#16A34A",
+          warning: "#D97706",
+          background: "#E6EAF0",
+          surface: "#F6F8FB",
+          "surface-bright": "#FBFCFD",
+          "surface-variant": "#D9E0EA",
+          "on-surface-variant": "#334155",
+          appbar: "#1E293B",
+          footer: "#1E293B"
+        }
+      },
+      // Neutral slate greys with the same blue as light mode, so dark pages don't glare.
+      dark: {
+        dark: true,
+        colors: {
+          primary: "#60A5FA",
+          secondary: "#94A3B8",
+          accent: "#A78BFA",
+          error: "#F87171",
+          info: "#38BDF8",
+          success: "#4ADE80",
+          warning: "#FBBF24",
+          background: "#0F1115",
+          surface: "#181B21",
+          "surface-bright": "#22262E",
+          "surface-variant": "#2A2F38",
+          "on-surface-variant": "#CBD5E1",
+          appbar: "#181B21",
+          footer: "#181B21"
+        }
+      }
+    }
+  },
+  defaults: {
+    VBtn: { variant: "flat" },
+    VTextField: { variant: "outlined", density: "comfortable" },
+    VSelect: { variant: "outlined", density: "comfortable" },
+    VAutocomplete: { variant: "outlined", density: "comfortable" },
+    VCombobox: { variant: "outlined", density: "comfortable" },
+    VTextarea: { variant: "outlined", density: "comfortable" },
+    VFileInput: { variant: "outlined", density: "comfortable" }
+  }
+});

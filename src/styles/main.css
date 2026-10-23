@@ -1,0 +1,31 @@
+/* Vuetify 4 dropped most of its CSS reset; restore the spacing reset the old pages were built on. */
+@layer vuetify-core.reset {
+  ul,
+  ol,
+  figure,
+  details,
+  summary {
+    padding: 0;
+    margin: 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p {
+    margin: 0;
+  }
+}
+
+/* Links inside tables and cards follow the theme instead of the browser's blue/purple. */
+.app-link {
+  color: rgb(var(--v-theme-primary));
+  text-decoration: none;
+}
+
+.app-link:hover {
+  text-decoration: underline;
+}

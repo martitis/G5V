@@ -5,9 +5,11 @@ on:
       - '**'
   pull_request:
 
+permissions:
+  contents: read
 jobs:
   build-lint:
-    name: Build and lint
+    name: Typecheck, lint and build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -16,6 +18,9 @@ jobs:
           node-version: 22
           cache: yarn
       - run: yarn install --frozen-lockfile
-      # The warning cap is the current count; lower it as warnings get fixed, never raise it.
-      - run: yarn lint --no-fix --max-warnings 34
+      - run: yarn lint
+      - run: yarn format:check
+      # Fails when a $t() key is missing from the English translations.
+      - run: yarn i18n
+      # vue-tsc, then vite build.
       - run: yarn build

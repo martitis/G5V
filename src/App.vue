@@ -1,38 +1,31 @@
 <template>
   <v-app>
-    <Navbar :user="user" />
+    <AppNavbar />
     <v-main>
-      <router-view :key="$route.path" />
+      <!-- Keyed by path so pages reload their data when only the route params change. -->
+      <router-view :key="route.fullPath" />
     </v-main>
-    <Footer />
+    <AppFooter />
+    <v-snackbar v-model="ui.noticeShown" :color="ui.noticeColor" timeout="6000" location="bottom">
+      {{ ui.notice }}
+      <template #actions>
+        <v-btn variant="text" @click="ui.noticeShown = false">{{ $t("misc.Close") }}</v-btn>
+      </template>
+    </v-snackbar>
   </v-app>
 </template>
 
-<script>
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-export default {
-  name: "App",
-  data() {
-    return {
-      user: {
-        admin: false,
-        steam_id: "",
-        id: -1,
-        super_admin: false,
-        name: "",
-        small_image: "",
-        medium_image: "",
-        large_image: ""
-      } // should be object from JSON response
-    };
-  },
-  components: {
-    Navbar,
-    Footer
-  },
-  async mounted() {
-    this.user = await this.IsLoggedIn();
-  }
-};
+<script setup lang="ts">
+import { onMounted } from "vue";
+import { useRoute } from "vue-router";
+import AppNavbar from "@/components/AppNavbar.vue";
+import AppFooter from "@/components/AppFooter.vue";
+import { useAuthStore } from "@/stores/auth";
+import { useUiStore } from "@/stores/ui";
+
+const route = useRoute();
+const auth = useAuthStore();
+const ui = useUiStore();
+
+onMounted(() => auth.load());
 </script>

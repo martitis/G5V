@@ -1,242 +1,142 @@
 <template>
-  <v-data-table
-    item-key="name"
-    class="elevation-1"
-    :loading="isLoading"
-    :loading-text="$t('misc.LoadText')"
-    :headers="headers"
-    :items="matches"
-    :options.sync="options"
-    :server-items-length="totalMatches"
-    ref="MatchesTable"
-  >
-    <template v-slot:item.id="{ item }">
-      <router-link
-        :to="{ path: '/match/' + item.id }"
-        v-if="item.match_status != 'Cancelled'"
-      >
-        {{ item.id }}
-      </router-link>
-      <div v-else>
-        {{ item.id }}
-      </div>
-    </template>
-    <template v-slot:item.owner="{ item }">
-      <router-link :to="{ path: '/user/' + item.user_id }">
-        {{ item.owner }}
-      </router-link>
-    </template>
-    <template v-slot:item.team1_string="{ item }">
-      <router-link
-        :to="{ path: '/teams/' + item.team1_id }"
-        v-if="item.team1_id !== null"
-      >
-        {{ item.team1_string }}
-      </router-link>
-      <div v-else>
-        {{ item.team1_string }}
-      </div>
-    </template>
-    <template v-slot:item.team2_string="{ item }">
-      <router-link
-        :to="{ path: '/teams/' + item.team2_id }"
-        v-if="item.team2_id !== null"
-      >
-        {{ item.team2_string }}
-      </router-link>
-      <div v-else>
-        {{ item.team2_string }}
-      </div>
-    </template>
-
-    <template v-slot:item.ip_string="{ item }">
-      <div>
-          {{item.ip_string + ":" + item.port}}
-      </div>
-    </template>
-
-    <template v-slot:item.connect="{ item }">
-      <div v-if="item.end_time === null">
+  <v-card>
+    <v-card-title v-if="title || $slots.actions" class="d-flex align-center flex-wrap ga-2">
+      <span>{{ title }}</span>
+      <v-spacer />
+      <slot name="actions" />
+    </v-card-title>
+    <v-data-table
+      :headers="headers"
+      :items="rows"
+      :loading="loading"
+      :loading-text="$t('misc.LoadText')"
+      :no-data-text="$t('misc.NoData')"
+      :sort-by="[{ key: 'id', order: 'desc' }]"
+      item-value="id"
+      density="comfortable"
+    >
+      <template #[`item.id`]="{ item }">
+        <router-link v-if="!isCancelled(item)" :to="`/match/${item.id}`" class="app-link">
+          {{ item.id }}
+        </router-link>
+        <span v-else>{{ item.id }}</span>
+      </template>
+      <template #[`item.team1_string`]="{ item }">
+        <router-link v-if="item.team1_id" :to="`/teams/${item.team1_id}`" class="app-link">
+          {{ item.team1_string }}
+        </router-link>
+        <span v-else>{{ item.team1_string }}</span>
+      </template>
+      <template #[`item.team2_string`]="{ item }">
+        <router-link v-if="item.team2_id" :to="`/teams/${item.team2_id}`" class="app-link">
+          {{ item.team2_string }}
+        </router-link>
+        <span v-else>{{ item.team2_string }}</span>
+      </template>
+      <template #[`item.status`]="{ item }">
+        <v-chip :color="item.status.color" size="small" variant="tonal" label>
+          {{ item.status.label }}
+        </v-chip>
+      </template>
+      <template #[`item.score`]="{ item }">
+        <span class="font-weight-medium">{{ item.score[0] }} : {{ item.score[1] }}</span>
+      </template>
+      <template #[`item.owner`]="{ item }">
+        <router-link :to="`/user/${item.user_id}`" class="app-link">
+          {{ item.owner || `#${item.user_id}` }}
+        </router-link>
+      </template>
+      <template #[`item.ip_string`]="{ item }">
+        <span v-if="item.ip_string">{{ item.ip_string }}:{{ item.port }}</span>
+      </template>
+      <template #[`item.connect`]="{ item }">
+        <!-- Only for matches being played on a known server. -->
         <v-btn
+          v-if="isLive(item) && item.ip_string"
+          :href="`steam://connect/${item.ip_string}:${item.port}`"
           color="primary"
-          small
-          :href="
-            'steam://rungame/730/' +
-              user.steam_id +
-              '/+connect%20' +
-              item.ip_string +
-              ':' +
-              item.port
-          "
+          size="small"
+          prepend-icon="mdi-play"
         >
           {{ $t("Match.Connect") }}
         </v-btn>
-      </div>
-    </template>
-
-    <template v-slot:top>
-      <div v-if="isMyMatches && isThereCancelledMatches">
-        <v-toolbar flat>
-          <v-toolbar-title>
-            <v-btn primary @click="deleteCancelled" :loading="deletePending">
-              {{ $t("Matches.DeleteButton") }}
-            </v-btn>
-          </v-toolbar-title>
-        </v-toolbar>
-      </div>
-      <div v-else />
-    </template>
-  </v-data-table>
+      </template>
+    </v-data-table>
+  </v-card>
 </template>
 
-<script>
-export default {
-  props: {
-    user: Object
-  },
-  data() {
-    return {
-      matches: [],
-      isLoading: true,
-      isThereCancelledMatches: false,
-      totalMatches: -1,
-      options: {},
-      deletePending: false
-    };
-  },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t("Matches.MatchID"),
-          align: "start",
-          sortable: true,
-          value: "id"
-        },
-        {
-          text: this.$t("Matches.Team1"),
-          value: "team1_string"
-        },
-        {
-          text: this.$t("Matches.Team2"),
-          value: "team2_string"
-        },
-        {
-          text: this.$t("Matches.Status"),
-          value: "match_status",
-          sortable: false
-        },
-        {
-          text: this.$t("Matches.Owner"),
-          value: "owner"
-        },   
-        {
-          text: this.$t("Matches.server_name"),
-          value: "server_name"
-        },  
-        {
-          text: this.$t("Matches.ip_string"),
-          value: "ip_string"
-        },
-        {
-          text: this.$t("Matches.ConnectButton"),
-          value: "connect"
-        }     
-      ];
-    },
-    isMyMatches() {
-      return this.$route.path == "/mymatches";
-    }
-  },
-  watch: {
-    options: {
-      async handler() {
-        await this.pageUpdate();
-      },
-      deep: true
-    }
-  },
-  methods: {
-    async pushMatchData(resultArray) {
-      this.isLoading = true;
-      let matches = [];
-      let matchString;
-      let team1Score,
-        team2Score = 0;
-      resultArray.forEach(async match => {
-        if (match.max_maps == 1) {
-          team1Score =
-            match.team1_mapscore == undefined ? 0 : match.team1_mapscore;
-          team2Score =
-            match.team2_mapscore == undefined ? 0 : match.team2_mapscore;
-        } else {
-          team1Score = match.team1_score == undefined ? 0 : match.team1_score;
-          team2Score = match.team2_score == undefined ? 0 : match.team2_score;
-        }
-        if (
-          match.end_time == null &&
-          (match.cancelled == 0 || match.cancelled == null) &&
-          match.start_time != null
-        ) {
-          matchString = `Live, ${team1Score}:${team2Score} - ${match.team1_string} vs ${match.team2_string}`;
-        } else if (team1Score < team2Score) {
-          matchString = `Lost, ${team1Score}:${team2Score} - ${match.team1_string} vs ${match.team2_string}`;
-        } else if (team1Score > team2Score) {
-          matchString = `Won, ${team1Score}:${team2Score} - ${match.team1_string} vs ${match.team2_string}`;
-        } else if (match.cancelled == 1) {
-          matchString = "Cancelled";
-        } else if (team1Score == team2Score && match.forfeit != 1) {
-          matchString = `Tied, ${team1Score}:${team2Score} vs ${match.team2_string}`;
-        } else if (match.winner == match.team1_id) {
-          matchString = `Forfeit win vs ${match.team2_string}`;
-        } else if (match.winner == match.team2_id) {
-          matchString = `Forfeit loss vs ${match.team2_string}`;
-        }
-        match.match_status = matchString;
-        if (match.cancelled == 1) this.isThereCancelledMatches = true;
-        await matches.push(match);
-      });
-      this.isLoading = false;
-      return matches;
-    },
-    async pageUpdate() {
-      let count =
-        this.$route.path == "/mymatches"
-          ? await this.GetMyMatches()
-          : await this.GetAllMatches();
-      const { sortBy, sortDesc, page, itemsPerPage } = this.options;
-      if (typeof count == "string") count = [];
-      if (sortBy.length === 1 && sortDesc.length === 1) {
-        count = count.sort((a, b) => {
-          const sortA = a[sortBy[0]];
-          const sortB = b[sortBy[0]];
-          if (sortDesc[0]) {
-            if (sortA < sortB) return 1;
-            if (sortA > sortB) return -1;
-            return 0;
-          } else {
-            if (sortA < sortB) return -1;
-            if (sortA > sortB) return 1;
-            return 0;
-          }
-        });
-      }
-      this.totalMatches = count.length;
-      if (itemsPerPage > 0) {
-        count = count.slice((page - 1) * itemsPerPage, page * itemsPerPage);
-      }
-      this.matches = await this.pushMatchData(count);
-      return;
-    },
-    async deleteCancelled() {
-      this.deletePending = true;
-      await this.DeleteMyCancelledMatches();
-      this.deletePending = false;
-      this.matches = [];
-      this.isLoading = true;
-      this.isThereCancelledMatches = false;
-      await this.pageUpdate();
-    }
+<script setup lang="ts">
+import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { users } from "@/api";
+import type { Match } from "@/api/types";
+import { useUiStore } from "@/stores/ui";
+import { displayScore, isCancelled, isLive } from "@/utils/format";
+import { matchStatus } from "@/utils/matchStatus";
+
+/** `load` returns the matches to list; it is called again when it changes or on `reload()`. */
+const props = defineProps<{ load: () => Promise<Match[]>; title?: string }>();
+const emit = defineEmits<{ loaded: [matches: Match[]] }>();
+
+const { t } = useI18n();
+const ui = useUiStore();
+const matches = ref<Match[]>([]);
+const loading = ref(true);
+/** user id -> name, for lists whose rows don't carry the owner's name. */
+const ownerNames = ref<Record<number, string>>({});
+
+const rows = computed(() =>
+  matches.value.map((match) => ({
+    ...match,
+    owner: match.owner || ownerNames.value[match.user_id],
+    status: matchStatus(match, t),
+    score: displayScore(match)
+  }))
+);
+
+const hasServers = computed(() => matches.value.some((match) => match.ip_string));
+const headers = computed(() => [
+  { title: t("Matches.MatchID"), key: "id" },
+  { title: t("Matches.Team1"), key: "team1_string" },
+  { title: t("Matches.Team2"), key: "team2_string" },
+  { title: t("Matches.Score"), key: "score", sortable: false },
+  { title: t("Matches.Status"), key: "status", sortable: false },
+  { title: t("Matches.Owner"), key: "owner" },
+  // Only /matches/mymatches returns server details; don't show empty columns elsewhere.
+  ...(hasServers.value
+    ? [
+        { title: t("Matches.server_name"), key: "server_name" },
+        { title: t("Matches.ip_string"), key: "ip_string" },
+        { title: t("Matches.ConnectButton"), key: "connect", sortable: false }
+      ]
+    : [])
+]);
+
+async function reload() {
+  loading.value = true;
+  try {
+    matches.value = await props.load();
+    emit("loaded", matches.value);
+    // One request per distinct owner (the old table made two requests per row).
+    const missing = [
+      ...new Set(matches.value.filter((m) => !m.owner).map((m) => m.user_id))
+    ].filter((id) => !(id in ownerNames.value));
+    const names = await Promise.all(
+      missing.map((id) =>
+        users
+          .get(id)
+          .then((user) => [id, user.name] as const)
+          .catch(() => [id, ""] as const)
+      )
+    );
+    ownerNames.value = { ...ownerNames.value, ...Object.fromEntries(names) };
+  } catch (error) {
+    ui.notifyError(error);
+  } finally {
+    loading.value = false;
   }
-};
+}
+
+watch(() => props.load, reload, { immediate: true });
+defineExpose({ reload });
 </script>

@@ -1,189 +1,98 @@
 <template>
-  <v-container style="padding: 0px">
-    <v-dialog shake v-model="show" max-width="800px">
-      <v-card color="lighten-4">
-        <v-card-title>
-          <span class="headline">
-            {{ title }}
-          </span>
-          <v-spacer></v-spacer>
-          <button type="button" class="close" @click="show = false">
-            X
-          </button>
-        </v-card-title>
-        <v-card-text>
-          <v-form ref="loginForm">
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12">
-                    <v-alert
-                      border="bottom"
-                      color="secondary lighten-1"
-                      dark
-                      icon="mdi-information-outline"
-                      v-html="$t('Login.Info')"
-                    >
-                    </v-alert>
-                  </v-col>
-                  <v-col cols="12">
-                    <v-text-field
-                      v-model="userInfo.steam_id"
-                      ref="SteamId"
-                      :label="$t('Login.SteamIdLabel')"
-                    />
-                  </v-col>
-                  <v-col cols="12" sm="12" md="12" lg="6">
-                    <v-text-field
-                      v-model="userInfo.username"
-                      :label="$t('Login.UsernameLabel')"
-                      ref="Username"
-                      required
-                      :rules="[
-                        () => !!userInfo.username || $t('misc.Required')
-                      ]"
-                    />
-                  </v-col>
-                  <v-col cols="12" sm="12" md="12" lg="6">
-                    <v-text-field
-                      v-model="userInfo.password"
-                      :label="$t('Login.PasswordLabel')"
-                      ref="Password"
-                      :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
-                      :type="showPass ? 'text' : 'password'"
-                      :rules="[
-                        () => !!userInfo.password || $t('misc.Required')
-                      ]"
-                      @click:append="showPass = !showPass"
-                    />
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="darken-1"
-            text
-            @click="userRegister"
-            :disabled="userLoading"
-          >
-            {{ $t("Login.Register") }}
-          </v-btn>
-          <v-btn
-            color="primary"
-            text
-            @click="userLogin()"
-            :loading="userLoading"
-            :disabled="userLoading"
-          >
-            {{ $t("Login.Login") }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-bottom-sheet v-model="responseSheet" inset persistent>
-      <v-sheet class="text-center" height="200px">
-        <v-btn
-          class="mt-6"
-          text
-          color="success"
-          @click="
-            responseSheet = !responseSheet;
-            response = '';
-          "
-        >
-          {{ $t("misc.Close") }}
-        </v-btn>
-        <div class="my-3">
-          {{ response }}
-        </div>
-      </v-sheet>
-    </v-bottom-sheet>
-  </v-container>
+  <v-dialog v-model="show" max-width="720">
+    <v-card :title="$t('Login.title')">
+      <v-card-text>
+        <v-alert type="info" variant="tonal" class="mb-4">
+          <!-- Static translation text with a link (no user input). -->
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <span v-html="$t('Login.Info')" />
+        </v-alert>
+        <v-form ref="form" @submit.prevent="login">
+          <v-text-field
+            v-model="steamId"
+            :label="$t('Login.SteamIdLabel')"
+            :hint="$t('Login.SteamIdHint')"
+            persistent-hint
+            class="mb-2"
+          />
+          <v-row density="compact">
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="username"
+                :label="$t('Login.UsernameLabel')"
+                autocomplete="username"
+                :rules="[required]"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="password"
+                :label="$t('Login.PasswordLabel')"
+                :type="showPass ? 'text' : 'password'"
+                :append-inner-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+                autocomplete="current-password"
+                :rules="[required]"
+                @click:append-inner="showPass = !showPass"
+              />
+            </v-col>
+          </v-row>
+          <!-- Enables Enter to submit. -->
+          <button type="submit" hidden />
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn variant="text" :disabled="busy" @click="register">{{ $t("Login.Register") }}</v-btn>
+        <v-btn color="primary" :loading="busy" @click="login">{{ $t("Login.Login") }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
-<script>
-export default {
-  props: {
-    value: Boolean,
-    title: String
-  },
-  computed: {
-    show: {
-      get() {
-        return this.value;
-      },
-      set(value) {
-        if (!value) {
-          this.$nextTick(() => {
-            this.$refs.loginForm.resetValidation();
-            this.$refs.loginForm.reset();
-          });
-        }
-        this.$emit("input", value);
-      }
-    }
-  },
-  data() {
-    return {
-      showPass: false,
-      response: "",
-      responseSheet: false,
-      userLoading: false,
-      userInfo: Object
-    };
-  },
-  methods: {
-    async userLogin() {
-      if (this.$refs.loginForm.validate()) {
-        this.userLoading = true;
-        let userResponse;
-        let userObject = {
-          username: this.userInfo.username,
-          password: this.userInfo.password
-        };
-        userResponse = await this.login(userObject);
-        if (!userResponse.includes("Success")) {
-          this.response = userResponse;
-          this.responseSheet = true;
-          this.userLoading = false;
-        } else {
-          window.location.reload();
-        }
-      }
-    },
-    async userRegister() {
-      if (this.$refs.loginForm.validate()) {
-        if (!this.userInfo.steam_id) {
-          console.log("Failed successfully");
-          this.response = "Invalid Steam 64 ID. Please enter a Steam ID.";
-          this.responseSheet = true;
-          this.userLoading = false;
-          return;
-        }
-        this.userLoading = true;
-        let userResponse;
-        let userObject = {
-          username: this.userInfo.username,
-          password: this.userInfo.password,
-          steam_id: this.userInfo.steam_id
-        };
-        userResponse = await this.register(userObject);
-        if (!userResponse.includes("Success")) {
-          this.response = userResponse;
-          this.responseSheet = true;
-          this.userLoading = false;
-        } else {
-          window.location.reload();
-        }
-      }
-    }
-  },
-  async mounted() {
-    this.user = await this.IsLoggedIn();
+<script setup lang="ts">
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { auth as authApi } from "@/api";
+import { useAuthStore } from "@/stores/auth";
+import { useUiStore } from "@/stores/ui";
+import { isSteamId64 } from "@/utils/format";
+
+const show = defineModel<boolean>({ default: false });
+const { t } = useI18n();
+const auth = useAuthStore();
+const ui = useUiStore();
+
+const form = ref<{ validate: () => Promise<{ valid: boolean }> } | null>(null);
+const steamId = ref("");
+const username = ref("");
+const password = ref("");
+const showPass = ref(false);
+const busy = ref(false);
+
+const required = (value: string) => !!value || t("misc.Required");
+
+async function submit(action: () => Promise<unknown>) {
+  if (!(await form.value?.validate())?.valid) return;
+  busy.value = true;
+  try {
+    await action();
+    await auth.load(true);
+    show.value = false;
+    password.value = "";
+  } catch (error) {
+    ui.notifyError(error);
+  } finally {
+    busy.value = false;
   }
-};
+}
+
+const login = () => submit(() => authApi.login(username.value, password.value));
+
+function register() {
+  if (!isSteamId64(steamId.value)) {
+    ui.notify(t("Login.SteamIdInvalid"), "error");
+    return;
+  }
+  return submit(() => authApi.register(username.value, password.value, steamId.value.trim()));
+}
 </script>
