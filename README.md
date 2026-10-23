@@ -1,11 +1,11 @@
-# G5V
+# G5V-newgen
 
 The web panel for a CS2 tournament setup built on [MatchZy](https://shobhit-pathak.github.io/MatchZy/): create and run
 matches, follow them live, and manage teams, servers, seasons, tournaments and PUG queues. It's the frontend of
 [G5API](https://github.com/martitis/G5API), which talks to the game servers and stores everything.
 
-It started as a fork of [PhlexPlexico/G5V](https://github.com/PhlexPlexico/G5V) (Vue 2, for Get5) and is now a rewrite
-in Vue 3.5, Vuetify 4, Vite, Pinia, vue-i18n and TypeScript.
+It started as a fork of [PhlexPlexico/G5V](https://github.com/PhlexPlexico/G5V) (Vue 2, for Get5) and was renamed to
+keep the two apart. It is now a rewrite in Vue 3.5, Vuetify 4, Vite, Pinia, vue-i18n and TypeScript.
 
 ## What's in it
 - **Match list:** live matches first, with the current map and round score updating live. Finished matches show who

@@ -1,6 +1,7 @@
-# G5V: frontend for a CS2 tournament panel (MatchZy)
+# G5V-newgen: frontend for a CS2 tournament panel (MatchZy)
 
 Vue web panel for G5API (`../G5API`): matches, live scoreboard, teams, servers, seasons, leaderboards.
+GitHub: `martitis/G5V-newgen` (renamed from G5V and detached from the fork network; the local folder is still `../G5V`).
 It started as a fork of PhlexPlexico/G5V and now **diverges freely** from upstream.
 Roadmap and progress: [../G5API/IMPROVEMENT_PLAN.md](../G5API/IMPROVEMENT_PLAN.md) (shared by both repos).
 Backend facts (API, MatchZy integration) are in [../G5API/CLAUDE.md](../G5API/CLAUDE.md).
