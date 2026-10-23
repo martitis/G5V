@@ -307,14 +307,14 @@
       "FormTitleEdit": "Edit Server Info",
       "Flag": "Location",
       "LastSeen": "Last seen",
-      "Online": "Online",
       "OfflineSince": "Offline · seen {ago}",
       "NeverSeen": "Never answered",
       "NotChecked": "Not checked yet",
       "AgoSeconds": "{n} s ago",
       "AgoMinutes": "{n} min ago",
       "AgoHours": "{n} h ago",
-      "AgoDays": "{n} d ago"
+      "AgoDays": "{n} d ago",
+      "OnlineSince": "Online · {ago}"
     },
     "ServerCreate": {
       "FormJoinPassword": "Join password (optional)",
@@ -1011,14 +1011,14 @@
       "FormTitleEdit": "Modifier les infos du serveur",
       "Flag": "Emplacement",
       "LastSeen": "Vu pour la dernière fois",
-      "Online": "En ligne",
       "OfflineSince": "Hors ligne · vu {ago}",
       "NeverSeen": "N'a jamais répondu",
       "NotChecked": "Pas encore vérifié",
       "AgoSeconds": "il y a {n} s",
       "AgoMinutes": "il y a {n} min",
       "AgoHours": "il y a {n} h",
-      "AgoDays": "il y a {n} j"
+      "AgoDays": "il y a {n} j",
+      "OnlineSince": "En ligne · {ago}"
     },
     "ServerCreate": {
       "FormJoinPassword": "Mot de passe du serveur (facultatif)",
@@ -1715,14 +1715,14 @@
       "FormTitleEdit": "サーバー情報の編集",
       "Flag": "場所は",
       "LastSeen": "最終応答",
-      "Online": "オンライン",
       "OfflineSince": "オフライン・最終応答 {ago}",
       "NeverSeen": "応答なし",
       "NotChecked": "未確認",
       "AgoSeconds": "{n} 秒前",
       "AgoMinutes": "{n} 分前",
       "AgoHours": "{n} 時間前",
-      "AgoDays": "{n} 日前"
+      "AgoDays": "{n} 日前",
+      "OnlineSince": "オンライン・{ago}"
     },
     "ServerCreate": {
       "FormJoinPassword": "参加パスワード（任意）",

@@ -224,7 +224,12 @@ const now = ref(Date.now());
 function seen(server: Server) {
   const age = secondsSince(server.last_seen, now.value);
   if (age != null && age <= ONLINE_S)
-    return { online: true, color: "success", icon: "mdi-circle", text: t("MyServers.Online") };
+    return {
+      online: true,
+      color: "success",
+      icon: "mdi-circle",
+      text: t("MyServers.OnlineSince", { ago: agoText(age) })
+    };
   if (age == null)
     return {
       online: false,
@@ -246,13 +251,17 @@ function agoText(seconds: number) {
   return t("MyServers.AgoDays", { n: Math.round(seconds / 86400) });
 }
 
-// Refresh quietly every 10 s while the page is visible (no spinner, errors ignored until the next try).
+// The "seen … ago" texts count every second; the list itself refreshes quietly every 10 s while the page
+// is visible (no spinner, errors ignored until the next try).
+const clock = setInterval(() => (now.value = Date.now()), 1000);
 const timer = setInterval(() => {
-  now.value = Date.now();
   if (document.visibilityState === "visible" && !loading.value)
     fetchServers().catch(() => undefined);
 }, 10000);
-onBeforeUnmount(() => clearInterval(timer));
+onBeforeUnmount(() => {
+  clearInterval(clock);
+  clearInterval(timer);
+});
 
 function openDialog(server: Server | null) {
   editing.value = server;
