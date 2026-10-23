@@ -727,7 +727,12 @@
       "ConfirmTitle": "Send to the game server?",
       "Sent": "Sent to the server.",
       "Reply": "Server reply",
-      "HistoryHint": "↑/↓: previous commands"
+      "HistoryHint": "↑/↓: previous commands",
+      "TabMatch": "Match",
+      "TabPlayers": "Players",
+      "TabServer": "Server",
+      "TabChat": "Chat & settings",
+      "EndSection": "End the match"
     },
     "Preset": {
       "StartFrom": "Start from",
@@ -1518,7 +1523,12 @@
       "ConfirmTitle": "Envoyer au serveur de jeu ?",
       "Sent": "Envoyé au serveur.",
       "Reply": "Réponse du serveur",
-      "HistoryHint": "↑/↓ : commandes précédentes"
+      "HistoryHint": "↑/↓ : commandes précédentes",
+      "TabMatch": "Match",
+      "TabPlayers": "Joueurs",
+      "TabServer": "Serveur",
+      "TabChat": "Chat et réglages",
+      "EndSection": "Terminer le match"
     },
     "Preset": {
       "StartFrom": "Partir de",
@@ -2310,7 +2320,12 @@
       "ConfirmTitle": "ゲームサーバーに送信しますか？",
       "Sent": "サーバーに送信しました。",
       "Reply": "サーバーの応答",
-      "HistoryHint": "↑/↓：過去のコマンド"
+      "HistoryHint": "↑/↓：過去のコマンド",
+      "TabMatch": "試合",
+      "TabPlayers": "プレイヤー",
+      "TabServer": "サーバー",
+      "TabChat": "チャットと設定",
+      "EndSection": "試合を終了"
     },
     "Preset": {
       "StartFrom": "テンプレート",

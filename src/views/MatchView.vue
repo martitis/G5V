@@ -28,7 +28,6 @@
             @bombs="(list) => (bombs = list)"
             @pause="(state) => (pause = state)"
           />
-          <MatchAdminMenu v-if="adminTools" ref="adminMenu" :match="match" @changed="reload" />
         </template>
       </MatchHeader>
 
@@ -63,7 +62,13 @@
 
       <ReadyStatus v-if="waitingMinutes != null" :match="match" />
 
-      <MatchControlPanel v-if="adminTools" :match="match" class="mb-4" />
+      <MatchControlPanel
+        v-if="adminTools"
+        ref="controlPanel"
+        :match="match"
+        class="mb-4"
+        @changed="reload"
+      />
 
       <VetoList v-if="vetoList.length" :vetoes="vetoList" :sides="vetoSides" class="mb-4" />
 
@@ -104,7 +109,6 @@ import type {
   VetoSide
 } from "@/api/types";
 import MapScoreboard from "@/components/match/MapScoreboard.vue";
-import MatchAdminMenu from "@/components/match/MatchAdminMenu.vue";
 import MatchControlPanel from "@/components/match/MatchControlPanel.vue";
 import MatchHeader from "@/components/match/MatchHeader.vue";
 import MatchStreams from "@/components/match/MatchStreams.vue";
@@ -121,7 +125,7 @@ const auth = useAuthStore();
 const ui = useUiStore();
 
 const match = ref<Match | null>(null);
-const adminMenu = ref<InstanceType<typeof MatchAdminMenu> | null>(null);
+const controlPanel = ref<InstanceType<typeof MatchControlPanel> | null>(null);
 const team1 = ref<Team | null>(null);
 const team2 = ref<Team | null>(null);
 const server = ref<Server | null>(null);
@@ -150,10 +154,10 @@ const score = computed<[number, number]>(() => {
   return [m.team1_score ?? 0, m.team2_score ?? 0];
 });
 
-/** Recovery choices from the server state banner open the admin menu's dialogs. */
+/** Recovery choices from the server state banner open the control panel's dialogs. */
 function onServerAction(action: "restore" | "restart" | "forfeit" | "cancel") {
-  if (action === "restore") void adminMenu.value?.openBackups();
-  else adminMenu.value?.open(action);
+  if (action === "restore") void controlPanel.value?.openBackups();
+  else controlPanel.value?.open(action);
 }
 
 /** Minutes since the match was loaded while no map has gone live yet (no-show check). */
