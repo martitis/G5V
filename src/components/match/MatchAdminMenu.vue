@@ -221,7 +221,8 @@
       @update:model-value="close"
     >
       <v-card
-        :title="
+        :title="dialog === 'restart' ? $t('MatchAdmin.MatchRestart') : $t('MatchAdmin.CancelMatch')"
+        :text="
           dialog === 'restart'
             ? $t('MatchAdmin.MatchRestartInfo')
             : $t('MatchAdmin.CancelMatchConfirm')
