@@ -1,6 +1,6 @@
 <template>
-  <v-footer app color="secondary" class="flex-column pa-0">
-    <div class="d-flex align-center justify-end w-100 px-4 py-1 bg-primary">
+  <v-footer app color="footer" class="flex-column pa-0">
+    <div class="d-flex align-center justify-end w-100 px-4 py-1 bg-appbar">
       <v-btn icon variant="text" size="small" @click="toggleTheme">
         <v-icon>{{ isDark ? "mdi-weather-sunny" : "mdi-moon-waxing-crescent" }}</v-icon>
         <v-tooltip activator="parent" location="top">{{ $t("Navbar.DarkMode") }}</v-tooltip>

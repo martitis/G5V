@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar color="primary" density="comfortable">
+  <v-app-bar color="appbar" density="comfortable">
     <v-app-bar-nav-icon v-if="!mdAndUp" @click.stop="drawer = !drawer" />
     <v-app-bar-title>{{ appTitle() }}</v-app-bar-title>
     <GlobalSearch class="mx-2" />

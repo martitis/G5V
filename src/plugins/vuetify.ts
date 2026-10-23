@@ -22,7 +22,7 @@ export default createVuetify({
     // Vuetify 4 defaults to the system theme; the panel has its own toggle.
     defaultTheme: savedTheme(),
     themes: {
-      // Colours of the previous panel (Material blue / teal).
+      // Colours of the previous panel (Material blue). appbar/footer: the top bar and the footer.
       light: {
         dark: false,
         colors: {
@@ -31,17 +31,28 @@ export default createVuetify({
           accent: "#000000",
           error: "#D50000",
           background: "#E1F5FE",
-          footer: "#03A9F4"
+          appbar: "#2196F3",
+          footer: "#546E7A"
         }
       },
+      // Neutral slate greys with the same blue as light mode, so dark pages don't glare.
       dark: {
         dark: true,
         colors: {
-          primary: "#009688",
-          secondary: "#78909C",
-          background: "#303030",
-          surface: "#424242",
-          footer: "#00796B"
+          primary: "#60A5FA",
+          secondary: "#94A3B8",
+          accent: "#A78BFA",
+          error: "#F87171",
+          info: "#38BDF8",
+          success: "#4ADE80",
+          warning: "#FBBF24",
+          background: "#0F1115",
+          surface: "#181B21",
+          "surface-bright": "#22262E",
+          "surface-variant": "#2A2F38",
+          "on-surface-variant": "#CBD5E1",
+          appbar: "#181B21",
+          footer: "#181B21"
         }
       }
     }
