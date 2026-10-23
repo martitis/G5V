@@ -2,7 +2,7 @@
 
 The web panel for a CS2 tournament setup built on [MatchZy](https://shobhit-pathak.github.io/MatchZy/): create and run
 matches, follow them live, and manage teams, servers, seasons, tournaments and PUG queues. It's the frontend of
-[G5API](https://github.com/martitis/G5API), which talks to the game servers and stores everything.
+[G5API-newgen](https://github.com/martitis/G5API-newgen), which talks to the game servers and stores everything.
 
 It started as a fork of [PhlexPlexico/G5V](https://github.com/PhlexPlexico/G5V) (Vue 2, for Get5) and was renamed to
 keep the two apart. It is now a rewrite in Vue 3.5, Vuetify 4, Vite, Pinia, vue-i18n and TypeScript.
@@ -63,13 +63,13 @@ Ready-made configs:
 - **Docker:** `DockerfileLight` (nginx serving a `dist/` built beforehand), `DockerfileLightCaddy` (the same with
   Caddy), and `DockerfileFull` (builds inside the image).
 
-G5API's [DEPLOY.md](https://github.com/martitis/G5API/blob/master/DEPLOY.md) covers the whole setup: API, database,
+G5API's [DEPLOY.md](https://github.com/martitis/G5API-newgen/blob/master/DEPLOY.md) covers the whole setup: API, database,
 proxy and game server.
 
 ## Contributing
 [CLAUDE.md](CLAUDE.md) describes the code (API layer, stores, live streams, translations) and its conventions. The
 roadmap lives in G5API's
-[IMPROVEMENT_PLAN.md](https://github.com/martitis/G5API/blob/master/IMPROVEMENT_PLAN.md). New text goes into
+[IMPROVEMENT_PLAN.md](https://github.com/martitis/G5API-newgen/blob/master/IMPROVEMENT_PLAN.md). New text goes into
 `src/translations/translations.json` in all three languages.
 
 ## License
