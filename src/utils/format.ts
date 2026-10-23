@@ -173,6 +173,13 @@ export function formatDateTime(value: string | null | undefined): string {
   return isNaN(date.getTime()) ? value : date.toLocaleString();
 }
 
+/** Seconds since an API timestamp, or null when there is none. */
+export function secondsSince(value: string | null | undefined, now = Date.now()): number | null {
+  if (!value) return null;
+  const date = new Date(value.includes("T") ? value : value.replace(" ", "T") + "Z");
+  return isNaN(date.getTime()) ? null : Math.max(0, Math.round((now - date.getTime()) / 1000));
+}
+
 export function formatDate(value: string | null | undefined): string {
   if (!value) return "";
   const date = new Date(value);

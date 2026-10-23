@@ -2,14 +2,15 @@
   <div>
     <v-expansion-panels v-model="openPanels" variant="accordion" multiple>
       <v-expansion-panel value="control">
-        <v-expansion-panel-title>
-          <v-icon class="mr-2">mdi-shield-crown</v-icon>{{ $t("Control.Title") }}
+        <v-expansion-panel-title color="accent">
+          <v-icon class="mr-2">mdi-shield-crown</v-icon>
+          <span class="font-weight-medium">{{ $t("Control.Title") }}</span>
           <v-spacer />
           <v-chip
             v-if="health"
             :color="health.reachable ? 'success' : 'error'"
             size="x-small"
-            variant="tonal"
+            variant="flat"
             label
             class="mr-2"
           >
@@ -472,7 +473,8 @@ const emit = defineEmits<{ changed: [] }>();
 
 const { t } = useI18n();
 const ui = useUiStore();
-const openPanels = ref<string[]>(["control"]);
+// Collapsed by default; admins open it when they need it.
+const openPanels = ref<string[]>([]);
 const tab = ref<"match" | "players" | "server" | "chat">("match");
 const actions = ref<InstanceType<typeof MatchAdminDialogs> | null>(null);
 const busy = ref<string | null>(null);

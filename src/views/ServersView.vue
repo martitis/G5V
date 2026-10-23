@@ -63,6 +63,23 @@
             {{ item.in_use ? $t("MyServers.InUse") : $t("MyServers.Free") }}
           </v-chip>
         </template>
+        <template #[`item.last_seen`]="{ item }">
+          <v-chip
+            :color="seen(item).color"
+            size="small"
+            variant="tonal"
+            label
+            :prepend-icon="seen(item).icon"
+          >
+            {{ seen(item).text }}
+          </v-chip>
+          <div
+            v-if="seen(item).online && item.last_gamestate && item.last_gamestate !== 'none'"
+            class="text-body-small text-medium-emphasis mt-1"
+          >
+            MatchZy: {{ item.last_gamestate }}
+          </div>
+        </template>
         <template #[`item.public_server`]="{ item }">
           <v-icon :color="item.public_server ? 'success' : undefined">
             {{ item.public_server ? "mdi-earth" : "mdi-lock" }}
@@ -141,7 +158,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { servers as serversApi } from "@/api";
 import type { Server } from "@/api/types";
@@ -149,7 +166,7 @@ import ServerDialog from "@/components/ServerDialog.vue";
 import { useOnlyMine } from "@/composables/useOnlyMine";
 import { useAuthStore } from "@/stores/auth";
 import { useUiStore } from "@/stores/ui";
-import { flagUrl } from "@/utils/format";
+import { flagUrl, secondsSince } from "@/utils/format";
 
 const { t } = useI18n();
 const auth = useAuthStore();
@@ -178,23 +195,64 @@ const headers = computed(() => [
   { title: t("MyServers.Name"), key: "display_name" },
   { title: t("MyServers.Host"), key: "address", sortable: false },
   { title: t("MyServers.InUse"), key: "in_use" },
+  { title: t("MyServers.LastSeen"), key: "last_seen", sortable: false },
   { title: t("MyServers.IsPublic"), key: "public_server" },
   { title: t("MyServers.Owner"), key: "name" },
   { title: t("MyServers.RCONPass"), key: "rcon", sortable: false },
   { title: "", key: "actions", sortable: false, align: "end" as const }
 ]);
 
+async function fetchServers() {
+  await auth.load();
+  servers.value = mine.value && auth.loggedIn ? await serversApi.mine() : await serversApi.all();
+}
+
 async function load() {
   loading.value = true;
   try {
-    await auth.load();
-    servers.value = mine.value && auth.loggedIn ? await serversApi.mine() : await serversApi.all();
+    await fetchServers();
   } catch (error) {
     ui.notifyError(error);
   } finally {
     loading.value = false;
   }
 }
+
+/** The API probes every server every 10 s; seen within 30 s counts as online. */
+const ONLINE_S = 30;
+const now = ref(Date.now());
+function seen(server: Server) {
+  const age = secondsSince(server.last_seen, now.value);
+  if (age != null && age <= ONLINE_S)
+    return { online: true, color: "success", icon: "mdi-circle", text: t("MyServers.Online") };
+  if (age == null)
+    return {
+      online: false,
+      color: "grey",
+      icon: "mdi-help-circle-outline",
+      text: server.last_checked ? t("MyServers.NeverSeen") : t("MyServers.NotChecked")
+    };
+  return {
+    online: false,
+    color: "error",
+    icon: "mdi-circle-outline",
+    text: t("MyServers.OfflineSince", { ago: agoText(age) })
+  };
+}
+function agoText(seconds: number) {
+  if (seconds < 90) return t("MyServers.AgoSeconds", { n: seconds });
+  if (seconds < 5400) return t("MyServers.AgoMinutes", { n: Math.round(seconds / 60) });
+  if (seconds < 129600) return t("MyServers.AgoHours", { n: Math.round(seconds / 3600) });
+  return t("MyServers.AgoDays", { n: Math.round(seconds / 86400) });
+}
+
+// Refresh quietly every 10 s while the page is visible (no spinner, errors ignored until the next try).
+const timer = setInterval(() => {
+  now.value = Date.now();
+  if (document.visibilityState === "visible" && !loading.value)
+    fetchServers().catch(() => undefined);
+}, 10000);
+onBeforeUnmount(() => clearInterval(timer));
 
 function openDialog(server: Server | null) {
   editing.value = server;
